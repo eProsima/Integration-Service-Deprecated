@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<rs>
+	<bridge>
+		<subscriber>
+			<participant>rs_subscriber</participant>
+			<domain>0</domain>
+			<topic>TextPubSubTopic</topic>
+			<type>Text</type>
+		</subscriber>
+		<publisher>
+			<participant>rs_publisher</participant>
+			<domain>5</domain>
+			<topic>TextPubSubTopic</topic>
+			<type>Text</type>
+		</publisher>
+		<transformation></transformation>
+	</bridge>
+</rs>
