@@ -27,11 +27,11 @@
 #include "fastrtps/subscriber/SampleInfo.h"
 #include "fastrtps/attributes/SubscriberAttributes.h"
 #include "GenericPubSubTypes.h"
-#include "RSBridge.h"
 
 #include "dynamicload/dynamicload.h"
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
 
