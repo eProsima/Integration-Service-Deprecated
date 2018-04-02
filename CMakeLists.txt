@@ -49,12 +49,20 @@ add_library(rslib SHARED
     src/dynamicload/dynamicload.cpp
     src/RSManager.cpp
     src/RSBridge.cpp
-    src/GenericPubSubTypes.cpp)
+    src/GenericPubSubTypes.cpp
+    src/RSBridgeFastRTPSToNGSIv2.cpp
+    src/RSBridgeNGSIv2ToFastRTPS.cpp)
 
 target_link_libraries(rslib
     fastrtps
     fastcdr
     tinyxml2
+    -L/usr/lib/x86_64-linux-gnu
+    curl
+    curlpp
+    pthread
+    ${Boost_LIBRARIES}
+    boost_system
     ${CMAKE_DL_LIBS})
 
 target_link_libraries(routing-service rslib)

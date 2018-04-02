@@ -1,18 +1,64 @@
 <?xml version="1.0"?>
 <rs>
 	<bridge>
+        <bridge_type>fastrtps</bridge_type>
 		<subscriber>
 			<participant>subscriber_participant_name</participant>
 			<domain>0</domain>
 			<topic>subscriber_topic_name</topic>
 			<type>subscriber_type_name</type>
+            <partition>subscriber_partition</partition>  <!-- optional -->
 		</subscriber>
 		<publisher>
 			<participant>publisher_participant_name</participant>
 			<domain>0</domain>
 			<topic>publisher_topic_name</topic>
 			<type>publisher_type_name</type>
+            <partition>publisher_partition</partition>  <!-- optional -->
 		</publisher>
+		<transformation>/path/to/transformation/library</transformation>
+	</bridge>
+	<bridge>
+        <bridge_type>fastrtps_to_ngsiv2</bridge_type>
+		<ros2>
+			<participant>ros2_participant_name</participant>
+			<domain>0</domain>
+			<topic>ros2_topic_name</topic>
+			<type>ros2_type_name</type>
+            <partition>ros2_partition</partition>  <!-- optional -->
+		</ros2>
+		<ngsiv2>
+			<participant>ngsiv2_participant_name</participant>
+			<id>ngsiv2_entity_id</id>
+            <host>ngsiv2_host</host>
+            <port>ngsiv2_port</port>
+		</ngsiv2>
+		<transformation>/path/to/transformation/library</transformation>
+	</bridge>
+	<bridge>
+        <bridge_type>ngsiv2_to_fastrtps</bridge_type>
+		<ros2>
+			<participant>ros2_participant_name</participant>
+			<domain>0</domain>
+			<topic>ros2_topic_name</topic>
+			<type>ros2_type_name</type>
+            <partition>ros2_partition</partition>
+		</ros2>
+		<ngsiv2>
+			<participant>ngsiv2_participant_name</participant>
+			<id>ngsiv2_entity_id</id>
+            <host>ngsiv2_host</host>
+            <port>ngsiv2_port</port>
+            <subscription>
+                <type>ngsiv2_entity_type</type> <!-- optional -->
+                <attrs>ngsiv2_condition_attrs_list</attrs> <!-- comma separated -->
+                <expression>ngsiv2_condition_expression</expression>
+                <notifs>ngsiv2_notification_attrs_list</notif> <!-- comma separated -->
+                <expiration>ngsiv2_expiration_time</expiration> <!-- optional -->
+                <throttling>ngsiv2_throttling</throttling> <!-- optional -->
+                <description>ngsiv2_description</description> <!-- optional -->
+            </subscription>
+		</ngsiv2>
 		<transformation>/path/to/transformation/library</transformation>
 	</bridge>
 </rs>

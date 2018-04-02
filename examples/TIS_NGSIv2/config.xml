@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<rs>
+	<bridge>
+        <bridge_type>ngsiv2</bridge_type>
+		<ros2>
+			<participant>ros2_participant</participant>
+			<domain>0</domain>
+			<topic>CameraTopic</topic>
+			<type>CameraInfo</type>
+            <partition>rt</partition>
+		</ros2>
+		<ngsiv2>
+			<participant>ngsiv2_participant</participant>
+			<id>CameraInfo</id>
+            <host>localhost</host>
+            <port>1026</port>
+		</ngsiv2>
+		<transformation>/path/to/transformation/library</transformation>
+	</bridge>
+</rs>

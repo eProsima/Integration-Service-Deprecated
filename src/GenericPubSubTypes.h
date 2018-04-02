@@ -18,6 +18,7 @@
 #include <fastrtps/TopicDataType.h>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 class GenericPubSubType : public TopicDataType {
 public:
