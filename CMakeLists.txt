@@ -51,7 +51,9 @@ add_library(rslib SHARED
     src/RSBridge.cpp
     src/GenericPubSubTypes.cpp
     src/RSBridgeFastRTPSToNGSIv2.cpp
-    src/RSBridgeNGSIv2ToFastRTPS.cpp)
+    src/RSBridgeNGSIv2ToFastRTPS.cpp
+    src/NGSIv2/JsonNGSIv2.cxx
+    src/NGSIv2/JsonNGSIv2PubSubTypes.cxx)
 
 target_link_libraries(rslib
     fastrtps
