@@ -21,15 +21,23 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS TRUE)
 
 file(GLOB USER_LIB_SOURCES_CXX "*.cxx")
-file(GLOB USER_LIB_SOURCES_CPP "jsoncpp.cpp")
+file(GLOB USER_LIB_SOURCES_CPP "*.cpp")
 
-##list(REMOVE_ITEM USER_LIB_SOURCES_CPP "userlib_ngsiv2.cpp" "userlib_fastrtps.cpp")
-##list(FILTER USER_LIB_SOURCES_CPP EXCLUDE REGEX "**/userlib_*.cpp")
+add_executable(tis_ngsiv2 main.cpp)
 
-MESSAGE( STATUS "CPP SOURCES: " ${USER_LIB_SOURCES_CPP} )
+add_library(dynamicload ../../src/dynamicload/dynamicload.cpp)
+#add_library(tinyxml2 ../../src/tinyxml2/tinyxml2.cpp)
+add_library(RSManager ../../src/RSManager.cpp)
+add_library(RSBridge ../../src/RSBridge.cpp ../../src/RSBridgeFastRTPSToNGSIv2.cpp ../../src/RSBridgeNGSIv2ToFastRTPS.cpp ../../src/NGSIv2/JsonNGSIv2.cxx ../../src/NGSIv2/JsonNGSIv2PubSubTypes.cxx)
+add_library(GenericPubSubTypes ../../src/GenericPubSubTypes.cpp)
 
-add_library(userlib_fastrtps SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP} "userlib_fastrtps.cpp")
-add_library(userlib_ngsiv2 SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP} "userlib_ngsiv2.cpp")
+add_library(userlib SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})
 
-target_link_libraries(userlib_fastrtps fastrtps fastcdr ${CMAKE_DL_LIBS})
-target_link_libraries(userlib_ngsiv2 fastrtps fastcdr ${CMAKE_DL_LIBS})
+target_link_libraries(userlib fastrtps fastcdr ${CMAKE_DL_LIBS})
+
+target_link_libraries(dynamicload  ${CMAKE_DL_LIBS})
+target_link_libraries(GenericPubSubTypes fastrtps fastcdr)
+target_link_libraries(RSBridge GenericPubSubTypes dynamicload -L/usr/lib/x86_64-linux-gnu curl curlpp pthread ${Boost_LIBRARIES} boost_system)
+target_link_libraries(RSManager RSBridge tinyxml2)
+
+target_link_libraries(tis_ngsiv2 RSManager)

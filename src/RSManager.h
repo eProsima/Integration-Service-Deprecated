@@ -25,17 +25,18 @@
 
 class RSManager {
     std::vector<RSBridge> bridge;
-    std::vector<RSBridgeNGSIv2ToFastRTPS> bridgeNGSIv2ToFastRTPS;
-    std::vector<RSBridgeFastRTPSToNGSIv2> bridgeFastRTPSToNGSIv2;
+    std::vector<RSBridgeNGSIv2ToFastRTPS*> bridgeNGSIv2ToFastRTPS;
+    std::vector<RSBridgeFastRTPSToNGSIv2*> bridgeFastRTPSToNGSIv2;
     bool active;
 public:
     RSManager(std::string xml_file_path);
     void LoadFastRTPSBridge(tinyxml2::XMLElement *bridge_element);
-    void LoadNGSIv2ToFastRTPSBridge(tinyxml2::XMLElement *bridge_element);
-    void LoadFastRTPSToNGSIv2Bridge(tinyxml2::XMLElement *bridge_element);
-    ~RSManager(){};
+    void LoadNGSIv2Bridge(tinyxml2::XMLElement *bridge_element);
+    void removeNGSIv2Subscriptions();
+    ~RSManager();
     bool isActive();
     tinyxml2::XMLElement* _assignNextElement(tinyxml2::XMLElement *element, std::string name);
+    tinyxml2::XMLElement* _assignOptionalElement(tinyxml2::XMLElement *element, std::string name);
 
 };
 
