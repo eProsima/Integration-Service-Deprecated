@@ -60,17 +60,17 @@ extern "C" void USER_LIB_EXPORT transformToNGSIv2(SerializedPayload_t *serialize
 	// User types
 	RobotRcv robot_data;
 	RobotRcvPubSubType robot_pst;
-    
+
     JsonNGSIv2PubSubType string_pst;
     JsonNGSIv2 string_data;
 
 	// Deserialization
 	robot_pst.deserialize(serialized_input, &robot_data);
 
-	// Custom transformation
+	// Custom transformation - For convenience, custom string format <entityId>@<json_changes>
     std::stringstream ss;
-    ss << "{ \"id\": \"" << robot_data.robot_id() << "\", \"type\": \"Robot\",";
-    ss << "\"transmission_time\": { \"value\": \" " << robot_data.transmission_time() << "\", \"type\": \"DateTime\"}, ";
+    ss << robot_data.robot_id() << "@";
+    ss << "{\"transmission_time\": { \"value\": \"" << robot_data.transmission_time() << "\"}, ";
     ss << "\"floor\": {\"value\": " << robot_data.destination().floor() << "}, ";
     ss << "\"x\": {\"value\": " << robot_data.destination().x() << "}, ";
     ss << "\"y\": {\"value\": " << robot_data.destination().y() << "}, ";
@@ -78,8 +78,7 @@ extern "C" void USER_LIB_EXPORT transformToNGSIv2(SerializedPayload_t *serialize
     ss << "\"state\": {\"value\": " << ((robot_data.state() == State::ACTION) ? "\"ACTION\"" : "\"STAND_BY\"") << "} }";
 	string_data.data(ss.str());
     std::cout << string_data.data() << std::endl;
-    
-    
+
 	// Serialization
 	serialized_output->reserve(string_pst.m_typeSize);
 	string_pst.serialize(&string_data, serialized_output);

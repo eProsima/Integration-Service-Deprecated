@@ -132,32 +132,37 @@ void RSBridgeFastRTPSToNGSIv2::NGSIv2Publisher::setHostPort(const string host, c
 
 RSBridgeFastRTPSToNGSIv2::NGSIv2Publisher::~NGSIv2Publisher() {}
 
+string getEntityId(const string json)
+{
+    return json.substr(0, json.find_first_of("@"));
+}
+
+string getPayload(const string json)
+{
+    return json.substr(json.find_first_of("@") + 1);
+}
+
 string RSBridgeFastRTPSToNGSIv2::NGSIv2Publisher::write(SerializedPayload_t* payload)
 {
     try {
         curlpp::Cleanup cleaner;
         curlpp::Easy request;
-        
-        request.setOpt(new curlpp::options::Url(url + "/v2/entities")); 
-        request.setOpt(new curlpp::options::Verbose(true)); 
 
         JsonNGSIv2PubSubType json_pst;
         std::string json;
         json_pst.deserialize(payload, &json);
-        /*
-        std::stringstream ss;
-        ss << payload->data;
-        
-        std::string json = ss.str();
-        */
 
+        string entityId = getEntityId(json);
+        string payload = getPayload(json);
+        request.setOpt(new curlpp::options::Url(url + "/v2/entities/" + entityId + "/attrs"));
+        request.setOpt(new curlpp::options::Verbose(true)); 
         std::list<std::string> header; 
         header.push_back("Content-Type: application/json"); 
         //header.push_back("Content-Length: application/json"); 
 
         request.setOpt(new curlpp::options::HttpHeader(header)); 
-        request.setOpt(new curlpp::options::PostFields(json));
-        request.setOpt(new curlpp::options::PostFieldSize(json.length()));
+        request.setOpt(new curlpp::options::PostFields(payload));
+        request.setOpt(new curlpp::options::PostFieldSize(payload.length()));
         
         std::ostringstream response;
         request.setOpt(new curlpp::options::WriteStream(&response));

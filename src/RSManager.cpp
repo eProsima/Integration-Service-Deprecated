@@ -336,6 +336,7 @@ bool RSManager::isActive(){
 
 RSManager::~RSManager()
 {
+    removeNGSIv2Subscriptions();
     for (RSBridgeNGSIv2ToFastRTPS* b : bridgeNGSIv2ToFastRTPS)
     {
         delete b;
