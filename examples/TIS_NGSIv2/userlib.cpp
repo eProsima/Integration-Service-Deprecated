@@ -24,7 +24,7 @@ extern "C" void USER_LIB_EXPORT transformFromNGSIv2(SerializedPayload_t *seriali
 	// User types
 	RobotSnd robot_data;
 	RobotSndPubSubType robot_pst;
-    
+
     JsonNGSIv2PubSubType string_pst;
     JsonNGSIv2 string_data;
 

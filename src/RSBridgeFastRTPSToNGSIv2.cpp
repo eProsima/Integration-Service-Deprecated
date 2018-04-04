@@ -50,7 +50,7 @@ RSBridgeFastRTPSToNGSIv2::RSBridgeFastRTPSToNGSIv2(
     data_type = new GenericPubSubType();
     data_type->setName(sub_params.topic.topicDataType.c_str());
     Domain::registerType(mf_participant,(TopicDataType*) data_type);
-    
+
     m_listener.setPublisher(&ngsiv2_publisher);
 
     // Create Subscriber
@@ -157,20 +157,20 @@ string RSBridgeFastRTPSToNGSIv2::NGSIv2Publisher::write(SerializedPayload_t* pay
         string entityId = json.entityId();
         string payload = json.data();
         request.setOpt(new curlpp::options::Url(url + "/v2/entities/" + entityId + "/attrs"));
-        request.setOpt(new curlpp::options::Verbose(true)); 
-        std::list<std::string> header; 
-        header.push_back("Content-Type: application/json"); 
-        //header.push_back("Content-Length: application/json"); 
+        request.setOpt(new curlpp::options::Verbose(true));
+        std::list<std::string> header;
+        header.push_back("Content-Type: application/json");
+        //header.push_back("Content-Length: application/json");
 
-        request.setOpt(new curlpp::options::HttpHeader(header)); 
+        request.setOpt(new curlpp::options::HttpHeader(header));
         request.setOpt(new curlpp::options::PostFields(payload));
         request.setOpt(new curlpp::options::PostFieldSize(payload.length()));
-        
+
         std::ostringstream response;
         request.setOpt(new curlpp::options::WriteStream(&response));
-        
-        request.perform(); 
-        
+
+        request.perform();
+
         cout << response.str() << endl;
     }
     catch ( curlpp::LogicError & e ) {

@@ -52,11 +52,11 @@ RSBridgeNGSIv2ToFastRTPS::RSBridgeNGSIv2ToFastRTPS(NGSIv2Params par_ngsiv2_param
     data_type = new GenericPubSubType();
     data_type->setName(pub_params.topic.topicDataType.c_str());
     Domain::registerType(mf_participant,(TopicDataType*) data_type);
-    
+
     //Create publisher
     mf_publisher = Domain::createPublisher(mf_participant,pub_params,nullptr);
     if(mf_publisher == nullptr) return;
-    
+
     // Configure and start listener
     ngsiv2_listener.setPublisher(mf_publisher);
     ngsiv2_listener.startListenerAndSubscribe(sub_params, file_path);
@@ -101,7 +101,7 @@ void RSBridgeNGSIv2ToFastRTPS::RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::startLi
         user_transformation = (userf_t)eProsimaGetProcAddress(handle, "transformFromNGSIv2");
     }
 
-    subscription_id = addSubscription(url, sub_params.idPattern, sub_params.type, sub_params.attrs, sub_params.expression, 
+    subscription_id = addSubscription(url, sub_params.idPattern, sub_params.type, sub_params.attrs, sub_params.expression,
         getListenerURL(), sub_params.notif, sub_params.expiration, sub_params.throttling, sub_params.description);
 
     thread.detach();
@@ -130,11 +130,11 @@ string RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::addSubscription(const string se
     {
         curlpp::Cleanup myCleanup;// Now add a subscription
         curlpp::Easy subRequest;
-        std::list<std::string> sheader; 
-        sheader.push_back("Content-Type: application/json"); 
+        std::list<std::string> sheader;
+        sheader.push_back("Content-Type: application/json");
         subRequest.setOpt(new curlpp::options::HttpHeader(sheader));
         //subRequest.setOpt(new curlpp::options::Verbose(true));
-        
+
         string myAttrs = attrs;
         string myNotifAttrs = notifAttrs;
         string comma(",");
@@ -147,9 +147,9 @@ string RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::addSubscription(const string se
         myNotifAttrs.push_back('"');
         myAttrs.insert(0, "\"");
         myNotifAttrs.insert(0, "\"");
-        
+
         std::stringstream ssjson;
-        
+
         ssjson << "{";
         if (!description.empty()) { ssjson << "\"description\": \"" << description << "\", "; }
         ssjson << "\"subject\": { ";
@@ -168,9 +168,9 @@ string RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::addSubscription(const string se
             }
             if (!expression.empty())
             {
-                if (!attrs.empty()) 
-                { 
-                    ssjson << ","; 
+                if (!attrs.empty())
+                {
+                    ssjson << ",";
                 }
                 ssjson << "\"expression\": {";
                 ssjson << "\"q\": \"" << expression << "\"";
@@ -188,29 +188,29 @@ string RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::addSubscription(const string se
         if (!expiration.empty()) { ssjson << ",\"expires\": \"" << expiration << "\""; }
         if (throttling > 0) { ssjson << ",\"throttling\": " << throttling; }
         ssjson << "}";
-        
+
         std::string json = ssjson.str();
-        
+
         subRequest.setOpt(new curlpp::options::PostFields(json));
         subRequest.setOpt(new curlpp::options::PostFieldSize(json.length()));
-        
+
         std::stringstream ss;
         ss << server << "/v2/subscriptions/";
         subRequest.setOpt<Url>(ss.str());
-        
+
         std::ostringstream response;
-        
+
         subRequest.setOpt(new curlpp::options::WriteStream(&response));
         subRequest.setOpt(new curlpp::options::Header(1));
 
         // Send request and get a result.
         subRequest.perform();
-        
+
         //cout << response.str() << endl;
-        
+
         string subsc_id;
         std::istringstream responseHeader(response.str());
-        
+
         for (std::string line; std::getline(responseHeader, line); )
         {
             if (line.find("Location: /v2/subscriptions/") != std::string::npos)
@@ -222,7 +222,7 @@ string RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::addSubscription(const string se
                 return subsc_id;
             }
         }
-        
+
     }
     catch(curlpp::RuntimeError & e)
     {
@@ -245,22 +245,22 @@ void RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::deleteSubscription(const string s
     try
     {
         curlpp::Cleanup myCleanup;
-        
+
         curlpp::Easy delRequest;
         std::list<std::string> delHeader;
-        
+
         std::stringstream ss;
         ss << server << "/v2/subscriptions/" << id;
         delRequest.setOpt<Url>(ss.str());
-        
+
         delRequest.setOpt(new curlpp::options::CustomRequest("DELETE"));
-        
+
         std::ostringstream delResponse;
-        delRequest.setOpt(new curlpp::options::WriteStream(&delResponse));        
-        
+        delRequest.setOpt(new curlpp::options::WriteStream(&delResponse));
+
         // Send request and get a result.
         delRequest.perform();
-        
+
         cout << delResponse.str() << endl;
     }
     catch(curlpp::RuntimeError & e)

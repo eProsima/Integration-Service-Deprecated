@@ -341,7 +341,7 @@ RSManager::~RSManager()
     {
         delete b;
     }
-    
+
     for (RSBridgeFastRTPSToNGSIv2* b : bridgeFastRTPSToNGSIv2)
     {
         delete b;
