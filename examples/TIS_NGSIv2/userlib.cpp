@@ -67,15 +67,16 @@ extern "C" void USER_LIB_EXPORT transformToNGSIv2(SerializedPayload_t *serialize
 	// Deserialization
 	robot_pst.deserialize(serialized_input, &robot_data);
 
-	// Custom transformation - For convenience, custom string format <entityId>@<json_changes>
+	// Custom transformation
     std::stringstream ss;
-    ss << robot_data.robot_id() << "@";
+    //ss << robot_data.robot_id() << "@";
     ss << "{\"transmission_time\": { \"value\": \"" << robot_data.transmission_time() << "\"}, ";
     ss << "\"floor\": {\"value\": " << robot_data.destination().floor() << "}, ";
     ss << "\"x\": {\"value\": " << robot_data.destination().x() << "}, ";
     ss << "\"y\": {\"value\": " << robot_data.destination().y() << "}, ";
     ss << "\"zeta\": {\"value\": " << robot_data.destination().zeta() << "},";
     ss << "\"state\": {\"value\": " << ((robot_data.state() == State::ACTION) ? "\"ACTION\"" : "\"STAND_BY\"") << "} }";
+	string_data.entityId(robot_data.robot_id());
 	string_data.data(ss.str());
     std::cout << string_data.data() << std::endl;
 

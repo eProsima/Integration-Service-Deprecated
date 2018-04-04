@@ -131,7 +131,7 @@ void RSBridgeFastRTPSToNGSIv2::NGSIv2Publisher::setHostPort(const string host, c
 }
 
 RSBridgeFastRTPSToNGSIv2::NGSIv2Publisher::~NGSIv2Publisher() {}
-
+/*
 string getEntityId(const string json)
 {
     return json.substr(0, json.find_first_of("@"));
@@ -141,7 +141,7 @@ string getPayload(const string json)
 {
     return json.substr(json.find_first_of("@") + 1);
 }
-
+*/
 string RSBridgeFastRTPSToNGSIv2::NGSIv2Publisher::write(SerializedPayload_t* payload)
 {
     try {
@@ -149,11 +149,13 @@ string RSBridgeFastRTPSToNGSIv2::NGSIv2Publisher::write(SerializedPayload_t* pay
         curlpp::Easy request;
 
         JsonNGSIv2PubSubType json_pst;
-        std::string json;
+        JsonNGSIv2 json;
         json_pst.deserialize(payload, &json);
 
-        string entityId = getEntityId(json);
-        string payload = getPayload(json);
+        //string entityId = getEntityId(json);
+        //string payload = getPayload(json);
+        string entityId = json.entityId();
+        string payload = json.data();
         request.setOpt(new curlpp::options::Url(url + "/v2/entities/" + entityId + "/attrs"));
         request.setOpt(new curlpp::options::Verbose(true)); 
         std::list<std::string> header; 

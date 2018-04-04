@@ -104,6 +104,41 @@ public:
     eProsima_user_DllExport JsonNGSIv2& operator=(JsonNGSIv2 &&x);
     
     /*!
+     * @brief This function copies the value in member entityId
+     * @param _entityId New value to be copied in member entityId
+     */
+    inline eProsima_user_DllExport void entityId(const std::string &_entityId)
+    {
+        m_entityId = _entityId;
+    }
+
+    /*!
+     * @brief This function moves the value in member entityId
+     * @param _entityId New value to be moved in member entityId
+     */
+    inline eProsima_user_DllExport void entityId(std::string &&_entityId)
+    {
+        m_entityId = std::move(_entityId);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member entityId
+     * @return Constant reference to member entityId
+     */
+    inline eProsima_user_DllExport const std::string& entityId() const
+    {
+        return m_entityId;
+    }
+
+    /*!
+     * @brief This function returns a reference to member entityId
+     * @return Reference to member entityId
+     */
+    inline eProsima_user_DllExport std::string& entityId()
+    {
+        return m_entityId;
+    }
+    /*!
      * @brief This function copies the value in member data
      * @param _data New value to be copied in member data
      */
@@ -190,6 +225,7 @@ public:
     eProsima_user_DllExport void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
     
 private:
+    std::string m_entityId;
     std::string m_data;
 };
 

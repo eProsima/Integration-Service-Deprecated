@@ -35,6 +35,8 @@ using namespace eprosima::fastcdr::exception;
 
 JsonNGSIv2::JsonNGSIv2()
 {
+
+
 }
 
 JsonNGSIv2::~JsonNGSIv2()
@@ -43,16 +45,19 @@ JsonNGSIv2::~JsonNGSIv2()
 
 JsonNGSIv2::JsonNGSIv2(const JsonNGSIv2 &x)
 {
+    m_entityId = x.m_entityId;
     m_data = x.m_data;
 }
 
 JsonNGSIv2::JsonNGSIv2(JsonNGSIv2 &&x)
 {
+    m_entityId = std::move(x.m_entityId);
     m_data = std::move(x.m_data);
 }
 
 JsonNGSIv2& JsonNGSIv2::operator=(const JsonNGSIv2 &x)
 {
+    m_entityId = x.m_entityId;
     m_data = x.m_data;
     
     return *this;
@@ -60,6 +65,7 @@ JsonNGSIv2& JsonNGSIv2::operator=(const JsonNGSIv2 &x)
 
 JsonNGSIv2& JsonNGSIv2::operator=(JsonNGSIv2 &&x)
 {
+    m_entityId = std::move(x.m_entityId);
     m_data = std::move(x.m_data);
     
     return *this;
@@ -71,6 +77,9 @@ size_t JsonNGSIv2::getMaxCdrSerializedSize(size_t current_alignment)
             
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
+
+
     return current_alignment - initial_alignment;
 }
 
@@ -78,18 +87,23 @@ size_t JsonNGSIv2::getCdrSerializedSize(const JsonNGSIv2& data, size_t current_a
 {
     size_t initial_alignment = current_alignment;
             
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.entityId().size() + 1;
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.data().size() + 1;
+
 
     return current_alignment - initial_alignment;
 }
 
 void JsonNGSIv2::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
+    scdr << m_entityId;
     scdr << m_data;
 }
 
 void JsonNGSIv2::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+    dcdr >> m_entityId;
     dcdr >> m_data;
 }
 
@@ -97,6 +111,8 @@ size_t JsonNGSIv2::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
             
+
+
 
     return current_align;
 }
@@ -108,5 +124,6 @@ bool JsonNGSIv2::isKeyDefined()
 
 void JsonNGSIv2::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
+	 
 	 
 }

@@ -309,7 +309,10 @@ void RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::listener()
             //SerializedPayload_t serialized_input(data.length());
             SerializedPayload_t serialized_input(2048);
             JsonNGSIv2PubSubType json_pst;
-            json_pst.serialize(&data, &serialized_input);
+            JsonNGSIv2 json;
+            json.data(data);
+            json.entityId(""); // No need to parse here (or empty means complete json in data ;) )
+            json_pst.serialize(&json, &serialized_input);
 
             SerializedPayload_t serialized_output;
             if(user_transformation){
