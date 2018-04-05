@@ -106,6 +106,16 @@ export(
     FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
 
 install(
+    TARGETS rsrtpsbridgelib
+    EXPORT ${PROJECT_NAME}Targets
+    COMPONENT libraries
+    DESTINATION ${LIB_INSTALL_DIR})
+
+export(
+    TARGETS rsrtpsbridgelib rslib
+    FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
+
+install(
     EXPORT ${PROJECT_NAME}Targets
     DESTINATION lib/routingservice/cmake
     COMPONENT cmake)
