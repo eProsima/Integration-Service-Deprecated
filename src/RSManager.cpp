@@ -34,7 +34,7 @@ RSManager::RSManager(std::string xml_file_path) : active(false)
     for (auto child = bridge_element->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
     {
         tinyxml2::XMLElement *current_element = _assignNextElement(child, "bridge_type");
-        const char* bridge_type = current_element->GetText();
+        const char* bridge_type = (current_element) ? current_element->GetText() : "fastrtps"; // Old format, only fastrtps support
         if (strncmp(bridge_type, "fastrtps", 8) == 0
             || strncmp(bridge_type, "ros2", 4) == 0
             || strncmp(bridge_type, "unidirectional", 14) == 0)
@@ -76,17 +76,35 @@ void loadUnidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element
 
         tinyxml2::XMLElement *lib_element = bridge_element->FirstChildElement("bridge_library");
 
-        if(!lib_element)
+        if (!lib_element)
         {
-            throw 0;
+            std::cout << "WARNING: <bridge_library> node not found. Using rsrtpsbridgelib as default, but you may update your configuration file." << std::endl;
         }
 
-        const char* file_path = lib_element->GetText();
+        const char* file_path = (lib_element) ? lib_element->GetText() : "librsrtpsbridgelib.so"; // Support for oldformat, defaults fastrtps
         handle = eProsimaLoadLibrary(file_path);
-        manager->addHandle(handle);
-        loadbridgef_t loadLib = (loadbridgef_t)eProsimaGetProcAddress(handle, "createBridge");
+        if (!lib_element && !handle)
+        {
+            handle = eProsimaLoadLibrary("/usr/local/lib/librsrtpsbridgelib.so"); // Default install directory
+        }
+        if (handle)
+        {
+            manager->addHandle(handle);
+            loadbridgef_t loadLib = (loadbridgef_t)eProsimaGetProcAddress(handle, "createBridge");
 
-        manager->addBridge(loadLib(bridge_element));
+            if (loadLib)
+            {
+                manager->addBridge(loadLib(bridge_element));
+            }
+            else
+            {
+                std::cout << "External symbol 'createBridge' in " << file_path << " not found!" << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "Bridge library " << file_path << " not found!" << std::endl;
+        }
     }
     catch (int e_code){
         std::cout << "Error ocurred while loading bridge library " << e_code << std::endl;
@@ -119,23 +137,42 @@ void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element,
         const char* file_path2 = lib2_element->GetText();
         handle1 = eProsimaLoadLibrary(file_path1);
         handle2 = eProsimaLoadLibrary(file_path2);
-        manager->addHandle(handle1);
-        manager->addHandle(handle2);
-        loadbridgef_t loadLib1 = (loadbridgef_t)eProsimaGetProcAddress(handle1, "createBridge");
-        loadbridgef_t loadLib2 = (loadbridgef_t)eProsimaGetProcAddress(handle2, "createBridge");
+        if (!handle1)
+        {
+            std::cout << "Bridge library " << file_path1 << " not found!" << std::endl;
+        } else if (!handle2)
+        {
+            std::cout << "Bridge library " << file_path2 << " not found!" << std::endl;
+        }
+        else
+        {
+            manager->addHandle(handle1);
+            manager->addHandle(handle2);
+            loadbridgef_t loadLib1 = (loadbridgef_t)eProsimaGetProcAddress(handle1, "createBridge");
+            loadbridgef_t loadLib2 = (loadbridgef_t)eProsimaGetProcAddress(handle2, "createBridge");
 
-        manager->addBridge(loadLib1(bridge_element));
-        manager->addBridge(loadLib2(bridge_element));
+            if (!loadLib1)
+            {
+                std::cout << "External symbol 'createBridge' in " << file_path1 << " not found!" << std::endl;
+            }
+            else if (!loadLib2)
+            {
+                std::cout << "External symbol 'createBridge' in " << file_path2 << " not found!" << std::endl;
+            }
+            else
+            {
+                manager->addBridge(loadLib1(bridge_element));
+                manager->addBridge(loadLib2(bridge_element));
+            }
+        }
     }
     catch (int e_code){
         std::cout << "Error ocurred while loading bridge library " << e_code << std::endl;
     }
 }
 
-tinyxml2::XMLElement* RSManager::_assignNextElement(tinyxml2::XMLElement *element, std::string name){
-    if (!element->FirstChildElement(name.c_str())){
-        throw 0;
-    }
+tinyxml2::XMLElement* RSManager::_assignNextElement(tinyxml2::XMLElement *element, std::string name)
+{
     return element->FirstChildElement(name.c_str());
 }
 
