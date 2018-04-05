@@ -17,7 +17,7 @@
 			<type>publisher_type_name</type>
             <partition>publisher_partition</partition>  <!-- optional -->
 		</publisher>
-        <transformation>/path/to/transformation/library</transformation> <!-- optional if transform is declared in bridge_library -->
+        <transformation>/path/to/transformation/library</transformation>
         <bridge_library>/path/to/bridge/library</bridge_library> <!-- optional -->
 	</bridge>
 </rs>
