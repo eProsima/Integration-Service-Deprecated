@@ -1,18 +1,18 @@
 <!-- example config.xml for NGSIv2 builtin bridges. -->
 
 <rs>
-	<bridge>
+    <bridge>
         <bridge_type>ngsiv2</bridge_type>
-		<ros2>
-			<participant>ros2_participant_name</participant>
-			<domain>0</domain>
-			<topic>ros2_topic_name</topic>
-			<type>ros2_type_name</type>
+        <ros2>
+            <participant>ros2_participant_name</participant>
+            <domain>0</domain>
+            <topic>ros2_topic_name</topic>
+            <type>ros2_type_name</type>
             <partition>ros2_partition</partition>
-		</ros2>
-		<ngsiv2>
-			<participant>ngsiv2_participant_name</participant>
-			<id>ngsiv2_entity_id</id>
+        </ros2>
+        <ngsiv2>
+            <participant>ngsiv2_participant_name</participant>
+            <id>ngsiv2_entity_id</id>
             <host>ngsiv2_host</host>
             <port>ngsiv2_port</port>
             <subscription>
@@ -26,9 +26,9 @@
                 <throttling>ngsiv2_throttling</throttling> <!-- optional -->
                 <description>ngsiv2_description</description> <!-- optional -->
             </subscription>
-		</ngsiv2>
+        </ngsiv2>
         <transformation>/path/to/transformation/library</transformation>
         <bridge_library_ros2>/path/to/bridge/library_1</bridge_library_ros2>
         <bridge_library_ngsiv2>/path/to/bridge/library_2</bridge_library_ngsiv2>
-	</bridge>
+    </bridge>
 </rs>
