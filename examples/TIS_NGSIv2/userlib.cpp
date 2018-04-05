@@ -1,7 +1,7 @@
 #include <iostream>
 #include "RobotSndPubSubTypes.h"
 #include "RobotRcvPubSubTypes.h"
-#include "../../src/NGSIv2/JsonNGSIv2PubSubTypes.h"
+#include "../../src/builtin/NGSIv2/idl/JsonNGSIv2PubSubTypes.h"
 
 #include "json/json.h"
 

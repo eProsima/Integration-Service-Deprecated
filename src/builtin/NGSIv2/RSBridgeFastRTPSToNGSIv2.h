@@ -18,7 +18,6 @@
 
 #include <iostream>
 
-#include <fastrtps/fastrtps_fwd.h>
 #include "fastrtps/participant/Participant.h"
 #include "fastrtps/attributes/ParticipantAttributes.h"
 #include "fastrtps/publisher/Publisher.h"
@@ -28,10 +27,11 @@
 #include "fastrtps/subscriber/SubscriberListener.h"
 #include "fastrtps/subscriber/SampleInfo.h"
 #include "fastrtps/attributes/SubscriberAttributes.h"
-#include "GenericPubSubTypes.h"
-#include "NGSIv2Params.h"
 
-#include "dynamicload/dynamicload.h"
+#include "../../RSBridge.h"
+#include "../../GenericPubSubTypes.h"
+
+#include "NGSIv2Params.h"
 
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Options.hpp>
@@ -49,9 +49,7 @@ using namespace eprosima::fastrtps::rtps;
 using namespace curlpp::options;
 using namespace curlpp::infos;
 
-typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
-
-class RSBridgeFastRTPSToNGSIv2
+class RSBridgeFastRTPSToNGSIv2 : public RSBridge
 {
 public:
     RSBridgeFastRTPSToNGSIv2(
@@ -60,6 +58,7 @@ public:
         SubscriberAttributes sub_params,
         const char* file_path);
     virtual ~RSBridgeFastRTPSToNGSIv2();
+    void onTerminate() override;
 private:
     Participant *mf_participant;
     Subscriber *mf_subscriber;
@@ -67,7 +66,7 @@ private:
     std::string ngsiv2_host;
     uint16_t ngsiv2_port;
     std::string ngsiv2_id;
-    
+
     class NGSIv2Publisher
     {
     public:

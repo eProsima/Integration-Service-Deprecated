@@ -24,8 +24,7 @@
 #include <fastrtps/Domain.h>
 
 #include "RSBridgeNGSIv2ToFastRTPS.h"
-#include "GenericPubSubTypes.h"
-#include "NGSIv2/JsonNGSIv2PubSubTypes.h" // Received type from NGSIv2
+#include "idl/JsonNGSIv2PubSubTypes.h" // Received type from NGSIv2
 
 #include <algorithm>
 
@@ -83,13 +82,13 @@ RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::NGSIv2Listener(const string host, cons
     user_transformation = nullptr;
 }
 
-RSBridgeNGSIv2ToFastRTPS::RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::~NGSIv2Listener()
+RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::~NGSIv2Listener()
 {
     if(handle) eProsimaCloseLibrary(handle);
     exit = true;
 }
 
-void RSBridgeNGSIv2ToFastRTPS::RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::startListenerAndSubscribe(NGSIv2SubscriptionParams sub_params, const char* file_path)
+void RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::startListenerAndSubscribe(NGSIv2SubscriptionParams sub_params, const char* file_path)
 {
     listener_host = sub_params.host;
     listener_port = sub_params.port;
@@ -107,7 +106,7 @@ void RSBridgeNGSIv2ToFastRTPS::RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::startLi
     thread.detach();
 }
 
-void RSBridgeNGSIv2ToFastRTPS::RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::setPublisher(Publisher *fastrtps_pub)
+void RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::setPublisher(Publisher *fastrtps_pub)
 {
     this->fastrtps_pub = fastrtps_pub;
 }
@@ -235,7 +234,7 @@ string RSBridgeNGSIv2ToFastRTPS::NGSIv2Listener::addSubscription(const string se
     return "";
 }
 
-void RSBridgeNGSIv2ToFastRTPS::RSBridgeNGSIv2ToFastRTPS::deleteSubscription()
+void RSBridgeNGSIv2ToFastRTPS::onTerminate()
 {
     ngsiv2_listener.deleteSubscription(ngsiv2_listener.url, ngsiv2_listener.subscription_id); // Delete our subcription from origin
 }

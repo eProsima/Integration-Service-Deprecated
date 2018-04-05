@@ -22,11 +22,10 @@
 
 #include <fastrtps/Domain.h>
 
-#include "RSBridge.h"
-#include "GenericPubSubTypes.h"
+#include "RSBridgeRTPS.h"
+#include "../../GenericPubSubTypes.h"
 
-
-RSBridge::RSBridge(ParticipantAttributes par_pub_params,
+RSBridgeRTPS::RSBridgeRTPS(ParticipantAttributes par_pub_params,
                     ParticipantAttributes par_sub_params,
                     PublisherAttributes pub_params,
                     SubscriberAttributes sub_params,
@@ -62,12 +61,12 @@ RSBridge::RSBridge(ParticipantAttributes par_pub_params,
     if(ms_subscriber == nullptr) return;
 }
 
-RSBridge::~RSBridge(){
+RSBridgeRTPS::~RSBridgeRTPS(){
     if(mp_participant != nullptr) Domain::removeParticipant(mp_participant);
     if(ms_participant != nullptr) Domain::removeParticipant(ms_participant);
 }
 
-void RSBridge::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info){
+void RSBridgeRTPS::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info){
     if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
@@ -80,18 +79,23 @@ void RSBridge::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& 
     }
 }
 
-RSBridge::SubListener::SubListener(const char* file_path) : handle(nullptr), user_transformation(nullptr){
+RSBridgeRTPS::SubListener::SubListener(const char* file_path) : handle(nullptr), user_transformation(nullptr){
     if(file_path){
         handle = eProsimaLoadLibrary(file_path);
         user_transformation = (userf_t)eProsimaGetProcAddress(handle, "transform");
     }
 }
 
-RSBridge::SubListener::~SubListener(){
+RSBridgeRTPS::SubListener::~SubListener(){
     if(handle) eProsimaCloseLibrary(handle);
 }
 
-void RSBridge::SubListener::onNewDataMessage(Subscriber* sub){
+void RSBridgeRTPS::onTerminate()
+{
+    // Don't need to do anything here
+}
+
+void RSBridgeRTPS::SubListener::onNewDataMessage(Subscriber* sub){
     SerializedPayload_t serialized_input;
     SerializedPayload_t serialized_output;
     if(sub->takeNextData(&serialized_input, &m_info)){

@@ -25,19 +25,12 @@ file(GLOB USER_LIB_SOURCES_CPP "*.cpp")
 
 add_executable(tis_ngsiv2 main.cpp)
 
-add_library(dynamicload ../../src/dynamicload/dynamicload.cpp)
-#add_library(tinyxml2 ../../src/tinyxml2/tinyxml2.cpp)
-add_library(RSManager ../../src/RSManager.cpp)
-add_library(RSBridge ../../src/RSBridge.cpp ../../src/RSBridgeFastRTPSToNGSIv2.cpp ../../src/RSBridgeNGSIv2ToFastRTPS.cpp ../../src/NGSIv2/JsonNGSIv2.cxx ../../src/NGSIv2/JsonNGSIv2PubSubTypes.cxx)
-add_library(GenericPubSubTypes ../../src/GenericPubSubTypes.cpp)
+add_library(RSManager ../../src/RSManager.cpp ../../src/builtin/NGSIv2/idl/JsonNGSIv2.cxx ../../src/builtin/NGSIv2/idl/JsonNGSIv2PubSubTypes.cxx)
 
 add_library(userlib SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})
 
 target_link_libraries(userlib fastrtps fastcdr ${CMAKE_DL_LIBS})
 
-target_link_libraries(dynamicload  ${CMAKE_DL_LIBS})
-target_link_libraries(GenericPubSubTypes fastrtps fastcdr)
-target_link_libraries(RSBridge GenericPubSubTypes dynamicload -L/usr/lib/x86_64-linux-gnu curl curlpp pthread ${Boost_LIBRARIES} boost_system)
-target_link_libraries(RSManager RSBridge tinyxml2)
+target_link_libraries(RSManager rslib  fastrtps fastcdr tinyxml2)
 
-target_link_libraries(tis_ngsiv2 RSManager)
+target_link_libraries(tis_ngsiv2 RSManager ${CMAKE_DL_LIBS} -L/usr/lib/x86_64-linux-gnu curl curlpp pthread ${Boost_LIBRARIES} boost_system)

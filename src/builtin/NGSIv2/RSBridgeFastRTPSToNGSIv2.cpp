@@ -23,8 +23,7 @@
 #include <fastrtps/Domain.h>
 
 #include "RSBridgeFastRTPSToNGSIv2.h"
-#include "GenericPubSubTypes.h"
-#include "NGSIv2/JsonNGSIv2PubSubTypes.h" // Type to send to NGSIv2
+#include "idl/JsonNGSIv2PubSubTypes.h" // Type to send to NGSIv2
 
 using boost::asio::ip::tcp;
 
@@ -60,6 +59,11 @@ RSBridgeFastRTPSToNGSIv2::RSBridgeFastRTPSToNGSIv2(
 
 RSBridgeFastRTPSToNGSIv2::~RSBridgeFastRTPSToNGSIv2(){
     if(mf_participant != nullptr) Domain::removeParticipant(mf_participant);
+}
+
+void RSBridgeFastRTPSToNGSIv2::onTerminate()
+{
+    // Don't need to do anything here.
 }
 
 void RSBridgeFastRTPSToNGSIv2::SubListener::onSubscriptionMatched(Subscriber* sub, MatchingInfo& info){

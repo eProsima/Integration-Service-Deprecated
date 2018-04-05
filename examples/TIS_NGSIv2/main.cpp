@@ -32,7 +32,7 @@ int main(int argc, char * argv[])
     {
         if (tis_manager_ptr)
         {
-            tis_manager_ptr->removeNGSIv2Subscriptions();
+            tis_manager_ptr->onTerminate();
         }
     }
     return 0;

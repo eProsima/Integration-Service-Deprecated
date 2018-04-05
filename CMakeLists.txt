@@ -6,7 +6,6 @@ set(PROJECT_MINOR_VERSION 0)
 set(PROJECT_MICRO_VERSION 0)
 set(PROJECT_VERSION ${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PROJECT_MICRO_VERSION})
 
-
 include(CheckCXXCompilerFlag)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
         CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -17,7 +16,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
         message(FATAL_ERROR "Compiler doesn't support C++11")
     endif()
 endif()
-
 
 find_package(fastrtps REQUIRED)
 find_package(fastcdr REQUIRED)
@@ -42,18 +40,28 @@ else()
     set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
 endif()
 
-
 add_executable(routing-service src/main.cpp)
 
 add_library(rslib SHARED
     src/dynamicload/dynamicload.cpp
     src/RSManager.cpp
-    src/RSBridge.cpp
-    src/GenericPubSubTypes.cpp
-    src/RSBridgeFastRTPSToNGSIv2.cpp
-    src/RSBridgeNGSIv2ToFastRTPS.cpp
-    src/NGSIv2/JsonNGSIv2.cxx
-    src/NGSIv2/JsonNGSIv2PubSubTypes.cxx)
+    src/GenericPubSubTypes.cpp)
+
+add_library(rsrtpsbridgelib SHARED
+    src/builtin/RTPS/RSBridgeRTPS.cpp
+    src/builtin/RTPS/bridgertpslib.cpp)
+
+add_library(rsngsiv2rtpsbridgelib SHARED
+    src/builtin/NGSIv2/RSBridgeNGSIv2ToFastRTPS.cpp
+    src/builtin/NGSIv2/ngsiv2rtpslib.cpp
+    src/builtin/NGSIv2/idl/JsonNGSIv2.cxx
+    src/builtin/NGSIv2/idl/JsonNGSIv2PubSubTypes.cxx)
+
+add_library(rsrtpsngsiv2bridgelib SHARED
+    src/builtin/NGSIv2/RSBridgeFastRTPSToNGSIv2.cpp
+    src/builtin/NGSIv2/rtpsngsiv2lib.cpp
+    src/builtin/NGSIv2/idl/JsonNGSIv2.cxx
+    src/builtin/NGSIv2/idl/JsonNGSIv2PubSubTypes.cxx)
 
 target_link_libraries(rslib
     fastrtps
@@ -67,8 +75,11 @@ target_link_libraries(rslib
     boost_system
     ${CMAKE_DL_LIBS})
 
-target_link_libraries(routing-service rslib)
+target_link_libraries(rsrtpsbridgelib rslib)
+target_link_libraries(rsngsiv2rtpsbridgelib rslib)
+target_link_libraries(rsrtpsngsiv2bridgelib rslib)
 
+target_link_libraries(routing-service rslib)
 
 install(
     FILES

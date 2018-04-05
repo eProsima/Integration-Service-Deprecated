@@ -22,5 +22,7 @@
             </subscription>
 		</ngsiv2>
 		<transformation>/home/luisgp/git/eProsima/routing-service/examples/TIS_NGSIv2/build/libuserlib.so</transformation>
+        <bridge_library_ros2>/home/luisgp/git/eProsima/routing-service/build/librsrtpsngsiv2bridgelib.so</bridge_library_ros2>
+        <bridge_library_ngsiv2>/home/luisgp/git/eProsima/routing-service/build/librsngsiv2rtpsbridgelib.so</bridge_library_ngsiv2>
 	</bridge>
 </rs>

@@ -12,20 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef _RSBRIDGE_H_
 #define _RSBRIDGE_H_
 
 #include <fastrtps/fastrtps_fwd.h>
-#include "fastrtps/participant/Participant.h"
-#include "fastrtps/attributes/ParticipantAttributes.h"
-#include "fastrtps/publisher/Publisher.h"
-#include "fastrtps/publisher/PublisherListener.h"
-#include "fastrtps/attributes/PublisherAttributes.h"
-#include "fastrtps/subscriber/Subscriber.h"
-#include "fastrtps/subscriber/SubscriberListener.h"
-#include "fastrtps/subscriber/SampleInfo.h"
-#include "fastrtps/attributes/SubscriberAttributes.h"
 #include "GenericPubSubTypes.h"
 
 #include "dynamicload/dynamicload.h"
@@ -33,43 +23,19 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
-
+/**
+ * Base class for Bridges. All implementation must inherit from it.
+ */
 class RSBridge
 {
 public:
-    RSBridge(ParticipantAttributes par_pub_params,
-                ParticipantAttributes par_sub_params,
-                PublisherAttributes pub_params,
-                SubscriberAttributes sub_params,
-                const char* file_path);
-    virtual ~RSBridge();
-private:
-    Participant *mp_participant;
-    Participant *ms_participant;
-    Subscriber *ms_subscriber;
-    Publisher *mp_publisher;
-    GenericPubSubType *input_type;
-    GenericPubSubType *output_type;
-
-    class SubListener : public SubscriberListener{
-    public:
-        SubListener(const char* file_path);
-        ~SubListener();
-        void setPublisher(Publisher* publisher){
-            listener_publisher = publisher;
-        }
-        void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
-        void onNewDataMessage(Subscriber* sub);
-        Publisher *listener_publisher;
-        userf_t user_transformation;
-        void *handle;
-        char *error;
-
-        SampleInfo_t m_info;
-        int n_matched;
-        int n_msg;
-    } m_listener;
+    /**
+     * This method will be called by RSManager when terminating the execution of the bridge.
+     * Any handle, subscription, and resources that the bridge needed to work must be closed.
+     */
+    virtual void onTerminate() = 0;
 };
+
+typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
 
 #endif // _Header__SUBSCRIBER_H_

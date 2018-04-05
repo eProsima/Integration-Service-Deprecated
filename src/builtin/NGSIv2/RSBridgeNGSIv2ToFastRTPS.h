@@ -18,7 +18,6 @@
 
 #include <iostream>
 
-#include <fastrtps/fastrtps_fwd.h>
 #include "fastrtps/participant/Participant.h"
 #include "fastrtps/attributes/ParticipantAttributes.h"
 #include "fastrtps/publisher/Publisher.h"
@@ -28,10 +27,10 @@
 #include "fastrtps/subscriber/SubscriberListener.h"
 #include "fastrtps/subscriber/SampleInfo.h"
 #include "fastrtps/attributes/SubscriberAttributes.h"
-#include "GenericPubSubTypes.h"
-#include "NGSIv2Params.h"
+#include "../../RSBridge.h"
+#include "../../GenericPubSubTypes.h"
 
-#include "dynamicload/dynamicload.h"
+#include "NGSIv2Params.h"
 
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Options.hpp>
@@ -51,9 +50,7 @@ using namespace curlpp::infos;
 
 using boost::asio::ip::tcp;
 
-typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
-
-class RSBridgeNGSIv2ToFastRTPS
+class RSBridgeNGSIv2ToFastRTPS : public RSBridge
 {
 public:
     RSBridgeNGSIv2ToFastRTPS(NGSIv2Params par_ngsiv2_params,
@@ -63,7 +60,7 @@ public:
                 const char* file_path);
     //RSBridgeNGSIv2ToFastRTPS(RSBridgeNGSIv2ToFastRTPS &&b);
     virtual ~RSBridgeNGSIv2ToFastRTPS();
-    void deleteSubscription();
+    void onTerminate() override;
 private:
     Participant *mf_participant;
     Publisher *mf_publisher;
