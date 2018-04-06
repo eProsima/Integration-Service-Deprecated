@@ -482,19 +482,28 @@ public:
         return m_camera_id;
     }
     /*!
-     * @brief This function sets a value in member transmission_time
-     * @param _transmission_time New value for member transmission_time
+     * @brief This function copies the value in member transmission_time
+     * @param _transmission_time New value to be copied in member transmission_time
      */
-    inline eProsima_user_DllExport void transmission_time(uint32_t _transmission_time)
+    inline eProsima_user_DllExport void transmission_time(const std::string &_transmission_time)
     {
         m_transmission_time = _transmission_time;
     }
 
     /*!
-     * @brief This function returns the value of member transmission_time
-     * @return Value of member transmission_time
+     * @brief This function moves the value in member transmission_time
+     * @param _transmission_time New value to be moved in member transmission_time
      */
-    inline eProsima_user_DllExport uint32_t transmission_time() const
+    inline eProsima_user_DllExport void transmission_time(std::string &&_transmission_time)
+    {
+        m_transmission_time = std::move(_transmission_time);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member transmission_time
+     * @return Constant reference to member transmission_time
+     */
+    inline eProsima_user_DllExport const std::string& transmission_time() const
     {
         return m_transmission_time;
     }
@@ -503,7 +512,7 @@ public:
      * @brief This function returns a reference to member transmission_time
      * @return Reference to member transmission_time
      */
-    inline eProsima_user_DllExport uint32_t& transmission_time()
+    inline eProsima_user_DllExport std::string& transmission_time()
     {
         return m_transmission_time;
     }
@@ -656,7 +665,7 @@ public:
     
 private:
     std::string m_camera_id;
-    uint32_t m_transmission_time;
+    std::string m_transmission_time;
     uint32_t m_number_of_people;
     std::vector<GuestLocation> m_guest_locations;
     std::vector<GuestFeature> m_guest_features;

@@ -14,7 +14,7 @@ struct GuestFeature
 struct CameraInfo
 {
     string camera_id;
-	unsigned long transmission_time;
+	string transmission_time;
 	unsigned long number_of_people;
 	sequence<GuestLocation> guest_locations;
 	sequence<GuestFeature> guest_features;

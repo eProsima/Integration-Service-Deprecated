@@ -21,15 +21,19 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS TRUE)
 
 file(GLOB USER_LIB_SOURCES_CXX "*.cxx")
-file(GLOB USER_LIB_SOURCES_CPP "*.cpp")
+#file(GLOB USER_LIB_SOURCES_CPP "*.cpp")
 
 add_executable(tis_ngsiv2 main.cpp)
 
 add_library(RSManager ../../src/RSManager.cpp ../../src/builtin/NGSIv2/idl/JsonNGSIv2.cxx ../../src/builtin/NGSIv2/idl/JsonNGSIv2PubSubTypes.cxx)
 
-add_library(userlib SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})
+#add_library(userlib SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})
+#add_library(userlib2 SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})
+add_library(userlib SHARED ${USER_LIB_SOURCES_CXX} userlib.cpp)
+add_library(userlib2 SHARED ${USER_LIB_SOURCES_CXX} userlib2.cpp)
 
 target_link_libraries(userlib fastrtps fastcdr ${CMAKE_DL_LIBS})
+target_link_libraries(userlib2 fastrtps fastcdr ${CMAKE_DL_LIBS})
 
 target_link_libraries(RSManager rslib  fastrtps fastcdr tinyxml2)
 

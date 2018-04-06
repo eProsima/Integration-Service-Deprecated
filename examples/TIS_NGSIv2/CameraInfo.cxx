@@ -237,7 +237,7 @@ void GuestFeature::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 CameraInfo::CameraInfo()
 {
 
-    m_transmission_time = 0;
+
     m_number_of_people = 0;
 
 
@@ -259,7 +259,7 @@ CameraInfo::CameraInfo(const CameraInfo &x)
 CameraInfo::CameraInfo(CameraInfo &&x)
 {
     m_camera_id = std::move(x.m_camera_id);
-    m_transmission_time = x.m_transmission_time;
+    m_transmission_time = std::move(x.m_transmission_time);
     m_number_of_people = x.m_number_of_people;
     m_guest_locations = std::move(x.m_guest_locations);
     m_guest_features = std::move(x.m_guest_features);
@@ -279,7 +279,7 @@ CameraInfo& CameraInfo::operator=(const CameraInfo &x)
 CameraInfo& CameraInfo::operator=(CameraInfo &&x)
 {
     m_camera_id = std::move(x.m_camera_id);
-    m_transmission_time = x.m_transmission_time;
+    m_transmission_time = std::move(x.m_transmission_time);
     m_number_of_people = x.m_number_of_people;
     m_guest_locations = std::move(x.m_guest_locations);
     m_guest_features = std::move(x.m_guest_features);
@@ -293,7 +293,7 @@ size_t CameraInfo::getMaxCdrSerializedSize(size_t current_alignment)
             
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
@@ -317,7 +317,7 @@ size_t CameraInfo::getCdrSerializedSize(const CameraInfo& data, size_t current_a
             
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.camera_id().size() + 1;
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.transmission_time().size() + 1;
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
