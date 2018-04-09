@@ -51,18 +51,6 @@ add_library(rsrtpsbridgelib SHARED
     src/builtin/RTPS/RSBridgeRTPS.cpp
     src/builtin/RTPS/bridgertpslib.cpp)
 
-add_library(rsngsiv2rtpsbridgelib SHARED
-    src/builtin/NGSIv2/RSBridgeNGSIv2ToFastRTPS.cpp
-    src/builtin/NGSIv2/ngsiv2rtpslib.cpp
-    src/builtin/NGSIv2/idl/JsonNGSIv2.cxx
-    src/builtin/NGSIv2/idl/JsonNGSIv2PubSubTypes.cxx)
-
-add_library(rsrtpsngsiv2bridgelib SHARED
-    src/builtin/NGSIv2/RSBridgeFastRTPSToNGSIv2.cpp
-    src/builtin/NGSIv2/rtpsngsiv2lib.cpp
-    src/builtin/NGSIv2/idl/JsonNGSIv2.cxx
-    src/builtin/NGSIv2/idl/JsonNGSIv2PubSubTypes.cxx)
-
 target_link_libraries(rslib
     fastrtps
     fastcdr
@@ -76,8 +64,6 @@ target_link_libraries(rslib
     ${CMAKE_DL_LIBS})
 
 target_link_libraries(rsrtpsbridgelib rslib)
-target_link_libraries(rsngsiv2rtpsbridgelib rslib)
-target_link_libraries(rsrtpsngsiv2bridgelib rslib)
 
 target_link_libraries(routing-service rslib)
 

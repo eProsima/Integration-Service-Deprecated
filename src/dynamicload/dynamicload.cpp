@@ -18,7 +18,7 @@ void* eProsimaLoadLibrary(const char *filename){
         #endif
     }
     if(libraryHandle == nullptr){
-        std::cout << "Load failed" << std::endl;
+        std::cout << "Load failed: " << dlerror() << std::endl;
     }
 
     return libraryHandle;

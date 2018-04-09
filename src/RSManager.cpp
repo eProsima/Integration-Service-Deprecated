@@ -94,7 +94,15 @@ void loadUnidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element
 
             if (loadLib)
             {
-                manager->addBridge(loadLib(bridge_element));
+                RSBridge *bridge = loadLib(bridge_element);
+                if (bridge)
+                {
+                    manager->addBridge(bridge);
+                }
+                else
+                {
+                    std::cout << "Error loading bridge configuration " << file_path << std::endl;
+                }
             }
             else
             {
@@ -161,8 +169,28 @@ void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element,
             }
             else
             {
-                manager->addBridge(loadLib1(bridge_element));
-                manager->addBridge(loadLib2(bridge_element));
+                //manager->addBridge(loadLib1(bridge_element));
+                //manager->addBridge(loadLib2(bridge_element));
+
+                RSBridge *bridge1 = loadLib1(bridge_element);
+                if (bridge1)
+                {
+                    manager->addBridge(bridge1);
+                }
+                else
+                {
+                    std::cout << "Error loading bridge configuration " << file_path1 << std::endl;
+                }
+
+                RSBridge *bridge2 = loadLib2(bridge_element);
+                if (bridge2)
+                {
+                    manager->addBridge(bridge2);
+                }
+                else
+                {
+                    std::cout << "Error loading bridge configuration " << file_path2 << std::endl;
+                }
             }
         }
     }
@@ -180,7 +208,7 @@ void RSManager::onTerminate()
 {
     for (RSBridge* b : bridge)
     {
-        b->onTerminate();
+        if (b) b->onTerminate();
     }
 
     for (void* h : handle)
@@ -196,8 +224,9 @@ bool RSManager::isActive(){
 RSManager::~RSManager()
 {
     onTerminate();
-    for (RSBridge* b : bridge)
-    {
-        delete b;
-    }
+    bridge.clear();
+    //for (RSBridge* b : bridge)
+    //{
+    //    delete b;
+    //}
 }
