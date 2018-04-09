@@ -29,8 +29,8 @@ add_library(RSManager ../../src/RSManager.cpp ../../src/builtin/NGSIv2/idl/JsonN
 
 #add_library(userlib SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})
 #add_library(userlib2 SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})
-add_library(userlib SHARED ${USER_LIB_SOURCES_CXX} userlib.cpp)
-add_library(userlib2 SHARED ${USER_LIB_SOURCES_CXX} userlib2.cpp)
+add_library(userlib SHARED ${USER_LIB_SOURCES_CXX} userlib.cpp jsoncpp.cpp)
+add_library(userlib2 SHARED ${USER_LIB_SOURCES_CXX} userlib2.cpp jsoncpp.cpp)
 
 target_link_libraries(userlib fastrtps fastcdr ${CMAKE_DL_LIBS})
 target_link_libraries(userlib2 fastrtps fastcdr ${CMAKE_DL_LIBS})
