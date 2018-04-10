@@ -23,9 +23,9 @@ set(BUILD_SHARED_LIBS TRUE)
 file(GLOB USER_LIB_SOURCES_CXX "*.cxx")
 #file(GLOB USER_LIB_SOURCES_CPP "*.cpp")
 
-add_executable(tis_ngsiv2 main.cpp)
+add_executable(tis_ngsiv2 main.cpp JsonNGSIv2.cxx JsonNGSIv2PubSubTypes.cxx)
 
-add_library(RSManager ../../src/RSManager.cpp ../../src/builtin/NGSIv2/idl/JsonNGSIv2.cxx ../../src/builtin/NGSIv2/idl/JsonNGSIv2PubSubTypes.cxx)
+add_library(RSManager ../../src/RSManager.cpp)
 
 #add_library(userlib SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})
 #add_library(userlib2 SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})

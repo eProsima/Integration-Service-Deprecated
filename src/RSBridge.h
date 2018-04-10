@@ -34,7 +34,7 @@ public:
      * Any handle, subscription, and resources that the bridge needed to work must be closed.
      */
     virtual void onTerminate() = 0;
-    virtual ~RSBridge() = 0;
+    virtual ~RSBridge() = default;
 };
 
 typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);

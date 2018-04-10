@@ -208,7 +208,10 @@ void RSManager::onTerminate()
 {
     for (RSBridge* b : bridge)
     {
-        if (b) b->onTerminate();
+        if (b)
+        {
+            b->onTerminate();
+        }
     }
 
     for (void* h : handle)
@@ -224,9 +227,9 @@ bool RSManager::isActive(){
 RSManager::~RSManager()
 {
     onTerminate();
+    for (RSBridge* b : bridge)
+    {
+        delete b;
+    }
     bridge.clear();
-    //for (RSBridge* b : bridge)
-    //{
-    //    delete b;
-    //}
 }

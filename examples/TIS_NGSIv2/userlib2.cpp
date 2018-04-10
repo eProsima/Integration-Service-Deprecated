@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include "CameraInfoPubSubTypes.h"
-#include "../../src/builtin/NGSIv2/idl/JsonNGSIv2PubSubTypes.h"
+#include "JsonNGSIv2PubSubTypes.h"
 
 #include "json/json.h"
 
