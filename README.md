@@ -130,7 +130,7 @@ package "RTPS-Subscriber" <<Cloud>> {
 UserLibrary -left-> Subscriber
 
 @enduml
-``` # End
+```
 
 
 You can replicate the behaviour of a **fastrtps** bridge with an **unidirectional** bridge with the correct parameters.
@@ -169,7 +169,7 @@ UserLibrary -left-> Subscriber
 UserLibrary <-left- Subscriber
 
 @enduml
-``` # End
+```
 
 This bridge is a concrete implementation of a **bidirectional** bridge, and again, its behaviour can be replicated with the correct configuration of a bidirectional bridge. A example of NGSIv2 bridge libraries (*librsrtpsngsiv2bridgelib.so* and *libngsiv2rtpsbridge.so*) can be found on [**FIROS2**](https://github.com/eProsima/firos2).
 These libraries look for *transformFromNGSIv2* and *transformToNGSIv2* functions in the transformation library.
