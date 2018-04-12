@@ -5,17 +5,12 @@
 *eProsima Transformation and Routing Service* is a library that allows intercommunication between different services and protocols. 
 Is an evolution of *eProsima Routing Service* making possible to communicate with no RTPS based protocols, like NGSIv2 from FIWARE-Orion contextBroker.
 
-### Current Status of FIROS2 and Routing Service
+### Steps to allow other protocols
 
-In its current states *eProsima firos2*, making use of *eProsima Routing Service*, allows to communicate any application based on RTPS protocols, like ROS2. 
-In its example, *firos2* communicates *HelloWorldExample* from *eProsima Fast-RTPS* with *talker/listener* example from ROS2.
-
-### Next steps to allow other protocols
-
-With the base knowledge of NGSIv2, which is based in RESTful services, it makes evident that we need to allow bidirectional bridges. 
+Taking as example NGSIv2, which is based in RESTful services, it makes evident that we need to allow bidirectional bridges. 
 This could be reached with two bridges, one per direction. These bridges are created internally and the user is abstracted to the details.
 To achieve this objective, the user is able to specify a library with two tranformation functions, one per each transform required (by each internal bridge), one to transform in one way (for example ROS2 -> NGSIv2) and other to transform in the opposite way (NGSIv2 -> ROS2, in the example).
-*Routing Service* applies the transform function of the user library received in its subscriber and write the result with its publisher, for each bridge.
+*Transformation and Routing Service* applies the transform function of the user library received in its subscriber and write the result with its publisher, for each bridge.
 In our example with NGSIv2, we want that our bridge tranform the date received from ROS2 and sent it to a RESTful service, **and** received data from subscriptions to that RESTful service, tranform and write it to a publisher of ROS2.
 
 The **config.xml** file must be addapted to each protocol. **RSManager** will parse the correspond node tree depending each protocol, defined in the user library, that knows how to setup each node with the information provided by the xml node.
@@ -112,7 +107,6 @@ The third bridge is of type **fastrtps** (**ros2** can be used too). This bridge
 
 - **Publisher** refers to the endpoint that will *publish* the transformed data.
 
-This type of bridge is equivalent to the bridges defined by *Routing Service*.
 
 ```plantuml
 @startuml
@@ -138,12 +132,11 @@ UserLibrary -left-> Subscriber
 @enduml
 ``` # End
 
-This kind of bridge is unidirectional to allow fully compatibility with *Routing Service*, but you can achieve bidirectional communication defining another **fastrtps** bridge whose roles are swapped, providing the correct transformation library.
 
 You can replicate the behaviour of a **fastrtps** bridge with an **unidirectional** bridge with the correct parameters.
 
 If you don't specify any bridge library the system will try to load the default *librsrtpsbridgelib.so* (and a warning will be shown at runtime).
-Also, if you don't specify bridge_type, the system will undertand that the bridge is of type **fastrtps**, to keep retrocompatibilty with old *Routing Service* applications.
+Also, if you don't specify bridge_type, the system will undertand that the bridge is of type **fastrtps**.
 
 The fourth type of bridge is **ngsiv2**. This bridges allows to propagate changes in Orion contextBroker to a RTPS based application and viceversa. Each node is again identified by their protocol:
 
@@ -178,5 +171,5 @@ UserLibrary <-left- Subscriber
 @enduml
 ``` # End
 
-This bridge is a concrete implementation of a **bidirectional** bridge, and again, its behaviour can be replicated with the correct configuration of a bidirectional bridge. Default NGSIv2 bridge libraries (*librsrtpsngsiv2bridgelib.so* and *libngsiv2rtpsbridge.so*) are amongs the builtin, but not installed by default.
+This bridge is a concrete implementation of a **bidirectional** bridge, and again, its behaviour can be replicated with the correct configuration of a bidirectional bridge. A example of NGSIv2 bridge libraries (*librsrtpsngsiv2bridgelib.so* and *libngsiv2rtpsbridge.so*) can be found on [**FIROS2**](https://github.com/eProsima/firos2).
 These libraries look for *transformFromNGSIv2* and *transformToNGSIv2* functions in the transformation library.
