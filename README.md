@@ -3,7 +3,6 @@
 <!-- ![eProsima](/home/luisgp/Documentos/doc-generada/eProsima.png) -->
 
 *eProsima Transformation and Routing Service* is a library that allows intercommunication between different services and protocols. 
-Is an evolution of *eProsima Routing Service* making possible to communicate with no RTPS based protocols, like NGSIv2 from FIWARE-Orion contextBroker.
 
 ### Steps to allow other protocols
 
