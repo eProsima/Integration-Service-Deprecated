@@ -1,15 +1,15 @@
-# eProsima Transformation and Routing Service
+# eProsima Transformation and Routing Services
 ![http://www.eprosima.com](https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ)
 <!-- ![eProsima](/home/luisgp/Documentos/doc-generada/eProsima.png) -->
 
-*eProsima Transformation and Routing Service* is a library that allows intercommunication between different services and protocols. 
+*eProsima Transformation and Routing Services* is a library that allows intercommunication between different services and protocols. 
 
 ### Steps to allow other protocols
 
 Taking as example NGSIv2, which is based in RESTful services, it makes evident that we need to allow bidirectional bridges. 
 This could be reached with two bridges, one per direction. These bridges are created internally and the user is abstracted to the details.
 To achieve this objective, the user is able to specify a library with two tranformation functions, one per each transform required (by each internal bridge), one to transform in one way (for example ROS2 -> NGSIv2) and other to transform in the opposite way (NGSIv2 -> ROS2, in the example).
-*Transformation and Routing Service* applies the transform function of the user library received in its subscriber and write the result with its publisher, for each bridge.
+*Transformation and Routing Services* applies the transform function of the user library received in its subscriber and write the result with its publisher, for each bridge.
 In our example with NGSIv2, we want that our bridge tranform the date received from ROS2 and sent it to a RESTful service, **and** received data from subscriptions to that RESTful service, tranform and write it to a publisher of ROS2.
 
 The **config.xml** file must be addapted to each protocol. **RSManager** will parse the correspond node tree depending each protocol, defined in the user library, that knows how to setup each node with the information provided by the xml node.
@@ -114,7 +114,7 @@ package "RTPS-Publisher" <<Cloud>> {
     class Publisher
 }
 
-package "Transformation and Routing Service" <<Rectangle>> {
+package "Transformation and Routing Services" <<Rectangle>> {
     class UserLibrary {
         +NodeA_t transform(NodeB_t)
     }
@@ -150,7 +150,7 @@ package "Orion contextBroker" <<Cloud>> {
     class Subscription
 }
 
-package "Transformation and Routing Service" <<Rectangle>> {
+package "Transformation and Routing Services" <<Rectangle>> {
     class UserLibrary {
         +NodeA_t transformFromNGSIv2(NodeB_t)
         +NodeB_t transformToNGSIv2(NodeA_t)
