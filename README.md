@@ -15,7 +15,7 @@ Some of the possibilities offered by the *Transformation and Routing Services* a
 #### Installation
 
 
-Before compiling *eProsima Routing Service* you need to have installed *Fast RTPS* as described in its [documentation ](http://eprosima-fast-rtps.readthedocs.io/en/latest/binaries.html>). For cloning this project execute:
+Before compiling *eProsima Transformation and Routing Services* you need to have installed *Fast RTPS* as described in its [documentation ](http://eprosima-fast-rtps.readthedocs.io/en/latest/binaries.html>). For cloning this project execute:
 
 
     $ git clone https://github.com/eProsima/routing-service
