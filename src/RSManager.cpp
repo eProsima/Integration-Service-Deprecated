@@ -14,9 +14,8 @@
 
 #include "RSManager.h"
 
-void loadNGSIv2Bridge(RSManager *manager, tinyxml2::XMLElement *bridge_element);
 void loadUnidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element);
-void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element, std::string nodeA, std::string nodeB);
+void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element);
 
 RSManager::RSManager(std::string xml_file_path) : active(false)
 {
@@ -34,20 +33,14 @@ RSManager::RSManager(std::string xml_file_path) : active(false)
     for (auto child = bridge_element->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
     {
         tinyxml2::XMLElement *current_element = _assignNextElement(child, "bridge_type");
-        const char* bridge_type = (current_element) ? current_element->GetText() : "fastrtps"; // Old format, only fastrtps support
-        if (strncmp(bridge_type, "fastrtps", 8) == 0
-            || strncmp(bridge_type, "ros2", 4) == 0
-            || strncmp(bridge_type, "unidirectional", 14) == 0)
+        const char* bridge_type = (current_element) ? current_element->GetText() : "unidirectional"; // Old format, only fastrtps support
+        if (strncmp(bridge_type, "unidirectional", 14) == 0)
         {
             loadUnidirectional(this, child);
         }
-        else if (strncmp(bridge_type, "ngsiv2", 6) == 0)
-        {
-            loadNGSIv2Bridge(this, child);
-        }
         else if (strncmp(bridge_type, "bidirectional", 13) == 0)
         {
-            loadBidirectional(this, child, "nodeA", "nodeB");
+            loadBidirectional(this, child);
         }
     }
 
@@ -119,19 +112,14 @@ void loadUnidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element
     }
 }
 
-void loadNGSIv2Bridge(RSManager *manager, tinyxml2::XMLElement *bridge_element)
-{
-    loadBidirectional(manager, bridge_element, "ros2", "ngsiv2");
-}
-
-void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element, std::string nodeA, std::string nodeB)
+void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element)
 {
     try
     {
         void* handle1;
         void* handle2;
-        std::string lib1 = "bridge_library_" + nodeA;
-        std::string lib2 = "bridge_library_" + nodeB;
+        std::string lib1 = "bridge_library_nodeA";
+        std::string lib2 = "bridge_library_nodeB";
 
         tinyxml2::XMLElement *lib1_element = bridge_element->FirstChildElement(lib1.c_str());
         tinyxml2::XMLElement *lib2_element = bridge_element->FirstChildElement(lib2.c_str());

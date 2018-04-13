@@ -2,17 +2,62 @@
 ![http://www.eprosima.com](https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ)
 <!-- ![eProsima](/home/luisgp/Documentos/doc-generada/eProsima.png) -->
 
-*eProsima Transformation and Routing Services* is a library that allows intercommunication between different services and protocols. 
+*eProsima Transformation and Routing Services* is a library and an utility based on *Fast RTPS* for making communication bridges between different systems, services and protocols. With the *Transformation and Routing Services* the user can create parametric communication bridges between applications. At the same time, it is able to perform some transformations over the messages such as customized routing, mapping between input and output attributes or data modification.
+
+Some of the possibilities offered by the *Transformation and Routing Services* are:
+
+-   Connections for jumping from topics which are running on different domains.
+-   Adapters for mapping the attributes from types with different IDL definitions.
+-   User-defined operations over the circulating messages.
+-   Communication with others environments, as *ROS2*.
+
+
+#### Installation
+
+
+Before compiling *eProsima Routing Service* you need to have installed *Fast RTPS* as described in its [documentation ](http://eprosima-fast-rtps.readthedocs.io/en/latest/binaries.html>). For cloning this project execute:
+
+
+    $ git clone https://github.com/eProsima/routing-service
+
+Now, for compiling, if you are on Linux execute:
+
+    $ mkdir build && cd build
+    $ cmake ..
+    $ make
+
+If you are on Windows choose your version of Visual Studio:
+
+    > mkdir build && cd build
+    > cmake ..  -G "Visual Studio 14 2015 Win64"
+    > cmake --build .
 
 ### Steps to allow other protocols
 
-Taking as example NGSIv2, which is based in RESTful services, it makes evident that we need to allow bidirectional bridges. 
-This could be reached with two bridges, one per direction. These bridges are created internally and the user is abstracted to the details.
-To achieve this objective, the user is able to specify a library with two tranformation functions, one per each transform required (by each internal bridge), one to transform in one way (for example ROS2 -> NGSIv2) and other to transform in the opposite way (NGSIv2 -> ROS2, in the example).
-*Transformation and Routing Services* applies the transform function of the user library received in its subscriber and write the result with its publisher, for each bridge.
-In our example with NGSIv2, we want that our bridge tranform the date received from ROS2 and sent it to a RESTful service, **and** received data from subscriptions to that RESTful service, tranform and write it to a publisher of ROS2.
+There are two kind of libraries that the user must implement:
 
-The **config.xml** file must be addapted to each protocol. **RSManager** will parse the correspond node tree depending each protocol, defined in the user library, that knows how to setup each node with the information provided by the xml node.
+**Bridge Library**: This libraries (one for unidirectional, two for bidirectional bridges) must export *createBridge* function as defined in the *resource/templatebridgelib.cpp* file:
+
+	extern "C" RSBridge* USER_LIB_EXPORT createBridge(tinyxml2::XMLElement *bridge_element)
+	
+This function must return a pointer to an instance of a derived class of RSBridge, or nullptr if failed. 
+TRSS will deallocate this object from memory when the bridge is stopped.
+
+**Tranformation Library**: This library must implement transformation functions for the received data.
+The *Bridge Libraries* will load and call this function, so the name of the functions can be customized.
+There is a prototype in *resource/templatelib.cpp*:
+
+	extern "C" void USER_LIB_EXPORT transform(
+		SerializedPayload_t *serialized_input, 
+		SerializedPayload_t *serialized_output)
+
+For both types of libraries, there are examples in the *examples* folder and *src/RTPS*.
+
+May be needed to generate data types from IDL files to communicate with *Fast-RTPS*.
+
+*Transformation and Routing Services* will load the *Bridge Libraries* that will apply the transform function of the *Transformation Library* to the data received in its subscriber and write the result with its publisher, for each bridge.
+
+The **config.xml** file must be addapted to each protocol. **RSManager** will parse the correspond node tree depending each protocol, defined in the *Bridge Libraries*, that knows how to setup each node with the information provided by the xml node.
 
 #### Configuration options in **config.xml**
 
@@ -42,67 +87,13 @@ The **config.xml** file must be addapted to each protocol. **RSManager** will pa
 			<bridge_library_nodeA>/path/to/bridge/library_1</bridge_library_nodeA> <!-- nodeA -> nodeB logic -->
 			<bridge_library_nodeB>/path/to/bridge/library_2</bridge_library_nodeB> <!-- nodeB -> nodeA logic -->
 		</bridge>
-		<!-- Builtin bridges -->
-		<bridge>
-			<bridge_type>fastrtps</bridge_type>
-			<subscriber>
-				<participant>subscriber_participant_name</participant>
-				<domain>subscriber_domain</domain>
-				<topic>subscriber_topic_name</topic>
-				<type>subscriber_type_name</type>
-				<partition>subscriber_partition</partition>  <!-- optional -->
-			</subscriber>
-			<publisher>
-				<participant>publisher_participant_name</participant>
-				<domain>subscriber_domain</domain>
-				<topic>publisher_topic_name</topic>
-				<type>publisher_type_name</type>
-				<partition>publisher_partition</partition>  <!-- optional -->
-			</publisher>
-			<transformation>/path/to/transformation/library</transformation>
-			<bridge_library>/path/to/bridge/library</bridge_library> <!-- optional -->
-		</bridge>
-		<bridge>
-			<bridge_type>ngsiv2</bridge_type>
-			<ros2>
-				<participant>ros2_participant_name</participant>
-				<domain>0</domain>
-				<topic>ros2_topic_name</topic>
-				<type>ros2_type_name</type>
-				<partition>ros2_partition</partition>
-			</ros2>
-			<ngsiv2>
-				<participant>ngsiv2_participant_name</participant>
-				<id>ngsiv2_entity_id</id>
-				<host>ngsiv2_host</host>
-				<port>ngsiv2_port</port>
-				<subscription>
-					<type>ngsiv2_entity_type</type> <!-- optional -->
-					<attrs>ngsiv2_condition_attrs_list</attrs> <!-- optional, comma separated -->
-					<expression>ngsiv2_condition_expression</expression> <!-- optional -->
-					<notifs>ngsiv2_notification_attrs_list</notifs> <!-- comma separated -->
-					<listener_host>listener_host</listener_host>
-					<listener_port>listener_port</listener_port>
-					<expiration>ngsiv2_expiration_time</expiration> <!-- optional -->
-					<throttling>ngsiv2_throttling</throttling> <!-- optional -->
-					<description>ngsiv2_description</description> <!-- optional -->
-				</subscription>
-			</ngsiv2>
-			<transformation>/path/to/transformation/library</transformation>
-			<bridge_library_ros2>/path/to/bridge/library_1</bridge_library_ros2>
-			<bridge_library_ngsiv2>/path/to/bridge/library_2</bridge_library_ngsiv2>
-		</bridge>
 	</rs>
 
-In the example *config.xml* above there are defined four bridges, the last two of each currently supported type.
+In the example *config.xml* above there are defined the two possible types of bridges.
 
-The first bridge type is **unidirectional**, and its behaviour is similar to **fastrtps** bridge that will be described later, but you can specify any publisher/subscriber parameters needed by your bridge implementation.
+The first bridge type is **unidirectional**. This bridge allows to communicate different applications that are based on RTPS protocol. In this case each node must be define by their role, **subscriber** or **publisher**:
 
-The second type is **bidirectional**, and again, its behaviour is similar to **ngsiv2** bridge, defined below. In this case, the only restriction is to name each participant as *nodeA* and *nodeB* respectively, as well as *bridge_library_nodeA* and *bridge_library_nodeB*. As in unidirectional case, you can specify any needed parameter for each node by your bridge libraries. The convention of names for the transformation library is responsability of the developer.
-
-The third bridge is of type **fastrtps** (**ros2** can be used too). This bridge allows to communicate different applications that are based on RTPS protocol. In this case each node must be define by their role, **subscriber** or **publisher**:
-
-- **Subscriber** refers to the endpoint that must *subscribe* in our bridge, in other word, the receiver of data of the bridge.
+- **Subscriber** refers to the endpoint that must *subscribe* in our bridge, in other words, the receiver of data of the bridge.
 
 - **Publisher** refers to the endpoint that will *publish* the transformed data.
 
@@ -131,44 +122,39 @@ UserLibrary -left-> Subscriber
 @enduml
 ```
 
-
-You can replicate the behaviour of a **fastrtps** bridge with an **unidirectional** bridge with the correct parameters.
-
 If you don't specify any bridge library the system will try to load the default *librsrtpsbridgelib.so* (and a warning will be shown at runtime).
-Also, if you don't specify bridge_type, the system will undertand that the bridge is of type **fastrtps**.
+This bridge library expects exactly *publisher* and *subscriber* nodes, and we recommend keep this pattern, but another bridge library implementation may define its own node names.
 
-The fourth type of bridge is **ngsiv2**. This bridges allows to propagate changes in Orion contextBroker to a RTPS based application and viceversa. Each node is again identified by their protocol:
-
-- **fastrtps** (or **ros2**): RTPS node. Will publish the data using RTPS protocol with data from Orion contextBroker and will update data in contextBroker with data received from RTPS.
-
-- **ngsiv2**: Location of the Orion contextBroker server and parameters for the subscription to the desired changes.
+The second type is **bidirectional**. This bridges allows to propagate changes between two protocols. Each node can be identified by the definition of its bridge libraries, but we recommend to name them by their protocol.
+As in unidirectional case, you can specify any needed parameter for each node by your bridge libraries. The convention of names for the transformation library is responsability of the developer.
+It is mandatory to use **bridge_library_nodeA** and **bridge_library_nodeB** for each bridge library.
 
 ```plantuml
 @startuml
 
-package "Orion contextBroker" <<Cloud>> {
-    class Subscription
+package "ProtocolA" <<Cloud>> {
+    class ParticipantA
 }
 
 package "Transformation and Routing Services" <<Rectangle>> {
     class UserLibrary {
-        +NodeA_t transformFromNGSIv2(NodeB_t)
-        +NodeB_t transformToNGSIv2(NodeA_t)
+        +NodeA_t transformToA(NodeB_t)
+        +NodeB_t transformFromA(NodeA_t)
     }
 }
 
-Subscription -right-> UserLibrary
-Subscription <-right- UserLibrary
+ParticipantA -right-> UserLibrary
+ParticipantA <-right- UserLibrary
 
-package "RTPS-Subscriber" <<Cloud>> {
-    class Subscriber
+package "ProtocolB" <<Cloud>> {
+    class ParticipantB
 }
 
-UserLibrary -left-> Subscriber
-UserLibrary <-left- Subscriber
+UserLibrary -left-> ParticipantB
+UserLibrary <-left- ParticipantB
 
 @enduml
 ```
 
-This bridge is a concrete implementation of a **bidirectional** bridge, and again, its behaviour can be replicated with the correct configuration of a bidirectional bridge. A example of NGSIv2 bridge libraries (*librsrtpsngsiv2bridgelib.so* and *libngsiv2rtpsbridge.so*) can be found on [**FIROS2**](https://github.com/eProsima/firos2).
+A concrete implementation of a **bidirectional** bridge can be found in the example of *TIS NGSIv2* bridge libraries (*librsrtpsngsiv2bridgelib.so* and *libngsiv2rtpsbridge.so*) on [**FIROS2**](https://github.com/eProsima/firos2).
 These libraries look for *transformFromNGSIv2* and *transformToNGSIv2* functions in the transformation library.

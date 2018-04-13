@@ -1,8 +1,0 @@
-#include "RobotPosition.idl"
-
-struct RobotSnd
-{
-    string robot_id;
-    string transmission_time;
-    RobotPosition position;
-};
