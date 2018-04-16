@@ -3,11 +3,11 @@
 #include "RSBridgeRTPS.h"
 
 #if defined(_WIN32) && defined (BUILD_SHARED_LIBS)
-	#if defined (_MSC_VER)
-		#pragma warning(disable: 4251)
-	#endif
-  #if defined(testlib_EXPORTS)
-  	#define  USER_LIB_EXPORT __declspec(dllexport)
+    #if defined (_MSC_VER)
+        #pragma warning(disable: 4251)
+    #endif
+  #if defined(routingservice_EXPORTS)
+    #define  USER_LIB_EXPORT __declspec(dllexport)
   #else
     #define  USER_LIB_EXPORT __declspec(dllimport)
   #endif
@@ -17,7 +17,7 @@
 
 RSBridgeRTPS* loadFastRTPSBridge(tinyxml2::XMLElement *bridge_element);
 
-extern "C" RSBridge* USER_LIB_EXPORT createBridge(tinyxml2::XMLElement *bridge_element)
+extern "C" USER_LIB_EXPORT RSBridge* createBridge(tinyxml2::XMLElement *bridge_element)
 {
     return loadFastRTPSBridge(bridge_element);
 }

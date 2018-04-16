@@ -40,28 +40,48 @@ else()
     set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
 endif()
 
+add_definitions(-DBUILD_SHARED_LIBS -Droutingservice_EXPORTS)
+
 add_executable(routing-service src/main.cpp)
 
-add_library(rslib SHARED
-    src/dynamicload/dynamicload.cpp
-    src/RSManager.cpp
-    src/GenericPubSubTypes.cpp)
+if(WIN32)
+	add_library(rslib
+	    src/dynamicload/dynamicload.cpp
+	    src/RSManager.cpp
+	    src/GenericPubSubTypes.cpp
+	    thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
+
+	target_include_directories(rslib PUBLIC thirdparty/tinyxml2)
+else()
+	add_library(rslib SHARED
+	    src/dynamicload/dynamicload.cpp
+	    src/RSManager.cpp
+	    src/GenericPubSubTypes.cpp)
+endif()
 
 add_library(rsrtpsbridgelib SHARED
     src/builtin/RTPS/RSBridgeRTPS.cpp
     src/builtin/RTPS/bridgertpslib.cpp)
 
-target_link_libraries(rslib
-    fastrtps
-    fastcdr
-    tinyxml2
-    -L/usr/lib/x86_64-linux-gnu
-    curl
-    curlpp
-    pthread
-    ${Boost_LIBRARIES}
-    boost_system
-    ${CMAKE_DL_LIBS})
+if(WIN32)
+	target_link_libraries(rslib
+	    fastrtps_static
+	    fastcdr_static
+	    ${CMAKE_DL_LIBS}
+	    IPHLPAPI
+	    shlwapi)
+else()
+	target_link_libraries(rslib
+	    fastrtps
+	    fastcdr
+	    tinyxml2
+	    -L/usr/lib/x86_64-linux-gnu
+	    curl
+	    curlpp
+	    ${Boost_LIBRARIES}
+	    boost_system
+	    ${CMAKE_DL_LIBS})
+endif()
 
 target_link_libraries(rsrtpsbridgelib rslib)
 
