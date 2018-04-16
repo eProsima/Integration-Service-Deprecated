@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _RSBRIDGE_H_
-#define _RSBRIDGE_H_
+#ifndef _ISBRIDGE_H_
+#define _ISBRIDGE_H_
 
 #include <fastrtps/fastrtps_fwd.h>
 #include "GenericPubSubTypes.h"
@@ -26,15 +26,15 @@ using namespace eprosima::fastrtps::rtps;
 /**
  * Base class for Bridges. All implementation must inherit from it.
  */
-class RSBridge
+class ISBridge
 {
 public:
     /**
-     * This method will be called by RSManager when terminating the execution of the bridge.
+     * This method will be called by ISManager when terminating the execution of the bridge.
      * Any handle, subscription, and resources that the bridge needed to work must be closed.
      */
     virtual void onTerminate() = 0;
-    virtual ~RSBridge() = default;
+    virtual ~ISBridge() = default;
 };
 
 typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);

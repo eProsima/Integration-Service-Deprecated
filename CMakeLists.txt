@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project("routingservice")
+project("integrationservices")
 set(PROJECT_MAJOR_VERSION 0)
 set(PROJECT_MINOR_VERSION 0)
 set(PROJECT_MICRO_VERSION 0)
@@ -40,38 +40,38 @@ else()
     set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
 endif()
 
-add_definitions(-DBUILD_SHARED_LIBS -Droutingservice_EXPORTS)
+add_definitions(-DBUILD_SHARED_LIBS -Dintegrationservices_EXPORTS)
 
-add_executable(routing-service src/main.cpp)
+add_executable(integration-services src/main.cpp)
 
 if(WIN32)
-	add_library(rslib
+	add_library(islib
 	    src/dynamicload/dynamicload.cpp
-	    src/RSManager.cpp
+	    src/ISManager.cpp
 	    src/GenericPubSubTypes.cpp
 	    thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
 
-	target_include_directories(rslib PUBLIC thirdparty/tinyxml2)
+	target_include_directories(islib PUBLIC thirdparty/tinyxml2)
 else()
-	add_library(rslib SHARED
+	add_library(islib SHARED
 	    src/dynamicload/dynamicload.cpp
-	    src/RSManager.cpp
+	    src/ISManager.cpp
 	    src/GenericPubSubTypes.cpp)
 endif()
 
-add_library(rsrtpsbridgelib SHARED
-    src/builtin/RTPS/RSBridgeRTPS.cpp
+add_library(isrtpsbridgelib SHARED
+    src/builtin/RTPS/ISBridgeRTPS.cpp
     src/builtin/RTPS/bridgertpslib.cpp)
 
 if(WIN32)
-	target_link_libraries(rslib
+	target_link_libraries(islib
 	    fastrtps_static
 	    fastcdr_static
 	    ${CMAKE_DL_LIBS}
 	    IPHLPAPI
 	    shlwapi)
 else()
-	target_link_libraries(rslib
+	target_link_libraries(islib
 	    fastrtps
 	    fastcdr
 	    tinyxml2
@@ -83,14 +83,14 @@ else()
 	    ${CMAKE_DL_LIBS})
 endif()
 
-target_link_libraries(rsrtpsbridgelib rslib)
+target_link_libraries(isrtpsbridgelib islib)
 
-target_link_libraries(routing-service rslib)
+target_link_libraries(integration-services islib)
 
 install(
     FILES
-        src/RSBridge.h
-        src/RSManager.h
+        src/ISBridge.h
+        src/ISManager.h
         src/GenericPubSubTypes.h
     COMPONENT headers
     DESTINATION ${INCLUDE_INSTALL_DIR}${PROJECT_NAME})
@@ -102,32 +102,32 @@ install(
     DESTINATION ${INCLUDE_INSTALL_DIR}${PROJECT_NAME}/dynamicload)
 
 install(
-    TARGETS rslib
+    TARGETS islib
     EXPORT ${PROJECT_NAME}Targets
     COMPONENT libraries
     DESTINATION ${LIB_INSTALL_DIR})
 
 export(
-    TARGETS rslib
+    TARGETS islib
     FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
 
 install(
-    TARGETS rsrtpsbridgelib
+    TARGETS isrtpsbridgelib
     EXPORT ${PROJECT_NAME}Targets
     COMPONENT libraries
     DESTINATION ${LIB_INSTALL_DIR})
 
 export(
-    TARGETS rsrtpsbridgelib rslib
+    TARGETS isrtpsbridgelib islib
     FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
 
 install(
     EXPORT ${PROJECT_NAME}Targets
-    DESTINATION lib/routingservice/cmake
+    DESTINATION lib/integrationservices/cmake
     COMPONENT cmake)
 
 install(
-    TARGETS routing-service
+    TARGETS integration-services
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin)
 

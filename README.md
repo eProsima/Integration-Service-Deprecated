@@ -1,10 +1,10 @@
-# eProsima Transformation and Routing Services
+# eProsima Integration Services
 ![http://www.eprosima.com](https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ)
 <!-- ![eProsima](/home/luisgp/Documentos/doc-generada/eProsima.png) -->
 
-*eProsima Transformation and Routing Services* is a library and an utility based on *Fast RTPS* for making communication bridges between different systems, services and protocols. With the *Transformation and Routing Services* the user can create parametric communication bridges between applications. At the same time, it is able to perform some transformations over the messages such as customized routing, mapping between input and output attributes or data modification.
+*eProsima Integration Services* is a library and an utility based on *Fast RTPS* for making communication bridges between different systems, services and protocols. With the *Integration Services* the user can create parametric communication bridges between applications. At the same time, it is able to perform some transformations over the messages such as customized routing, mapping between input and output attributes or data modification.
 
-Some of the possibilities offered by the *Transformation and Routing Services* are:
+Some of the possibilities offered by the *Integration Services* are:
 
 -   Connections for jumping from topics which are running on different domains.
 -   Adapters for mapping the attributes from types with different IDL definitions.
@@ -15,10 +15,10 @@ Some of the possibilities offered by the *Transformation and Routing Services* a
 #### Installation
 
 
-Before compiling *eProsima Transformation and Routing Services* you need to have installed *Fast RTPS* as described in its [documentation ](http://eprosima-fast-rtps.readthedocs.io/en/latest/binaries.html>). For cloning this project execute:
+Before compiling *eProsima Integration Services* you need to have installed *Fast RTPS* as described in its [documentation ](http://eprosima-fast-rtps.readthedocs.io/en/latest/binaries.html>). For cloning this project execute:
 
 
-    $ git clone https://github.com/eProsima/routing-service
+    $ git clone https://github.com/eProsima/integration-services
 
 Now, for compiling, if you are on Linux execute:
 
@@ -55,14 +55,14 @@ For both types of libraries, there are examples in the *examples* folder and *sr
 
 May be needed to generate data types from IDL files to communicate with *Fast-RTPS*.
 
-*Transformation and Routing Services* will load the *Bridge Libraries* that will apply the transform function of the *Transformation Library* to the data received in its subscriber and write the result with its publisher, for each bridge.
+*Integration Services* will load the *Bridge Libraries* that will apply the transform function of the *Transformation Library* to the data received in its subscriber and write the result with its publisher, for each bridge.
 
 The **config.xml** file must be addapted to each protocol. **RSManager** will parse the correspond node tree depending each protocol, defined in the *Bridge Libraries*, that knows how to setup each node with the information provided by the xml node.
 
 #### Configuration options in **config.xml**
 
 	<!-- Complete <bridge> node will be sent to each bridge_library to be parsed by itself. -->
-	<rs>
+	<is>
 		<!-- Generic bridges -->
 		<bridge>
 			<bridge_type>unidirectional</bridge_type>
@@ -87,7 +87,7 @@ The **config.xml** file must be addapted to each protocol. **RSManager** will pa
 			<bridge_library_nodeA>/path/to/bridge/library_1</bridge_library_nodeA> <!-- nodeA -> nodeB logic -->
 			<bridge_library_nodeB>/path/to/bridge/library_2</bridge_library_nodeB> <!-- nodeB -> nodeA logic -->
 		</bridge>
-	</rs>
+	</is>
 
 In the example *config.xml* above there are defined the two possible types of bridges.
 
@@ -105,7 +105,7 @@ package "RTPS-Publisher" <<Cloud>> {
     class Publisher
 }
 
-package "Transformation and Routing Services" <<Rectangle>> {
+package "Integration Services" <<Rectangle>> {
     class UserLibrary {
         +NodeA_t transform(NodeB_t)
     }
@@ -136,7 +136,7 @@ package "ProtocolA" <<Cloud>> {
     class ParticipantA
 }
 
-package "Transformation and Routing Services" <<Rectangle>> {
+package "Integration Services" <<Rectangle>> {
     class UserLibrary {
         +NodeA_t transformToA(NodeB_t)
         +NodeB_t transformFromA(NodeA_t)

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef _RSBRIDGERTPS_H_
-#define _RSBRIDGERTPS_H_
+#ifndef _ISBRIDGERTPS_H_
+#define _ISBRIDGERTPS_H_
 
 #include "fastrtps/participant/Participant.h"
 #include "fastrtps/attributes/ParticipantAttributes.h"
@@ -26,20 +26,20 @@
 #include "fastrtps/subscriber/SampleInfo.h"
 #include "fastrtps/attributes/SubscriberAttributes.h"
 
-#include "../../RSBridge.h"
+#include "../../ISBridge.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class RSBridgeRTPS : public RSBridge
+class ISBridgeRTPS : public ISBridge
 {
 public:
-    RSBridgeRTPS(ParticipantAttributes par_pub_params,
+    ISBridgeRTPS(ParticipantAttributes par_pub_params,
                 ParticipantAttributes par_sub_params,
                 PublisherAttributes pub_params,
                 SubscriberAttributes sub_params,
                 const char* file_path);
-    virtual ~RSBridgeRTPS();
+    virtual ~ISBridgeRTPS();
     void onTerminate() override;
 private:
     Participant *mp_participant;

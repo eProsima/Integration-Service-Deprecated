@@ -22,10 +22,10 @@
 
 #include <fastrtps/Domain.h>
 
-#include "RSBridgeRTPS.h"
+#include "ISBridgeRTPS.h"
 #include "../../GenericPubSubTypes.h"
 
-RSBridgeRTPS::RSBridgeRTPS(ParticipantAttributes par_pub_params,
+ISBridgeRTPS::ISBridgeRTPS(ParticipantAttributes par_pub_params,
                     ParticipantAttributes par_sub_params,
                     PublisherAttributes pub_params,
                     SubscriberAttributes sub_params,
@@ -61,12 +61,12 @@ RSBridgeRTPS::RSBridgeRTPS(ParticipantAttributes par_pub_params,
     if(ms_subscriber == nullptr) return;
 }
 
-RSBridgeRTPS::~RSBridgeRTPS(){
+ISBridgeRTPS::~ISBridgeRTPS(){
     if(mp_participant != nullptr) Domain::removeParticipant(mp_participant);
     if(ms_participant != nullptr) Domain::removeParticipant(ms_participant);
 }
 
-void RSBridgeRTPS::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info){
+void ISBridgeRTPS::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info){
     if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
@@ -79,23 +79,23 @@ void RSBridgeRTPS::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingIn
     }
 }
 
-RSBridgeRTPS::SubListener::SubListener(const char* file_path) : handle(nullptr), user_transformation(nullptr){
+ISBridgeRTPS::SubListener::SubListener(const char* file_path) : handle(nullptr), user_transformation(nullptr){
     if(file_path){
         handle = eProsimaLoadLibrary(file_path);
         user_transformation = (userf_t)eProsimaGetProcAddress(handle, "transform");
     }
 }
 
-RSBridgeRTPS::SubListener::~SubListener(){
+ISBridgeRTPS::SubListener::~SubListener(){
     if(handle) eProsimaCloseLibrary(handle);
 }
 
-void RSBridgeRTPS::onTerminate()
+void ISBridgeRTPS::onTerminate()
 {
     // Don't need to do anything here
 }
 
-void RSBridgeRTPS::SubListener::onNewDataMessage(Subscriber* sub){
+void ISBridgeRTPS::SubListener::onNewDataMessage(Subscriber* sub){
     SerializedPayload_t serialized_input;
     SerializedPayload_t serialized_output;
     if(sub->takeNextData(&serialized_input, &m_info)){

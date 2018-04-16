@@ -1,19 +1,19 @@
-Routing Service parameters and configuration
+Integration Services parameters and configuration
 ============================================
 
-In this section are presented the main features of the *Routing Service* and information about how to configure them for creating user-customized communication bridges.
+In this section are presented the main features of the *Integration Services* and information about how to configure them for creating user-customized communication bridges.
 
 
 XML configuration file
 ----------------------
 
-At the time of launching the *Routing Service*, it is needed to add the path of a XML configuration file. This XML has to contain all the data which defines the bridges to be created.
+At the time of launching the *Integration Services*, it is needed to add the path of a XML configuration file. This XML has to contain all the data which defines the bridges to be created.
 
-Each execution of the *Routing Service* permits to set up multiple independent bridges. At the same time, it is possible to launch more than one executions of the *Routing Service* simultaneously. In any case, if there exists an error in the definition of an individual bridge, this would not affect to the other of them.
+Each execution of the *Integration Services* permits to set up multiple independent bridges. At the same time, it is possible to launch more than one executions of the *Integration Services* simultaneously. In any case, if there exists an error in the definition of an individual bridge, this would not affect to the other of them.
 
 The parameters of the XML configuration file are the following:
 
-*   **rs**: label that contains a Routing Service valid configuration. It doesn't have to have an associated text but the bridge elements.
+*   **rs**: label that contains a Integration Services valid configuration. It doesn't have to have an associated text but the bridge elements.
 
     *   **bridge**: element defining a simple bridge. There could be as "bridge" elements as the user needs. It doesn't have to have an associated text but the bridge configuration elements.
 
@@ -23,6 +23,7 @@ The parameters of the XML configuration file are the following:
             *   domain: ID of the domain from data is received.
             *   topic: the specific topic to be subscripted.
             *   type: the name of the type to be received.
+            *   partition: partition of the subscriber domain.
 
         *   **publisher**
 
@@ -30,6 +31,7 @@ The parameters of the XML configuration file are the following:
             *   domain: ID of the domain where data is published.
             *   topic: the specific topic to publish on.
             *   type: the name of the type to be published.
+            *   partition: partition of the publisher domain.
 
         *   **transformation**: the file path with the transformation library binary.
 
@@ -40,7 +42,7 @@ In the `resource <resource>`_ folder there is a proposed template the user can f
 Transformation libraries
 ------------------------
 
-As it was said before, there exists the option to define specific functions for making operations of routing, mapping, and message modification. This is a powerful feature that allow tasks like creating adapters between different types or even different enviroments, based on *Fast RTPS* or not. This libraries are compiled apart from the *Routing Service* and are loaded on execution time.
+As it was said before, there exists the option to define specific functions for making operations of routing, mapping, and message modification. This is a powerful feature that allow tasks like creating adapters between different types or even different enviroments, based on *Fast RTPS* or not. This libraries are compiled apart from the *Integration Services* and are loaded on execution time.
 
 A simple transformation function would looks like this:
 
@@ -71,4 +73,4 @@ In the `resource <resource>`_ folder it could be found a proposed template which
 Other applications
 ------------------
 
-As an example of a real application of the *Routing Service*, *Firos2* is a *ROS2* package for communicating *Fast RTPS* and *ROS2* environments.
+As an example of a real application of the *Integration Services*, *Firos2* is a *ROS2* package for communicating *Fast RTPS* and *ROS2* environments.

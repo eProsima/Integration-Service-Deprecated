@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "RSManager.h"
+#include "ISManager.h"
 
-void loadUnidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element);
-void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element);
+void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element);
+void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element);
 
-RSManager::RSManager(std::string xml_file_path) : active(false)
+ISManager::ISManager(std::string xml_file_path) : active(false)
 {
     tinyxml2::XMLDocument doc;
     doc.LoadFile(xml_file_path.c_str());
 
-    tinyxml2::XMLElement *bridge_element = doc.FirstChildElement("rs");
+    tinyxml2::XMLElement *bridge_element = doc.FirstChildElement("is");
 
     if (!bridge_element)
     {
@@ -50,18 +50,18 @@ RSManager::RSManager(std::string xml_file_path) : active(false)
     }
 }
 
-void RSManager::addBridge(RSBridge* b)
+void ISManager::addBridge(ISBridge* b)
 {
     bridge.emplace_back(b);
     active = true;
 }
 
-void RSManager::addHandle(void* h)
+void ISManager::addHandle(void* h)
 {
     handle.emplace_back(h);
 }
 
-void loadUnidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element)
+void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element)
 {
     try
     {
@@ -87,7 +87,7 @@ void loadUnidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element
 
             if (loadLib)
             {
-                RSBridge *bridge = loadLib(bridge_element);
+                ISBridge *bridge = loadLib(bridge_element);
                 if (bridge)
                 {
                     manager->addBridge(bridge);
@@ -112,7 +112,7 @@ void loadUnidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element
     }
 }
 
-void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element)
+void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element)
 {
     try
     {
@@ -160,7 +160,7 @@ void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element)
                 //manager->addBridge(loadLib1(bridge_element));
                 //manager->addBridge(loadLib2(bridge_element));
 
-                RSBridge *bridge1 = loadLib1(bridge_element);
+                ISBridge *bridge1 = loadLib1(bridge_element);
                 if (bridge1)
                 {
                     manager->addBridge(bridge1);
@@ -170,7 +170,7 @@ void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element)
                     std::cout << "Error loading bridge configuration " << file_path1 << std::endl;
                 }
 
-                RSBridge *bridge2 = loadLib2(bridge_element);
+                ISBridge *bridge2 = loadLib2(bridge_element);
                 if (bridge2)
                 {
                     manager->addBridge(bridge2);
@@ -187,14 +187,14 @@ void loadBidirectional(RSManager *manager, tinyxml2::XMLElement *bridge_element)
     }
 }
 
-tinyxml2::XMLElement* RSManager::_assignNextElement(tinyxml2::XMLElement *element, std::string name)
+tinyxml2::XMLElement* ISManager::_assignNextElement(tinyxml2::XMLElement *element, std::string name)
 {
     return element->FirstChildElement(name.c_str());
 }
 
-void RSManager::onTerminate()
+void ISManager::onTerminate()
 {
-    for (RSBridge* b : bridge)
+    for (ISBridge* b : bridge)
     {
         if (b)
         {
@@ -208,14 +208,14 @@ void RSManager::onTerminate()
     }
 }
 
-bool RSManager::isActive(){
+bool ISManager::isActive(){
     return active;
 }
 
-RSManager::~RSManager()
+ISManager::~ISManager()
 {
     onTerminate();
-    for (RSBridge* b : bridge)
+    for (ISBridge* b : bridge)
     {
         delete b;
     }

@@ -1,12 +1,12 @@
 #include <iostream>
 #include <tinyxml2.h>
-#include "RSBridgeRTPS.h"
+#include "ISBridgeRTPS.h"
 
 #if defined(_WIN32) && defined (BUILD_SHARED_LIBS)
     #if defined (_MSC_VER)
         #pragma warning(disable: 4251)
     #endif
-  #if defined(routingservice_EXPORTS)
+  #if defined(integrationservices_EXPORTS)
     #define  USER_LIB_EXPORT __declspec(dllexport)
   #else
     #define  USER_LIB_EXPORT __declspec(dllimport)
@@ -15,9 +15,9 @@
   #define USER_LIB_EXPORT
 #endif
 
-RSBridgeRTPS* loadFastRTPSBridge(tinyxml2::XMLElement *bridge_element);
+ISBridgeRTPS* loadFastRTPSBridge(tinyxml2::XMLElement *bridge_element);
 
-extern "C" USER_LIB_EXPORT RSBridge* createBridge(tinyxml2::XMLElement *bridge_element)
+extern "C" USER_LIB_EXPORT ISBridge* createBridge(tinyxml2::XMLElement *bridge_element)
 {
     return loadFastRTPSBridge(bridge_element);
 }
@@ -33,7 +33,7 @@ tinyxml2::XMLElement* _assignOptionalElement(tinyxml2::XMLElement *element, std:
     return element->FirstChildElement(name.c_str());
 }
 
-RSBridgeRTPS* loadFastRTPSBridge(tinyxml2::XMLElement *bridge_element)
+ISBridgeRTPS* loadFastRTPSBridge(tinyxml2::XMLElement *bridge_element)
 {
     try
     {
@@ -122,7 +122,7 @@ RSBridgeRTPS* loadFastRTPSBridge(tinyxml2::XMLElement *bridge_element)
             subscriber_params.qos.m_partition.push_back(input_partition);
         }
 
-        RSBridgeRTPS *bridge = new RSBridgeRTPS(participant_publisher_params,
+        ISBridgeRTPS *bridge = new ISBridgeRTPS(participant_publisher_params,
                             participant_subscriber_params,
                             publisher_params,
                             subscriber_params,

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<rs>
+<is>
 	<bridge>
 		<subscriber>
 			<participant>rs_subscriber</participant>
@@ -15,4 +15,4 @@
 		</publisher>
 		<transformation></transformation>
 	</bridge>
-</rs>
+</is>

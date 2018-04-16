@@ -13,28 +13,28 @@
 // limitations under the License.
 
 
-#ifndef _RSMANAGER_H_
-#define _RSMANAGER_H_
+#ifndef _ISMANAGER_H_
+#define _ISMANAGER_H_
 
 #include <vector>
 #include <iostream>
-#include "RSBridge.h"
+#include "ISBridge.h"
 #include <tinyxml2.h>
 
-typedef RSBridge* (*loadbridgef_t)(tinyxml2::XMLElement *bridge_element);
+typedef ISBridge* (*loadbridgef_t)(tinyxml2::XMLElement *bridge_element);
 
-class RSManager {
-    std::vector<RSBridge*> bridge;
+class ISManager {
+    std::vector<ISBridge*> bridge;
     std::vector<void*> handle;
     bool active;
     tinyxml2::XMLElement* _assignNextElement(tinyxml2::XMLElement *element, std::string name);
 public:
-    RSManager(std::string xml_file_path);
-    ~RSManager();
+    ISManager(std::string xml_file_path);
+    ~ISManager();
     bool isActive();
     void addHandle(void* h);
-    void addBridge(RSBridge* b);
+    void addBridge(ISBridge* b);
     void onTerminate();
 };
 
-#endif // _RSMANAGER_H_
+#endif // _ISMANAGER_H_

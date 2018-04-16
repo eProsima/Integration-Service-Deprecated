@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 
-#include "RSManager.h"
+#include "ISManager.h"
 
 
 int main(int argc, char * argv[]){
@@ -12,7 +12,7 @@ int main(int argc, char * argv[]){
     }
     std::string path_to_config = argv[1];
 
-    RSManager rs_manager(path_to_config);
+    ISManager rs_manager(path_to_config);
 
     if (rs_manager.isActive()){
         std::cout << "\n### Routing Service is running, press any key for quit ###" << std::endl;

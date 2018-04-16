@@ -33,6 +33,8 @@ endif()
 message(STATUS "Configuring DomainExample...")
 file(GLOB DOMAINEXAMPLE_SOURCES "*.cxx")
 
+add_definitions(-DBUILD_SHARED_LIBS -Dintegrationservices_EXPORTS)
+
 add_executable(DomainExample ${DOMAINEXAMPLE_SOURCES})
 target_include_directories(DomainExample PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries(DomainExample fastrtps fastcdr ${Boost_LIBRARIES})
