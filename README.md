@@ -57,7 +57,7 @@ May be needed to generate data types from IDL files to communicate with *Fast-RT
 
 *Integration Services* will load the *Bridge Libraries* that will apply the transform function of the *Transformation Library* to the data received in its subscriber and write the result with its publisher, for each bridge.
 
-The **config.xml** file must be addapted to each protocol. **RSManager** will parse the correspond node tree depending each protocol, defined in the *Bridge Libraries*, that knows how to setup each node with the information provided by the xml node.
+The **config.xml** file must be adapted to each protocol. **RSManager** will parse the correspond node tree depending each protocol, defined in the *Bridge Libraries*, that knows how to setup each node with the information provided by the xml node.
 
 #### Configuration options in **config.xml**
 

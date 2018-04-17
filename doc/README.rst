@@ -13,7 +13,7 @@ Each execution of the *Integration Services* permits to set up multiple independ
 
 The parameters of the XML configuration file are the following:
 
-*   **rs**: label that contains a Integration Services valid configuration. It doesn't have to have an associated text but the bridge elements.
+*   **is**: label that contains a Integration Services valid configuration. It doesn't have to have an associated text but the bridge elements.
 
     *   **bridge**: element defining a simple bridge. There could be as "bridge" elements as the user needs. It doesn't have to have an associated text but the bridge configuration elements.
 
