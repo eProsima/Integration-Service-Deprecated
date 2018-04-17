@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project("integrationservices")
+project("integration-services")
 set(PROJECT_MAJOR_VERSION 0)
 set(PROJECT_MINOR_VERSION 0)
 set(PROJECT_MICRO_VERSION 0)
@@ -40,9 +40,9 @@ else()
     set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
 endif()
 
-add_definitions(-DBUILD_SHARED_LIBS -Dintegrationservices_EXPORTS)
+add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS)
 
-add_executable(integration-services src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp)
 
 if(WIN32)
 	add_library(islib
@@ -85,7 +85,7 @@ endif()
 
 target_link_libraries(isrtpsbridgelib islib)
 
-target_link_libraries(integration-services islib)
+target_link_libraries(${PROJECT_NAME} islib)
 
 install(
     FILES
@@ -123,11 +123,11 @@ export(
 
 install(
     EXPORT ${PROJECT_NAME}Targets
-    DESTINATION lib/integrationservices/cmake
+    DESTINATION lib/${PROJECT_NAME}/cmake
     COMPONENT cmake)
 
 install(
-    TARGETS integration-services
+    TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin)
 
