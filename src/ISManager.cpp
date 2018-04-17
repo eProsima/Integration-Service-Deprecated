@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include "ISManager.h"
+#include "ISBridgeRTPS.h"
+#include "xmlUtils.h"
 
 void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element);
 void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element);
@@ -32,7 +34,7 @@ ISManager::ISManager(std::string xml_file_path) : active(false)
 
     for (auto child = bridge_element->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
     {
-        tinyxml2::XMLElement *current_element = _assignNextElement(child, "bridge_type");
+        tinyxml2::XMLElement *current_element = _assignOptionalElement(child, "bridge_type");
         const char* bridge_type = (current_element) ? current_element->GetText() : "unidirectional"; // Old format, only fastrtps support
         if (strncmp(bridge_type, "unidirectional", 14) == 0)
         {
@@ -68,43 +70,132 @@ void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element
         void* handle;
 
         tinyxml2::XMLElement *lib_element = bridge_element->FirstChildElement("bridge_library");
+        tinyxml2::XMLElement *pub_element = bridge_element->FirstChildElement("publisher");
+        tinyxml2::XMLElement *sub_element = bridge_element->FirstChildElement("subscriber");
 
-        if (!lib_element)
+        if (!lib_element && !sub_element && !pub_element)
         {
-            std::cout << "WARNING: <bridge_library> node not found. Using rsrtpsbridgelib as default, but you may update your configuration file." << std::endl;
+            std::cout << "You must define at least publisher ans subscriber of a bridge_library and publisher or subscriber." << std::endl;
+            throw 0;
         }
 
-        const char* file_path = (lib_element) ? lib_element->GetText() : "librsrtpsbridgelib.so"; // Support for oldformat, defaults fastrtps
-        handle = eProsimaLoadLibrary(file_path);
-        if (!lib_element && !handle)
+        ISBridge *bridge = nullptr;
+        if (sub_element && pub_element) // RTPS Only bridge
         {
-            handle = eProsimaLoadLibrary("/usr/local/lib/librsrtpsbridgelib.so"); // Default install directory
-        }
-        if (handle)
-        {
-            manager->addHandle(handle);
-            loadbridgef_t loadLib = (loadbridgef_t)eProsimaGetProcAddress(handle, "createBridge");
-
-            if (loadLib)
+            bridge = ISBridgeRTPS::configureBridge(bridge_element);
+            if (bridge)
             {
-                ISBridge *bridge = loadLib(bridge_element);
-                if (bridge)
+                manager->addBridge(bridge);
+            }
+            else
+            {
+                std::cout << "Error loading RTPS bridge configuration. " << std::endl;
+            }
+        }
+        else if (lib_element)
+        {
+            const char* file_path = lib_element->GetText();
+            handle = eProsimaLoadLibrary(file_path);
+
+            if (handle)
+            {
+                manager->addHandle(handle);
+                loadbridgef_t loadLib = (loadbridgef_t)eProsimaGetProcAddress(handle, "createBridge");
+                if (loadLib)
                 {
+                    tinyxml2::XMLElement *config_element = bridge_element->FirstChildElement("bridge_configuration");
+                    if (config_element)
+                    {
+                        const char* bridge_config = config_element->GetText();
+                        if (!bridge_config || bridge_config[0] == '\0')
+                        {
+                            std::cout << "INFO: bridge_configuration is empty." << std::endl;
+                            bridge = loadLib(nullptr); // Let's try to load without configuration.
+                        }
+                        else
+                        {
+                            bridge = loadLib(bridge_config);
+                        }
+                    }
+                    else
+                    {
+                        std::cout << "INFO: No bridge_configuration element found." << std::endl;
+                        bridge = loadLib(nullptr); // Let's try to load without configuration.
+                    }
+
+                    // User bridge failed?
+                    if (!bridge)
+                    {
+                        std::cout << "Error loading bridge configuration " << file_path << std::endl;
+                        throw 0;
+                    }
+
+                    if (sub_element)
+                    {
+                        // RTPS -> Other
+                        RTPSListener* listener = RTPSListener::configureRTPSSubscriber(sub_element);
+
+                        // Transformation function?
+                        const char* function_path;
+                        if (bridge_element->FirstChildElement("transformation"))
+                        {
+                            function_path = bridge_element->FirstChildElement("transformation")->GetText();
+                            listener->setTransformation(function_path);
+                        }
+                        else
+                        {
+                            function_path = nullptr;
+                        }
+
+                        bridge->setRTPSSubscriber(listener);
+
+                        if (!bridge->getOtherPublisher())
+                        {
+                            std::cout << "WARNING: Bridge doesn't seem to have a configured Publisher. This"\
+                                " may be correct, but you are not using the standard architecture." << std::endl;
+                        }
+                        else
+                        {
+                            listener->setPublisher(bridge->getOtherPublisher());
+                        }
+
+                    }
+                    else if (pub_element)
+                    {
+                        // Other > RTPS
+                        RTPSPublisher* publisher = RTPSPublisher::configureRTPSPublisher(pub_element);
+                        bridge->setRTPSPublisher(publisher);
+                        if (!bridge->getOtherSubscriber())
+                        {
+                            std::cout << "WARNING: Bridge doesn't seem to have a configured Subscriber. This"\
+                                " may be correct, but you are not using the standard architecture." << std::endl;
+                        }
+                        else
+                        {
+                            bridge->getOtherSubscriber()->setPublisher(publisher);
+                        }
+                    }
+                    else
+                    {
+                        std::cout << "Error no RTPS participant found! " << std::endl;
+                        delete bridge;
+                        throw 0;
+                    }
                     manager->addBridge(bridge);
                 }
                 else
                 {
-                    std::cout << "Error loading bridge configuration " << file_path << std::endl;
+                    std::cout << "External symbol 'createBridge' in " << file_path << " not found!" << std::endl;
                 }
             }
             else
             {
-                std::cout << "External symbol 'createBridge' in " << file_path << " not found!" << std::endl;
+                std::cout << "Bridge library " << file_path << " not found!" << std::endl;
             }
         }
         else
         {
-            std::cout << "Bridge library " << file_path << " not found!" << std::endl;
+            std::cout << "Bridge library element not found!" << std::endl;
         }
     }
     catch (int e_code){
@@ -114,82 +205,133 @@ void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element
 
 void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element)
 {
+    ISBridge* bridge = nullptr;
     try
     {
-        void* handle1;
-        void* handle2;
-        std::string lib1 = "bridge_library_nodeA";
-        std::string lib2 = "bridge_library_nodeB";
+        tinyxml2::XMLElement *lib_element = bridge_element->FirstChildElement("bridge_library");
+        tinyxml2::XMLElement *rtps_element = bridge_element->FirstChildElement("rtps");
 
-        tinyxml2::XMLElement *lib1_element = bridge_element->FirstChildElement(lib1.c_str());
-        tinyxml2::XMLElement *lib2_element = bridge_element->FirstChildElement(lib2.c_str());
-
-        if(!lib1_element || !lib2_element)
+        if(!lib_element)
         {
+            std::cout << "No bridge_library element found!" << std::endl;
+            throw 0;
+        }
+        else if (!rtps_element)
+        {
+            std::cout << "No rtps element found!" << std::endl;
             throw 0;
         }
 
-        const char* file_path1 = lib1_element->GetText();
-        const char* file_path2 = lib2_element->GetText();
-        handle1 = eProsimaLoadLibrary(file_path1);
-        handle2 = eProsimaLoadLibrary(file_path2);
-        if (!handle1)
+        const char* file_path = lib_element->GetText();
+        void *handle = eProsimaLoadLibrary(file_path);
+        if (!handle)
         {
-            std::cout << "Bridge library " << file_path1 << " not found!" << std::endl;
-        } else if (!handle2)
-        {
-            std::cout << "Bridge library " << file_path2 << " not found!" << std::endl;
+            std::cout << "Bridge library " << file_path << " not found!" << std::endl;
         }
         else
         {
-            manager->addHandle(handle1);
-            manager->addHandle(handle2);
-            loadbridgef_t loadLib1 = (loadbridgef_t)eProsimaGetProcAddress(handle1, "createBridge");
-            loadbridgef_t loadLib2 = (loadbridgef_t)eProsimaGetProcAddress(handle2, "createBridge");
+            manager->addHandle(handle);
+            loadbridgef_t loadLib = (loadbridgef_t)eProsimaGetProcAddress(handle, "createBridge");
 
-            if (!loadLib1)
+            if (!loadLib)
             {
-                std::cout << "External symbol 'createBridge' in " << file_path1 << " not found!" << std::endl;
-            }
-            else if (!loadLib2)
-            {
-                std::cout << "External symbol 'createBridge' in " << file_path2 << " not found!" << std::endl;
+                std::cout << "External symbol 'createBridge' in " << file_path << " not found!" << std::endl;
             }
             else
             {
-                //manager->addBridge(loadLib1(bridge_element));
-                //manager->addBridge(loadLib2(bridge_element));
-
-                ISBridge *bridge1 = loadLib1(bridge_element);
-                if (bridge1)
+                tinyxml2::XMLElement *config_element = bridge_element->FirstChildElement("bridge_configuration");
+                if (config_element)
                 {
-                    manager->addBridge(bridge1);
+                    const char* bridge_config = config_element->GetText();
+                    if (!bridge_config || bridge_config[0] == '\0')
+                    {
+                        std::cout << "INFO: bridge_configuration is empty." << std::endl;
+                        bridge = loadLib(nullptr); // Let's try to load without configuration.
+                    }
+                    else
+                    {
+                        bridge = loadLib(bridge_config);
+                    }
                 }
                 else
                 {
-                    std::cout << "Error loading bridge configuration " << file_path1 << std::endl;
+                    std::cout << "INFO: No bridge_configuration element found." << std::endl;
+                    bridge = loadLib(nullptr); // Let's try to load without configuration.
                 }
 
-                ISBridge *bridge2 = loadLib2(bridge_element);
-                if (bridge2)
+                // User bridge failed?
+                if (!bridge)
                 {
-                    manager->addBridge(bridge2);
+                    std::cout << "Error loading bridge configuration " << file_path << std::endl;
+                    throw 0;
+                }
+
+                // Load RTPS Participants
+                tinyxml2::XMLElement *pub_element = rtps_element->FirstChildElement("publisher");
+                tinyxml2::XMLElement *sub_element = rtps_element->FirstChildElement("subscriber");
+                if(!sub_element || !pub_element)
+                {
+                    std::cout << "Error loading rtps participants." << file_path << std::endl;
+                    throw 0;
+                }
+
+                RTPSListener* listener = RTPSListener::configureRTPSSubscriber(sub_element);
+                RTPSPublisher* publisher = RTPSPublisher::configureRTPSPublisher(pub_element);
+
+                if (!listener)
+                {
+                    std::cout << "Error loading RTPS listener configuration. " << std::endl;
+                    throw 0;
+                }
+                else if (!publisher)
+                {
+                    std::cout << "Error loading RTPS publisher configuration. " << std::endl;
+                    throw 0;
+                }
+
+                // Transformation function?
+                const char* function_path;
+                if (bridge_element->FirstChildElement("transformation"))
+                {
+                    function_path = bridge_element->FirstChildElement("transformation")->GetText();
+                    listener->setTransformation(function_path);
                 }
                 else
                 {
-                    std::cout << "Error loading bridge configuration " << file_path2 << std::endl;
+                    function_path = nullptr;
                 }
+
+                bridge->setRTPSPublisher(publisher);
+                bridge->setRTPSSubscriber(listener);
+
+                if (!bridge->getOtherPublisher())
+                {
+                    std::cout << "WARNING: Bridge doesn't seem to have a configured Publisher. This"\
+                        " may be correct, but you are not using the standard architecture." << std::endl;
+                }
+                else
+                {
+                    listener->setPublisher(bridge->getOtherPublisher());
+                }
+
+                if (!bridge->getOtherSubscriber())
+                {
+                    std::cout << "WARNING: Bridge doesn't seem to have a configured Subscriber. This"\
+                        " may be correct, but you are not using the standard architecture." << std::endl;
+                }
+                else
+                {
+                    bridge->getOtherSubscriber()->setPublisher(publisher);
+                }
+
+                manager->addBridge(bridge);
             }
         }
     }
     catch (int e_code){
         std::cout << "Error ocurred while loading bridge library " << e_code << std::endl;
+        if (bridge) delete bridge;
     }
-}
-
-tinyxml2::XMLElement* ISManager::_assignNextElement(tinyxml2::XMLElement *element, std::string name)
-{
-    return element->FirstChildElement(name.c_str());
 }
 
 void ISManager::onTerminate()

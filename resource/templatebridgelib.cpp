@@ -1,5 +1,4 @@
 #include <iostream>
-#include <tinyxml2.h>
 #include "ISBridgeDummy.h"
 
 #if defined(_WIN32) && defined (BUILD_SHARED_LIBS)
@@ -15,53 +14,30 @@
   #define USER_LIB_EXPORT
 #endif
 
-ISBridgeDummy* loadDummyBridge(tinyxml2::XMLElement *bridge_element);
+ISBridgeDummy* loadDummyBridge(void *bridge_config);
 
 // TODO ISBridge must be now an interface (or abstract class) that all Bridges must implement.
-extern "C" ISBridge* USER_LIB_EXPORT createBridge(tinyxml2::XMLElement *bridge_element)
+// bridge_config is the string in the xml element <bridge_configuration>
+extern "C" ISBridge* USER_LIB_EXPORT createBridge(const char *bridge_config)
 {
     // Add Bridge constructor and...
-    //return new ISBridgeDummy(bridge_element);
+    //return new ISBridgeDummy(bridge_config);
 
-    // OR parse the config xml here and return a cleaner Bridge class!
-    //return loadDummyBridge(bridge_element);
+    // OR configure here and return a cleaner Bridge class!
+    //return loadDummyBridge(bridge_config);
 }
 
-// TODO parse the xml and return a configured ISBRidgeDummy
-ISBridgeDummy* loadDummyBridge(tinyxml2::XMLElement *bridge_element)
+// TODO parse the config and return a configured ISBRidgeDummy
+ISBridgeDummy* loadDummyBridge(const char *bridge_config)
 {
     try
     {
-        tinyxml2::XMLElement *nodeA_element = bridge_element->FirstChildElement("nodeA");
-        if (!nodeA_element)
-        {
-            throw 0;
-        }
-        tinyxml2::XMLElement *nodeB_element = bridge_element->FirstChildElement("nodeB");
-        if(!nodeB_element)
-        {
-            throw 0;
-        }
+        ISBRidgeDummyConfig* config = ISBRidgeDummyConfig::Parse(bridge_config); // Or open file, etc.
 
-        // TODO Parse configuration for each node
-
-        // TODO Load transformation library function_path
-        const char* function_path = bridge_element->FirstChildElement("transformation")->GetText();
-
-        // TODO NodeA configuration
-        DummyNodeAAttributes participant_nodeA_params;
-        participant_nodeA_params.dummyProperty = parsed_value_a;
+        // TODO Parse and configure
         // [...]
 
-        // TODO NodeB configuration
-        DummyNodeBAttributes participant_nodeB_params;
-        participant_nodeB_params.dummyProperty = parsed_value_b;
-        // [...]
-
-        ISBridgeDummy *bridge = new ISBridgeDummy(
-                                    participant_nodeA_params,
-                                    participant_nodeB_params,
-                                    function_path);
+        ISBridgeDummy *bridge = new ISBridgeDummy(config);
 
         return bridge;
     }

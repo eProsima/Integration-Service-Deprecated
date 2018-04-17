@@ -48,6 +48,7 @@ if(WIN32)
 	add_library(islib
 	    src/dynamicload/dynamicload.cpp
 	    src/ISManager.cpp
+        src/ISBridgeRTPS.cpp
 	    src/GenericPubSubTypes.cpp
 	    thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
 
@@ -56,12 +57,9 @@ else()
 	add_library(islib SHARED
 	    src/dynamicload/dynamicload.cpp
 	    src/ISManager.cpp
+        src/ISBridgeRTPS.cpp
 	    src/GenericPubSubTypes.cpp)
 endif()
-
-add_library(isrtpsbridgelib SHARED
-    src/builtin/RTPS/ISBridgeRTPS.cpp
-    src/builtin/RTPS/bridgertpslib.cpp)
 
 if(WIN32)
 	target_link_libraries(islib
@@ -82,8 +80,6 @@ else()
 	    boost_system
 	    ${CMAKE_DL_LIBS})
 endif()
-
-target_link_libraries(isrtpsbridgelib islib)
 
 target_link_libraries(${PROJECT_NAME} islib)
 
@@ -109,16 +105,6 @@ install(
 
 export(
     TARGETS islib
-    FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
-
-install(
-    TARGETS isrtpsbridgelib
-    EXPORT ${PROJECT_NAME}Targets
-    COMPONENT libraries
-    DESTINATION ${LIB_INSTALL_DIR})
-
-export(
-    TARGETS isrtpsbridgelib islib
     FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
 
 install(

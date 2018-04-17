@@ -15,28 +15,79 @@
 #ifndef _ISBRIDGE_H_
 #define _ISBRIDGE_H_
 
-#include <fastrtps/fastrtps_fwd.h>
-#include "GenericPubSubTypes.h"
+class ISSubscriber;
 
-#include "dynamicload/dynamicload.h"
+/** Base class for publishers. Must know how to write into the destination protocol */
+class ISPublisher
+{
+public:
+    virtual void onTerminate() {}
+    virtual ~ISPublisher() = default;
+    virtual bool publish(void *data) = 0;
+};
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+/** Base class for subscribers. Must know how to read from the origin protocol */
+class ISSubscriber
+{
+protected:
+    ISPublisher *listener_publisher;
+public:
+    virtual void onTerminate() {}
+    virtual ~ISSubscriber() = default;
+    virtual bool onDataReceived(void *data) = 0;
+    virtual void setPublisher(ISPublisher* publisher){
+        listener_publisher = publisher;
+    }
+};
 
 /**
  * Base class for Bridges. All implementation must inherit from it.
  */
 class ISBridge
 {
+protected:
+    ISPublisher *mp_publisher;
+    ISSubscriber *ms_subscriber;
+    ISPublisher *rtps_publisher;
+    ISSubscriber *rtps_subscriber;
+    //userf_t *transformation;
 public:
     /**
      * This method will be called by ISManager when terminating the execution of the bridge.
      * Any handle, subscription, and resources that the bridge needed to work must be closed.
      */
-    virtual void onTerminate() = 0;
-    virtual ~ISBridge() = default;
-};
+    virtual void onTerminate()
+    {
+        if (mp_publisher)
+        {
+            mp_publisher->onTerminate();
+        }
 
-typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
+        if (ms_subscriber)
+        {
+            ms_subscriber->onTerminate();
+        }
+
+        if (rtps_publisher)
+        {
+            rtps_publisher->onTerminate();
+        }
+
+        if (rtps_subscriber)
+        {
+            rtps_subscriber->onTerminate();
+        }
+    }
+    virtual ~ISBridge() = default;
+    virtual ISPublisher* getOtherPublisher() { return mp_publisher; }
+    virtual ISSubscriber* getOtherSubscriber() { return ms_subscriber; }
+    virtual ISPublisher* getRTPSPublisher() { return rtps_publisher; }
+    virtual ISSubscriber* getRTPSSubscriber() { return rtps_subscriber; }
+    virtual void setOtherPublisher(ISPublisher *publisher) { mp_publisher = publisher; }
+    virtual void setOtherSubscriber(ISSubscriber *subscriber) { ms_subscriber = subscriber; }
+    virtual void setRTPSPublisher(ISPublisher *publisher) { rtps_publisher = publisher; }
+    virtual void setRTPSSubscriber(ISSubscriber *subscriber) { rtps_subscriber = subscriber; }
+    //virtual void setTransformation(userf_t *function) { transformation = function; }
+};
 
 #endif // _Header__SUBSCRIBER_H_

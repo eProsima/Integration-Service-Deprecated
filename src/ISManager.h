@@ -19,15 +19,14 @@
 #include <vector>
 #include <iostream>
 #include "ISBridge.h"
-#include <tinyxml2.h>
+#include "dynamicload/dynamicload.h"
 
-typedef ISBridge* (*loadbridgef_t)(tinyxml2::XMLElement *bridge_element);
+typedef ISBridge* (*loadbridgef_t)(const char *config);
 
 class ISManager {
     std::vector<ISBridge*> bridge;
     std::vector<void*> handle;
     bool active;
-    tinyxml2::XMLElement* _assignNextElement(tinyxml2::XMLElement *element, std::string name);
 public:
     ISManager(std::string xml_file_path);
     ~ISManager();
