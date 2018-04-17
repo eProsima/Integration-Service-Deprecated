@@ -6,7 +6,7 @@
     #if defined (_MSC_VER)
         #pragma warning(disable: 4251)
     #endif
-  #if defined(integrationservices_EXPORTS)
+  #if defined(integration_services_EXPORTS)
     #define  USER_LIB_EXPORT __declspec(dllexport)
   #else
     #define  USER_LIB_EXPORT __declspec(dllimport)
