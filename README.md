@@ -41,7 +41,7 @@ There are two kind of libraries that the user must implement:
 	extern "C" RSBridge* USER_LIB_EXPORT createBridge(tinyxml2::XMLElement *bridge_element)
 	
 This function must return a pointer to an instance of a derived class of RSBridge, or nullptr if failed. 
-TRSS will deallocate this object from memory when the bridge is stopped.
+Integration Services will deallocate this object from memory when the bridge is stopped.
 
 **Tranformation Library**: This library must implement transformation functions for the received data.
 The *Bridge Libraries* will load and call this function, so the name of the functions can be customized.
