@@ -29,7 +29,7 @@ ISBridgeRTPS::ISBridgeRTPS(RTPSPublisher *pub, RTPSListener *sub, const char *fi
 {
     mp_publisher = nullptr;
     ms_subscriber = nullptr;
-    sub->setTransformation(file_path);
+    sub->setTransformation(file_path, "transform");
     sub->setPublisher(pub);
     rtps_publisher = pub;
     rtps_subscriber = sub;
@@ -59,11 +59,11 @@ RTPSListener::RTPSListener() : handle(nullptr), user_transformation(nullptr)
 {
 }
 
-void RTPSListener::setTransformation(const char* file_path)
+void RTPSListener::setTransformation(const char* file_path, const char* transformation_name)
 {
     if(file_path){
         handle = eProsimaLoadLibrary(file_path);
-        user_transformation = (userf_t)eProsimaGetProcAddress(handle, "transform");
+        user_transformation = (userf_t)eProsimaGetProcAddress(handle, transformation_name);
     }
 }
 

@@ -71,7 +71,7 @@ private:
 public:
     RTPSListener();
     ~RTPSListener() override;
-    void setTransformation(const char* file_path);
+    void setTransformation(const char* file_path, const char* transformation_name);
     void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
     void onNewDataMessage(Subscriber* sub);
     virtual bool onDataReceived(void * data) override;

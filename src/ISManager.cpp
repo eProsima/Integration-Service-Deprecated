@@ -140,7 +140,7 @@ void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element
                         if (bridge_element->FirstChildElement("transformation"))
                         {
                             function_path = bridge_element->FirstChildElement("transformation")->GetText();
-                            listener->setTransformation(function_path);
+                            listener->setTransformation(function_path, "transform");
                         }
                         else
                         {
@@ -294,7 +294,7 @@ void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element)
                 if (bridge_element->FirstChildElement("transformation"))
                 {
                     function_path = bridge_element->FirstChildElement("transformation")->GetText();
-                    listener->setTransformation(function_path);
+                    listener->setTransformation(function_path, "transform");
                 }
                 else
                 {
