@@ -112,7 +112,11 @@ bool RTPSListener::onDataReceived(void* data)
             else{
                 serialized_output.copy(&serialized_input, false);
             }
-            return listener_publisher->publish(&serialized_output);
+            if (listener_publisher)
+            {
+                return listener_publisher->publish(&serialized_output);
+            }
+            return false;
         }
     }
 }
