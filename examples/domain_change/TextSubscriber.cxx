@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file TextSubscriber.cpp
  * This file contains the implementation of the subscriber functions.
  *
@@ -36,7 +36,7 @@ TextSubscriber::~TextSubscriber() {	Domain::removeParticipant(mp_participant);}
 bool TextSubscriber::init()
 {
 	// Create RTPSParticipant
-	
+
 	ParticipantAttributes PParam;
 	PParam.rtps.builtin.domainId = 5; //In this example the ID is different than the publisher one
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
@@ -44,13 +44,13 @@ bool TextSubscriber::init()
 	mp_participant = Domain::createParticipant(PParam);
 	if(mp_participant == nullptr)
 			return false;
-	
+
 	//Register the type
-	
-	Domain::registerType(mp_participant,(TopicDataType*) &myType);		
-			
+
+	Domain::registerType(mp_participant,(TopicDataType*) &myType);
+
 	// Create Subscriber
-			
+
 	SubscriberAttributes Rparam;
 	Rparam.topic.topicKind = NO_KEY;
 	Rparam.topic.topicDataType = myType.getName(); //Must be registered before the creation of the subscriber
@@ -66,12 +66,12 @@ void TextSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,Matching
 	if (info.status == MATCHED_MATCHING)
 	{
 		n_matched++;
-		cout << "Subscriber matched" << endl;
+		std::cout << "Subscriber matched" << std::endl;
 	}
 	else
 	{
 		n_matched--;
-		cout << "Subscriber unmatched" << endl;
+		std::cout << "Subscriber unmatched" << std::endl;
 	}
 }
 
@@ -79,22 +79,22 @@ void TextSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 {
 		// Take data
 		Text st;
-		
+
 		if(sub->takeNextData(&st, &m_info))
 		{
 			if(m_info.sampleKind == ALIVE)
 			{
 				// Print your structure data here.
 				++n_msg;
-				cout << "Sample received, count=" << n_msg << endl;
+				std::cout << "Sample received, count=" << n_msg << std::endl;
 			}
 		}
 }
 
 void TextSubscriber::run()
 {
-	cout << "Waiting for Data, press Enter to stop the Subscriber. "<<endl;
+	std::cout << "Waiting for Data, press Enter to stop the Subscriber. "<< std::endl;
 	std::cin.ignore();
-	cout << "Shutting down the Subscriber." << endl;
+	std::cout << "Shutting down the Subscriber." << std::endl;
 }
 

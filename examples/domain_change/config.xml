@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 <is>
 	<bridge>
+        <bridge_type>unidirectional</bridge_type>
 		<subscriber>
-			<participant>rs_subscriber</participant>
+			<participant>is_subscriber</participant>
 			<domain>0</domain>
 			<topic>TextPubSubTopic</topic>
 			<type>Text</type>
 		</subscriber>
 		<publisher>
-			<participant>rs_publisher</participant>
+			<participant>is_publisher</participant>
 			<domain>5</domain>
 			<topic>TextPubSubTopic</topic>
 			<type>Text</type>

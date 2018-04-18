@@ -42,7 +42,7 @@ ISBridgeRTPS::~ISBridgeRTPS(){
     delete rtps_publisher;
 }
 
-void RTPSListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info){
+void RTPSListener::onSubscriptionMatched(Subscriber* sub, MatchingInfo& info){
     if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
@@ -52,6 +52,18 @@ void RTPSListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info){
     {
         n_matched--;
         std::cout << "Subscriber unmatched" << std::endl;
+    }
+}
+
+void RTPSPublisher::onPublicationMatched(Publisher* pub, MatchingInfo& info)
+{
+    if (info.status == MATCHED_MATCHING)
+    {
+        std::cout << "Publisher matched" << std::endl;
+    }
+    else
+    {
+        std::cout << "Publisher unmatched" << std::endl;
     }
 }
 
@@ -204,6 +216,7 @@ RTPSPublisher* RTPSPublisher::configureRTPSPublisher(void *configuration)
     // Publisher configuration
     PublisherAttributes pub_params;
     pub_params.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+    pub_params.topic.topicKind = NO_KEY;
     pub_params.topic.topicDataType = output_type_name;
     pub_params.topic.topicName = output_topic_name;
     if (output_partition != nullptr)
@@ -227,7 +240,8 @@ RTPSPublisher* RTPSPublisher::configureRTPSPublisher(void *configuration)
     Domain::registerType(publisher->mp_participant,(TopicDataType*) publisher->output_type);
 
     //Create publisher
-    publisher->mp_publisher = Domain::createPublisher(publisher->mp_participant, pub_params, nullptr);
+    publisher->mp_publisher = Domain::createPublisher(publisher->mp_participant, pub_params,
+                                      (PublisherListener*)publisher);
     if(publisher->mp_publisher == nullptr)
     {
         delete publisher;

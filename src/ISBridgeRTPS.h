@@ -38,7 +38,7 @@ using namespace eprosima::fastrtps::rtps;
 
 typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
 
-class RTPSPublisher : public ISPublisher
+class RTPSPublisher : public PublisherListener, public ISPublisher
 {
 private:
     Publisher *mp_publisher;
@@ -51,6 +51,7 @@ public:
         return mp_publisher->write(data);
     }
     ~RTPSPublisher() override;
+    void onPublicationMatched(Publisher* pub, MatchingInfo& info) override;
     static RTPSPublisher* configureRTPSPublisher(void* configuration);
     std::string name;
 };
@@ -72,8 +73,8 @@ public:
     RTPSListener();
     ~RTPSListener() override;
     void setTransformation(const char* file_path, const char* transformation_name);
-    void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info);
-    void onNewDataMessage(Subscriber* sub);
+    void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info) override;
+    void onNewDataMessage(Subscriber* sub) override;
     virtual bool onDataReceived(void * data) override;
     static RTPSListener* configureRTPSSubscriber(void* configuration);
     std::string name;

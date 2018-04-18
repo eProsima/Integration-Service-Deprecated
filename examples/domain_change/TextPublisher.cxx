@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file TextPublisher.cpp
  * This file contains the implementation of the publisher functions.
  *
@@ -41,7 +41,7 @@ TextPublisher::~TextPublisher() {	Domain::removeParticipant(mp_participant);}
 bool TextPublisher::init()
 {
 	// Create RTPSParticipant
-	
+
 	ParticipantAttributes PParam;
 	PParam.rtps.builtin.domainId = 0;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
@@ -49,13 +49,13 @@ bool TextPublisher::init()
 	mp_participant = Domain::createParticipant(PParam);
 	if(mp_participant == nullptr)
 		return false;
-	
+
 	//Register the type
-	
+
 	Domain::registerType(mp_participant,(TopicDataType*) &myType);
-	
+
 	// Create Publisher
-	
+
 	PublisherAttributes Wparam;
 	Wparam.topic.topicKind = NO_KEY;
 	Wparam.topic.topicDataType = myType.getName();  //This type MUST be registered
@@ -63,7 +63,7 @@ bool TextPublisher::init()
 	mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
 	if(mp_publisher == nullptr)
 		return false;
-	cout << "Publisher created, waiting for Subscribers." << endl;
+	std::cout << "Publisher created, waiting for Subscribers." << std::endl;
 	return true;
 }
 
@@ -72,12 +72,12 @@ void TextPublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInf
 	if (info.status == MATCHED_MATCHING)
 	{
 		n_matched++;
-		cout << "Publisher matched" << endl;
+		std::cout << "Publisher matched" << std::endl;
 	}
 	else
 	{
 		n_matched--;
-		cout << "Publisher unmatched" << endl;
+		std::cout << "Publisher unmatched" << std::endl;
 	}
 }
 
@@ -87,13 +87,13 @@ void TextPublisher::run()
 	{
 		eClock::my_sleep(250); // Sleep 250 ms
 	}
-	
+
 	// Publication code
-	
+
 	Text st;
-	
+
 	/* Initialize your structure here */
-	
+
 	int msgsent = 0;
 	char ch = 'y';
 	do
@@ -101,16 +101,16 @@ void TextPublisher::run()
 		if(ch == 'y')
 		{
 			mp_publisher->write(&st);  ++msgsent;
-			cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
+			std::cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
 		}
 		else if(ch == 'n')
 		{
-			cout << "Stopping execution " << endl;
+			std::cout << "Stopping execution " << std::endl;
 			break;
 		}
 		else
 		{
-			cout << "Command " << ch << " not recognized, please enter \"y/n\":";
+			std::cout << "Command " << ch << " not recognized, please enter \"y/n\": ";
 		}
 	}while(std::cin >> ch);
 }
