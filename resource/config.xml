@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Complete <bridge> node will be sent to each bridge_library to be parsed by itself. -->
 <is>
     <!-- Generic bridges -->
     <bridge>
