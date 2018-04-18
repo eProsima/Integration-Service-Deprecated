@@ -35,7 +35,7 @@ ISManager::ISManager(std::string xml_file_path) : active(false)
     for (auto child = bridge_element->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
     {
         tinyxml2::XMLElement *current_element = _assignOptionalElement(child, "bridge_type");
-        const char* bridge_type = (current_element) ? current_element->GetText() : "unidirectional"; // Old format, only fastrtps support
+        const char* bridge_type = (current_element) ? current_element->GetText() : "unidirectional";
         if (strncmp(bridge_type, "unidirectional", 14) == 0)
         {
             loadUnidirectional(this, child);
@@ -75,12 +75,21 @@ void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element
 
         if (!lib_element && !sub_element && !pub_element)
         {
-            std::cout << "You must define at least publisher ans subscriber of a bridge_library and publisher or subscriber." << std::endl;
+            std::cout << "You must define at least publisher and subscriber of a \
+                bridge_library and publisher or subscriber." << std::endl;
             throw 0;
         }
 
         ISBridge *bridge = nullptr;
-        if (sub_element && pub_element) // RTPS Only bridge
+
+        if (sub_element && pub_element && lib_element)
+        {
+            std::cout << "Error loading Bridge. Are you trying to make a bidirectional bridge? \
+                This is configured as unidirectional " << std::endl;
+            throw 0;
+        }
+
+        if (sub_element && pub_element && !lib_element) // RTPS Only bridge
         {
             bridge = ISBridgeRTPS::configureBridge(bridge_element);
             if (bridge)
@@ -90,6 +99,7 @@ void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element
             else
             {
                 std::cout << "Error loading RTPS bridge configuration. " << std::endl;
+                throw 0;
             }
         }
         else if (lib_element)
@@ -107,10 +117,26 @@ void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element
                     if (config_element)
                     {
                         const char* bridge_config = config_element->GetText();
+
                         if (!bridge_config || bridge_config[0] == '\0')
                         {
-                            std::cout << "INFO: bridge_configuration is empty." << std::endl;
-                            bridge = loadLib(nullptr); // Let's try to load without configuration.
+                            // Maybe not a string... It is inner xml?
+                            tinyxml2::XMLPrinter printer;
+                            config_element->Accept(&printer);
+                            std::stringstream ss;
+                            ss << printer.CStr();
+
+                            std::string temp = ss.str();
+                            std::replace(temp.begin(), temp.end(), '\n', ' ');
+                            if (!temp.empty())
+                            {
+                                bridge = loadLib(temp.c_str());
+                            }
+                            else
+                            {
+                                std::cout << "INFO: bridge_configuration is empty." << std::endl;
+                                bridge = loadLib(nullptr); // Let's try to load without configuration.
+                            }
                         }
                         else
                         {
@@ -245,8 +271,23 @@ void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element)
                     const char* bridge_config = config_element->GetText();
                     if (!bridge_config || bridge_config[0] == '\0')
                     {
-                        std::cout << "INFO: bridge_configuration is empty." << std::endl;
-                        bridge = loadLib(nullptr); // Let's try to load without configuration.
+                        // Maybe not a string... It is inner xml?
+                        tinyxml2::XMLPrinter printer;
+                        config_element->Accept(&printer);
+                        std::stringstream ss;
+                        ss << printer.CStr();
+
+                        std::string temp = ss.str();
+                        std::replace(temp.begin(), temp.end(), '\n', ' ');
+                        if (!temp.empty())
+                        {
+                            bridge = loadLib(temp.c_str());
+                        }
+                        else
+                        {
+                            std::cout << "INFO: bridge_configuration is empty." << std::endl;
+                            bridge = loadLib(nullptr); // Let's try to load without configuration.
+                        }
                     }
                     else
                     {
