@@ -11,7 +11,7 @@
         <publisher>
             <!-- RTPS publisher parameters -->
         </publisher>
-        <transformation>/path/to/transformation/library</transformation> <!-- must define transform function -->
+        <transformation>/path/to/transformation/library</transformation> <!-- OPTIONAL, must define transform function -->
     </bridge>
     <bridge>
         <!-- RTPS -> Other -->
@@ -19,7 +19,7 @@
         <subscriber>
             <!-- RTPS subscriber parameters -->
         </subscriber>
-        <transformation>/path/to/transformation/library</transformation> <!-- must define transform function -->
+        <transformation>/path/to/transformation/library</transformation> <!-- OPTIONAL, must define transform function -->
         <bridge_library>/path/to/bridge/library</bridge_library> <!-- must load tranform function as well -->
         <bridge_configuration>bridge/and/other/configuration</bridge_configuration> <!-- Configuration for bridge -->
     </bridge>
@@ -43,7 +43,7 @@
                 <!-- RTPS publisher parameters -->
             </publisher>
         </rtps>
-        <transformation>/path/to/transformation/library</transformation> <!-- must define transform function -->
+        <transformation>/path/to/transformation/library</transformation> <!-- OPTIONAL, must define transform function -->
         <bridge_library>/path/to/bridge/library</bridge_library> <!-- RTPS <-> Other logic -->
         <bridge_configuration>bridge/and/other/configuration</bridge_configuration> <!-- Configuration for bridge -->
     </bridge>
