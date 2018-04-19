@@ -116,9 +116,9 @@ bool RTPSListener::onDataReceived(void* data)
             {
                 return listener_publisher->publish(&serialized_output);
             }
-            return false;
         }
     }
+    return false;
 }
 
 RTPSListener* RTPSListener::configureRTPSSubscriber(void *configuration)
@@ -308,4 +308,5 @@ ISBridge* ISBridgeRTPS::configureBridge(void *configuration)
     catch (int e_code){
         std::cout << "Invalid configuration, skipping bridge " << e_code << std::endl;
     }
+    return nullptr;
 }
