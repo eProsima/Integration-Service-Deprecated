@@ -19,7 +19,7 @@
 void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element);
 void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element);
 
-ISManager::ISManager(std::string xml_file_path) : active(false)
+ISManager::ISManager(const std::string &xml_file_path) : active(false)
 {
     tinyxml2::XMLDocument doc;
     doc.LoadFile(xml_file_path.c_str());

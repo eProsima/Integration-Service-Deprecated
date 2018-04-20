@@ -21,9 +21,14 @@ class ISSubscriber;
 class ISPublisher
 {
 public:
+    ISPublisher() {};
     virtual void onTerminate() {}
     virtual ~ISPublisher() = default;
     virtual bool publish(void *data) = 0;
+
+    // Forbid copy
+    ISPublisher(const ISPublisher&) = delete;
+    ISPublisher& operator=(const ISPublisher&) = delete;
 };
 
 /** Base class for subscribers. Must know how to read from the origin protocol */
@@ -32,12 +37,17 @@ class ISSubscriber
 protected:
     ISPublisher *listener_publisher;
 public:
+    ISSubscriber() { listener_publisher = nullptr; };
     virtual void onTerminate() {}
     virtual ~ISSubscriber() = default;
     virtual bool onDataReceived(void *data) = 0;
     virtual void setPublisher(ISPublisher* publisher){
         listener_publisher = publisher;
     }
+
+    // Forbid copy
+    ISSubscriber(const ISSubscriber&) = delete;
+    ISSubscriber& operator=(const ISSubscriber&) = delete;
 };
 
 /**
@@ -52,6 +62,7 @@ protected:
     ISSubscriber *rtps_subscriber;
     //userf_t *transformation;
 public:
+    ISBridge() {};
     /**
      * This method will be called by ISManager when terminating the execution of the bridge.
      * Any handle, subscription, and resources that the bridge needed to work must be closed.
@@ -88,6 +99,10 @@ public:
     virtual void setRTPSPublisher(ISPublisher *publisher) { rtps_publisher = publisher; }
     virtual void setRTPSSubscriber(ISSubscriber *subscriber) { rtps_subscriber = subscriber; }
     //virtual void setTransformation(userf_t *function) { transformation = function; }
+
+    // Forbid copy
+    ISBridge(const ISBridge&) = delete;
+    ISBridge& operator=(const ISBridge&) = delete;
 };
 
 #endif // _Header__SUBSCRIBER_H_

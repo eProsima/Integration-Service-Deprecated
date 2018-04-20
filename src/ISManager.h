@@ -28,7 +28,7 @@ class ISManager {
     std::vector<void*> handle;
     bool active;
 public:
-    ISManager(std::string xml_file_path);
+    ISManager(const std::string &xml_file_path);
     ~ISManager();
     bool isActive();
     void addHandle(void* h);
