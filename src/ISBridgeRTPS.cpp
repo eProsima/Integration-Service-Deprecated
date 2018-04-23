@@ -19,12 +19,12 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/Domain.h>
 
 #include "ISBridgeRTPS.h"
 #include "GenericPubSubTypes.h"
 #include "xmlUtils.h"
 
+/*
 ISBridgeRTPS::ISBridgeRTPS(RTPSPublisher *pub, RTPSListener *sub, const char *file_path)
 {
     mp_publisher = nullptr;
@@ -34,13 +34,7 @@ ISBridgeRTPS::ISBridgeRTPS(RTPSPublisher *pub, RTPSListener *sub, const char *fi
     rtps_publisher = pub;
     rtps_subscriber = sub;
 }
-
-ISBridgeRTPS::~ISBridgeRTPS(){
-    delete ms_subscriber;
-    delete mp_publisher;
-    delete rtps_subscriber;
-    delete rtps_publisher;
-}
+*/
 
 void RTPSListener::onSubscriptionMatched(Subscriber* sub, MatchingInfo& info){
     if (info.status == MATCHED_MATCHING)
@@ -67,10 +61,9 @@ void RTPSPublisher::onPublicationMatched(Publisher* pub, MatchingInfo& info)
     }
 }
 
-RTPSListener::RTPSListener() : handle(nullptr), user_transformation(nullptr)
-{
-}
+//RTPSListener::RTPSListener() : ISSubscriber(std::string(std::string("RTPSListener") + counter++)) {}
 
+/*
 void RTPSListener::setTransformation(const char* file_path, const char* transformation_name)
 {
     if(file_path){
@@ -78,34 +71,31 @@ void RTPSListener::setTransformation(const char* file_path, const char* transfor
         user_transformation = (userf_t)eProsimaGetProcAddress(handle, transformation_name);
     }
 }
-
+*/
 RTPSPublisher::~RTPSPublisher()
 {
     if(mp_participant != nullptr) Domain::removeParticipant(mp_participant);
 }
 
-RTPSListener::~RTPSListener()
+
+RTPSListener::~RTPSListener() {}
+/*
 {
     if(handle) eProsimaCloseLibrary(handle);
     if(ms_participant != nullptr) Domain::removeParticipant(ms_participant);
 }
+*/
 
-void ISBridgeRTPS::onTerminate()
+void RTPSListener::onNewDataMessage(Subscriber* sub)
 {
-    // Don't need to do anything here
-}
-
-void RTPSListener::onNewDataMessage(Subscriber* sub){
-    onDataReceived(sub); // No need to call, work could be done here, but as example is fine.
-}
-
-bool RTPSListener::onDataReceived(void* data)
-{
-    Subscriber* sub = (Subscriber*)data;
     SerializedPayload_t serialized_input;
-    SerializedPayload_t serialized_output;
     if(sub->takeNextData(&serialized_input, &m_info)){
         if(m_info.sampleKind == ALIVE){
+            for (ISBridge* bridge : mv_bridges)
+            {
+                bridge->on_received_data(this, &serialized_input);
+            }
+            /*
             if(user_transformation){
                 user_transformation(&serialized_input, &serialized_output);
             }
@@ -116,9 +106,9 @@ bool RTPSListener::onDataReceived(void* data)
             {
                 return listener_publisher->publish(&serialized_output);
             }
+            */
         }
     }
-    return false;
 }
 
 RTPSListener* RTPSListener::configureRTPSSubscriber(void *configuration)
@@ -160,7 +150,7 @@ RTPSListener* RTPSListener::configureRTPSSubscriber(void *configuration)
         sub_params.qos.m_partition.push_back(input_partition);
     }
 
-    RTPSListener* listener = new RTPSListener();
+    RTPSListener* listener = new RTPSListener(input_participant_name);
     listener->ms_participant = Domain::createParticipant(par_sub_params);
     if(listener->ms_participant == nullptr)
     {
@@ -228,7 +218,7 @@ RTPSPublisher* RTPSPublisher::configureRTPSPublisher(void *configuration)
         pub_params.qos.m_partition.push_back(output_partition);
     }
 
-    RTPSPublisher* publisher = new RTPSPublisher();
+    RTPSPublisher* publisher = new RTPSPublisher(output_participant_name);
 
     // Create RTPSParticipant
     publisher->mp_participant = Domain::createParticipant(par_pub_params);
@@ -297,10 +287,14 @@ ISBridge* ISBridgeRTPS::configureBridge(void *configuration)
                 function_path = nullptr;
             }
 
-            ISBridgeRTPS *bridge = new ISBridgeRTPS(publisher, listener, function_path);
+            //ISBridgeRTPS *bridge = new ISBridgeRTPS(publisher, listener, function_path);
+            ISBridgeRTPS *bridge = new ISBridgeRTPS("Unnamed");
+            bridge->addSubscriber(listener);
+            bridge->addFunction(listener->getName(), function_path, function);
+            bridge->addPublisher(listener->getName(), function_path, publisher);
 
-            std::cout << "Created bridge Fast-RTPS between [" << listener->name << "] and [" <<
-                publisher->name << "]" << std::endl;
+            std::cout << "Created bridge Fast-RTPS between [" << listener->getName() << "] and [" <<
+                publisher->getName() << "]" << std::endl;
 
             return bridge;
         }

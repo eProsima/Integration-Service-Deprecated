@@ -36,16 +36,16 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
-
 class RTPSPublisher : public PublisherListener, public ISPublisher
 {
 private:
     Publisher *mp_publisher;
     Participant *mp_participant;
-    GenericPubSubType *output_type;
+    static int counter = 0;
 public:
-    RTPSPublisher() {}
+    GenericPubSubType *output_type;
+    //RTPSPublisher() {}
+    RTPSPublisher(const std::string &name) : ISPublisher(name) {}
     virtual bool publish(void * data) override
     {
         return mp_publisher->write(data);
@@ -53,39 +53,45 @@ public:
     ~RTPSPublisher() override;
     void onPublicationMatched(Publisher* pub, MatchingInfo& info) override;
     static RTPSPublisher* configureRTPSPublisher(void* configuration);
-    std::string name;
+    void setParticipant(const Participant* part) { mp_participant = part; }
+    bool hasParticipant() { return mp_participant != nullptr; }
+    Participant* getParticipant() { return mp_participant; }
+    bool hasRTPSPublisher() { return mp_publisher != nullptr; }
+    void setRTPSPublisher(const Publisher* pub) { mp_publisher = pub; }
 };
 
 class RTPSListener : public SubscriberListener, public ISSubscriber
 {
 private:
-    userf_t user_transformation;
-    void *handle;
-    char *error;
-
     SampleInfo_t m_info;
     int n_matched;
     int n_msg;
     Participant *ms_participant;
-    GenericPubSubType *input_type;
     Subscriber *ms_subscriber;
+    static int counter = 0;
 public:
-    RTPSListener();
+    GenericPubSubType *input_type;
+    //RTPSListener();
+    RTPSListener(const std::string &name) : ISSubscriber(name), ms_participant(nullptr), ms_subscriber(nullptr) {}
     ~RTPSListener() override;
-    void setTransformation(const char* file_path, const char* transformation_name);
     void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info) override;
     void onNewDataMessage(Subscriber* sub) override;
-    virtual bool onDataReceived(void * data) override;
     static RTPSListener* configureRTPSSubscriber(void* configuration);
-    std::string name;
+
+    void setParticipant(const Participant* part) { ms_participant = part; }
+    void setRTPSSubscriber(const Subscriber* sub) { ms_subscriber = sub; }
+    bool hasParticipant() { return ms_participant != nullptr; }
+    bool hasRTPSSubscriber() { return ms_subscriber != nullptr; }
+    Participant* getParticipant() { return ms_participant; }
 };
 
 class ISBridgeRTPS : public ISBridge
 {
 public:
-    ISBridgeRTPS(RTPSPublisher *publisher, RTPSListener *listener, const char* file_path);
+    //ISBridgeRTPS(RTPSPublisher *publisher, RTPSListener *listener, const char* file_path);
+    //ISBridgeRTPS();
+    ISBridgeRTPS(const std::string &name) : ISBridge(name) {}
     virtual ~ISBridgeRTPS();
-    void onTerminate() override;
     static ISBridge* configureBridge(void* configuration);
 };
 

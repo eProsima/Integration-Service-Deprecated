@@ -14,10 +14,7 @@
 
 #include "ISManager.h"
 #include "ISBridgeRTPS.h"
-#include "xmlUtils.h"
-
-void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element);
-void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element);
+#include <fastrtps/Domain.h>
 
 ISManager::ISManager(const std::string &xml_file_path) : active(false)
 {
@@ -34,6 +31,7 @@ ISManager::ISManager(const std::string &xml_file_path) : active(false)
 
     for (auto child = bridge_element->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
     {
+        /*
         tinyxml2::XMLElement *current_element = _assignOptionalElement(child, "bridge_type");
         const char* bridge_type = (current_element) ? current_element->GetText() : "unidirectional";
         if (strncmp(bridge_type, "unidirectional", 14) == 0)
@@ -44,9 +42,34 @@ ISManager::ISManager(const std::string &xml_file_path) : active(false)
         {
             loadBidirectional(this, child);
         }
+        */
+        //if (child->Name())
+        tinyxml2::XMLElement *participant = child->FirstChildElement("participant");
+        while(participant)
+        {
+            // TODO parse participants
+            loadParticipant(participant);
+            participant = child->NextSiblingElement();
+        }
+
+        tinyxml2::XMLElement *bridge = child->FirstChildElement("bridge");
+        while(bridge)
+        {
+            // TODO parse bridges
+            loadBridge(bridge);
+            bridge = child->NextSiblingElement();
+        }
+
+        tinyxml2::XMLElement *connector = child->FirstChildElement("connector");
+        while(connector)
+        {
+            // TODO parse connectors
+            loadConnector(connector);
+            connector = child->NextSiblingElement();
+        }
     }
 
-    if (bridge.size() > 0)
+    if (bridges.size() > 0)
     {
         active = true;
     }
@@ -54,17 +77,215 @@ ISManager::ISManager(const std::string &xml_file_path) : active(false)
 
 void ISManager::addBridge(ISBridge* b)
 {
-    bridge.emplace_back(b);
+    //bridge.emplace_back(b);
+    bridges[b->getName()] = b;
     active = true;
 }
 
-void ISManager::addHandle(void* h)
+void ISManager::addSubscriber(ISSubscriber* s)
 {
-    handle.emplace_back(h);
+    subscribers[s->getName()] = s;
 }
 
-void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element)
+void ISManager::addPublisher(ISPublisher* p)
 {
+    publishers[p->getName()] = p;
+}
+
+void ISManager::addHandle(const std::string &path, void* h)
+{
+    //handle.emplace_back(h);
+    handles[path] = h;
+}
+
+void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
+{
+    try
+    {
+        const char* part_name = participant_element->Attribute("name");
+        if (!part_name)
+        {
+           std::cout << "Found participant without name." << std::endl;
+           throw 0;
+        }
+
+        tinyxml2::XMLElement *attribs = participant_element->FirstChildElement("attributes");
+        if (!attribs)
+        {
+            std::cout << "No attributes found for participant " << part_name << std::endl;
+            throw 0;
+        }
+
+        int output_domain = 0;
+        tinyxml2::XMLElement *current_element = _assignNextElement(attribs, "domain");
+        if(current_element->QueryIntText(&output_domain))
+        {
+            std::cout << "Cannot parse domain for participant " << part_name << std::endl;
+            throw 0;
+        }
+
+        // Participant configuration
+        ParticipantAttributes part_params;
+        part_params.rtps.builtin.domainId = output_domain;
+        part_params.rtps.builtin.leaseDuration = c_TimeInfinite;
+        part_params.rtps.setName(part_name);
+
+        tinyxml2::XMLElement *subscribers = participant_element->FirstChildElement("subscriber");
+        while (subscribers)
+        {
+            loadSubscriber(part_params, subscribers);
+            subscribers = participant_element->NextSiblingElement();
+        }
+
+        tinyxml2::XMLElement *publishers = participant_element->FirstChildElement("publisher");
+        while (publishers)
+        {
+            loadPublisher(part_params, publishers);
+            publishers = participant_element->NextSiblingElement();
+        }
+    }
+    catch (int e_code)
+    {
+        std::cout << "Error ocurred while loading participant " << e_code << std::endl;
+    }
+}
+
+void ISManager::loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *subscriber_element)
+{
+    try
+    {
+        const char* sub_name = subscriber_element->Attribute("name");
+
+        tinyxml2::XMLElement *current_element = _assignNextElement(subscriber_element, "topic");
+        const char* topic_name = current_element->GetText();
+        current_element = _assignNextElement(subscriber_element, "type");
+        const char* type_name = current_element->GetText();
+
+        current_element = _assignOptionalElement(subscriber_element, "partition");
+        const char* partition = (current_element == nullptr) ? nullptr : current_element->GetText();
+
+        // Subscriber configuration
+        SubscriberAttributes sub_params;
+        sub_params.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+        sub_params.topic.topicKind = NO_KEY;
+        sub_params.topic.topicDataType = type_name;
+        sub_params.topic.topicName = topic_name;
+        if (partition != nullptr)
+        {
+            sub_params.qos.m_partition.push_back(partition);
+        }
+
+        RTPSListener* listener = new RTPSListener(getEndPointName(part_attrs.rtps.getName(), sub_name));
+        listener->setParticipant(Domain::createParticipant(part_attrs));
+        if(!listener->hasParticipant())
+        {
+            delete listener;
+            throw 0;
+        }
+
+        listener->input_type = new GenericPubSubType();
+        listener->input_type->setName(sub_params.topic.topicDataType.c_str());
+        Domain::registerType(listener->getParticipant(),(TopicDataType*) listener->input_type);
+
+        // Create Subscriber
+        listener->setRTPSSubscriber(Domain::createSubscriber(listener->getParticipant(), sub_params,
+                                                        (SubscriberListener*)listener));
+        if(!listener->hasRTPSSubscriber())
+        {
+            delete listener;
+            throw 0;
+        }
+
+        addSubscriber(listener);
+    }
+    catch (int e_code)
+    {
+        std::cout << "Error ocurred while loading subscriber " << e_code << std::endl;
+    }
+}
+
+void ISManager::loadPublisher(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *publisher_element)
+{
+    try
+    {
+        const char* pub_name = publisher_element->Attribute("name");
+
+        tinyxml2::XMLElement *current_element = _assignNextElement(publisher_element, "topic");
+        const char* topic_name = current_element->GetText();
+        current_element = _assignNextElement(publisher_element, "type");
+        const char* type_name = current_element->GetText();
+
+        current_element = _assignOptionalElement(publisher_element, "partition");
+        const char* partition = (current_element == nullptr) ? nullptr : current_element->GetText();
+
+        // Publisher configuration
+        PublisherAttributes pub_params;
+        pub_params.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+        pub_params.topic.topicKind = NO_KEY;
+        pub_params.topic.topicDataType = type_name;
+        pub_params.topic.topicName = topic_name;
+        if (partition != nullptr)
+        {
+            pub_params.qos.m_partition.push_back(partition);
+        }
+
+        RTPSPublisher* publisher = new RTPSPublisher(getEndPointName(part_attrs.rtps.getName(), pub_name));
+
+        // Create RTPSParticipant
+        publisher->setParticipant(Domain::createParticipant(part_attrs));
+        if(!publisher->hasParticipant())
+        {
+            delete publisher;
+            throw 0;
+        }
+
+        //Register types
+        publisher->output_type = new GenericPubSubType();
+        publisher->output_type->setName(pub_params.topic.topicDataType.c_str());
+        Domain::registerType(publisher->getParticipant(), (TopicDataType*)publisher->output_type);
+
+        //Create publisher
+        publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), pub_params,
+                                   (PublisherListener*)publisher));
+        if(!publisher->hasRTPSPublisher())
+        {
+            delete publisher;
+            throw 0;
+        }
+
+        addPublisher(publisher);
+    }
+    catch (int e_code)
+    {
+        std::cout << "Error ocurred while loading publisher " << e_code << std::endl;
+    }
+}
+
+
+void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
+{
+    try
+    {
+
+    }
+    catch (int e_code)
+    {
+        std::cout << "Error ocurred while loading bridge " << e_code << std::endl;
+    }
+}
+
+void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
+{
+    try
+    {
+
+    }
+    catch (int e_code)
+    {
+        std::cout << "Error ocurred while loading connector " << e_code << std::endl;
+    }
+}
+    /*
     try
     {
         void* handle;
@@ -227,8 +448,8 @@ void loadUnidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element
     catch (int e_code){
         std::cout << "Error ocurred while loading bridge library " << e_code << std::endl;
     }
-}
-
+    */
+/*
 void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element)
 {
     ISBridge* bridge = nullptr;
@@ -374,19 +595,22 @@ void loadBidirectional(ISManager *manager, tinyxml2::XMLElement *bridge_element)
         if (bridge) delete bridge;
     }
 }
+*/
 
 void ISManager::onTerminate()
 {
-    for (ISBridge* b : bridge)
+    for (const auto &p : bridges)
     {
+        ISBridge *b = p.second;
         if (b)
         {
             b->onTerminate();
         }
     }
 
-    for (void* h : handle)
+    for (const auto &p : handles)
     {
+        void *h = p.second;
         if(h) eProsimaCloseLibrary(h);
     }
 }
@@ -398,9 +622,13 @@ bool ISManager::isActive(){
 ISManager::~ISManager()
 {
     onTerminate();
-    for (ISBridge* b : bridge)
+    for (const auto &p : bridges)
     {
+        ISBridge *b = p.second;
         delete b;
     }
-    bridge.clear();
+    bridges.clear();
+    subscribers.clear();
+    publishers.clear();
+    handles.clear();
 }

@@ -15,16 +15,48 @@
 #ifndef _ISBRIDGE_H_
 #define _ISBRIDGE_H_
 
+#include <unordered_set>
+#include <vector>
+#include <map>
+#include <string>
+
+#include "GenericPubSubTypes.h"
+
+typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
+
 class ISSubscriber;
+class ISBridge;
+
+class ISBaseClass
+{
+protected:
+    std::string name;
+    virtual void setName(const std::string &name) { this->name = name; }
+public:
+    virtual const std::string& getName() const { return name; }
+    virtual void onTerminate();
+    virtual ~ISBaseClass() = default;
+};
 
 /** Base class for publishers. Must know how to write into the destination protocol */
-class ISPublisher
+class ISPublisher : public ISBaseClass
 {
+protected:
+    ISBridge *mb_bridge;
 public:
-    ISPublisher() {};
-    virtual void onTerminate() {}
+    ISPublisher(const std::string &name) : mb_bridge(nullptr) { setName(name); };
     virtual ~ISPublisher() = default;
     virtual bool publish(void *data) = 0;
+    virtual ISBridge* setBridge(ISBridge *bridge)
+    {
+        ISBridge *old = mb_bridge;
+        mb_bridge = bridge;
+        if (old)
+        {
+            old->removePublisher(this);
+        }
+        return old;
+    }
 
     // Forbid copy
     ISPublisher(const ISPublisher&) = delete;
@@ -32,17 +64,15 @@ public:
 };
 
 /** Base class for subscribers. Must know how to read from the origin protocol */
-class ISSubscriber
+class ISSubscriber : public ISBaseClass
 {
 protected:
-    ISPublisher *listener_publisher;
+    std::vector<ISBridge*> mv_bridges;
 public:
-    ISSubscriber() { listener_publisher = nullptr; };
-    virtual void onTerminate() {}
+    ISSubscriber(const std::string &name) { setName(name); };
     virtual ~ISSubscriber() = default;
-    virtual bool onDataReceived(void *data) = 0;
-    virtual void setPublisher(ISPublisher* publisher){
-        listener_publisher = publisher;
+    virtual void addBridge(ISBridge* bridge){
+        mv_bridges.push_back(bridge);
     }
 
     // Forbid copy
@@ -53,52 +83,34 @@ public:
 /**
  * Base class for Bridges. All implementation must inherit from it.
  */
-class ISBridge
+class ISBridge : public ISBaseClass
 {
 protected:
-    ISPublisher *mp_publisher;
-    ISSubscriber *ms_subscriber;
-    ISPublisher *rtps_publisher;
-    ISSubscriber *rtps_subscriber;
+    std::vector<ISSubscriber*> mv_subscriber;
+    std::map<std::string, userf_t> mm_functionsNames;
+    std::map<std::string, std::vector<std::string>> mm_functions;
+    std::map<std::string, std::vector<ISPublisher*>> mm_publisher;
+    std::map<ISPublisher*, std::string> mm_inv_publisher;
+    std::unordered_set<ISBaseClass*> ms_subpubs;
+
     //userf_t *transformation;
+    std::string generateKeyPublisher(const std::string &sub, const std::string &funct)
+    {
+        return sub + "@" + funct;
+    }
 public:
-    ISBridge() {};
+    ISBridge(const std::string &name) { setName(name); };
     /**
      * This method will be called by ISManager when terminating the execution of the bridge.
      * Any handle, subscription, and resources that the bridge needed to work must be closed.
      */
-    virtual void onTerminate()
-    {
-        if (mp_publisher)
-        {
-            mp_publisher->onTerminate();
-        }
-
-        if (ms_subscriber)
-        {
-            ms_subscriber->onTerminate();
-        }
-
-        if (rtps_publisher)
-        {
-            rtps_publisher->onTerminate();
-        }
-
-        if (rtps_subscriber)
-        {
-            rtps_subscriber->onTerminate();
-        }
-    }
-    virtual ~ISBridge() = default;
-    virtual ISPublisher* getOtherPublisher() { return mp_publisher; }
-    virtual ISSubscriber* getOtherSubscriber() { return ms_subscriber; }
-    virtual ISPublisher* getRTPSPublisher() { return rtps_publisher; }
-    virtual ISSubscriber* getRTPSSubscriber() { return rtps_subscriber; }
-    virtual void setOtherPublisher(ISPublisher *publisher) { mp_publisher = publisher; }
-    virtual void setOtherSubscriber(ISSubscriber *subscriber) { ms_subscriber = subscriber; }
-    virtual void setRTPSPublisher(ISPublisher *publisher) { rtps_publisher = publisher; }
-    virtual void setRTPSSubscriber(ISSubscriber *subscriber) { rtps_subscriber = subscriber; }
-    //virtual void setTransformation(userf_t *function) { transformation = function; }
+    virtual ~ISBridge();
+    virtual void addSubscriber(ISSubscriber *sub);
+    virtual void addFunction(const std::string &sub, const std::string &fname, userf_t func);
+    virtual void addPublisher(const std::string &sub, const std::string &funcName, ISPublisher* pub);
+    virtual ISPublisher* removePublisher(ISPublisher* pub);
+    virtual void on_received_data(const ISSubscriber *sub, SerializedPayload_t *data);
+    virtual void onTerminate() override;
 
     // Forbid copy
     ISBridge(const ISBridge&) = delete;

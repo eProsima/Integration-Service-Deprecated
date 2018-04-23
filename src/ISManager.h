@@ -16,24 +16,38 @@
 #ifndef _ISMANAGER_H_
 #define _ISMANAGER_H_
 
-#include <vector>
+#include <map>
 #include <iostream>
 #include "ISBridge.h"
 #include "dynamicload/dynamicload.h"
+#include "xmlUtils.h"
 
 typedef ISBridge* (*loadbridgef_t)(const char *config);
 
 class ISManager {
-    std::vector<ISBridge*> bridge;
-    std::vector<void*> handle;
+    std::map<std::string, ISBridge*> bridges;
+    std::map<std::string, ISSubscriber*> subscribers;
+    std::map<std::string, ISPublisher*> publishers;
+    std::map<std::string, void*> handles;
     bool active;
 public:
     ISManager(const std::string &xml_file_path);
     ~ISManager();
     bool isActive();
-    void addHandle(void* h);
+    void addHandle(const std::string &path, void* h);
     void addBridge(ISBridge* b);
+    void addPublisher(ISPublisher* p);
+    void addSubscriber(ISSubscriber* s);
+    void loadParticipant(tinyxml2::XMLElement *participant_element);
+    void loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *subscriber_element);
+    void loadPublisher(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *publisher_element);
+    void loadBridge(tinyxml2::XMLElement *bridge_element);
+    void loadConnector(tinyxml2::XMLElement *connector_element);
     void onTerminate();
+    std::string getEndPointName(const std::string &partName, const std::string &epName)
+    {
+        return partName + "." + epName;
+    }
 };
 
 #endif // _ISMANAGER_H_
