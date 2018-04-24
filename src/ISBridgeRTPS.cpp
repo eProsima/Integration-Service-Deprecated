@@ -65,10 +65,13 @@ void RTPSListener::onNewDataMessage(Subscriber* sub)
     SerializedPayload_t serialized_input;
     if(sub->takeNextData(&serialized_input, &m_info)){
         if(m_info.sampleKind == ALIVE){
+            on_received_data(&serialized_input);
+            /*
             for (ISBridge* bridge : mv_bridges)
             {
                 bridge->on_received_data(this, &serialized_input);
             }
+            */
         }
     }
 }

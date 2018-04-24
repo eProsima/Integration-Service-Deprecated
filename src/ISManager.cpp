@@ -287,11 +287,11 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
 
             parseProperties(bridge_element, configuration);
 
-            bridge = create_bridge(&configuration);
+            bridge = create_bridge(bridge_name, &configuration);
         }
         else
         {
-            bridge = create_bridge(nullptr);
+            bridge = create_bridge(bridge_name, nullptr);
         }
 
         addBridge(bridge);
@@ -299,9 +299,10 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
         tinyxml2::XMLElement *subscribers = bridge_element->FirstChildElement("subscriber");
         while (subscribers)
         {
+            const char* sub_name = subscribers->Attribute("name");
             std::vector<std::pair<std::string, std::string>> configuration;
             parseProperties(subscribers, configuration);
-            ISSubscriber* sub = create_subscriber(bridge, &configuration);
+            ISSubscriber* sub = create_subscriber(bridge, sub_name, &configuration);
             addSubscriber(bridge->getName(), sub);
             subscribers = subscribers->NextSiblingElement("subscriber");
         }
@@ -309,9 +310,10 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
         tinyxml2::XMLElement *publishers = bridge_element->FirstChildElement("publisher");
         while (publishers)
         {
+            const char* pub_name = publishers->Attribute("name");
             std::vector<std::pair<std::string, std::string>> configuration;
             parseProperties(publishers, configuration);
-            ISPublisher* pub = create_publisher(bridge, &configuration);
+            ISPublisher* pub = create_publisher(bridge, pub_name, &configuration);
             addPublisher(bridge->getName(), pub);
             publishers = publishers->NextSiblingElement("publisher");
         }

@@ -28,9 +28,11 @@ class ISPublisher;
 class ISSubscriber;
 class ISBridge;
 
-typedef ISBridge* (*createBridgef_t)(const std::vector<std::pair<std::string, std::string>> *config);
-typedef ISPublisher* (*createPubf_t)(ISBridge *bridge, const std::vector<std::pair<std::string, std::string>> *config);
-typedef ISSubscriber* (*createSubf_t)(ISBridge *bridge, const std::vector<std::pair<std::string, std::string>> *config);
+typedef ISBridge* (*createBridgef_t)(const char* name, const std::vector<std::pair<std::string, std::string>> *config);
+typedef ISPublisher* (*createPubf_t)(ISBridge *bridge, const char* name,
+                                     const std::vector<std::pair<std::string, std::string>> *config);
+typedef ISSubscriber* (*createSubf_t)(ISBridge *bridge, const char* name,
+                                      const std::vector<std::pair<std::string, std::string>> *config);
 
 class ISBaseClass
 {
@@ -70,6 +72,7 @@ public:
     virtual void addBridge(ISBridge* bridge){
         mv_bridges.push_back(bridge);
     }
+    virtual void on_received_data(SerializedPayload_t* payload);
 
     // Forbid copy
     ISSubscriber(const ISSubscriber&) = delete;

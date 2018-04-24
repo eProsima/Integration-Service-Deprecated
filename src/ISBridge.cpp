@@ -71,6 +71,14 @@ ISPublisher* ISBridge::removePublisher(ISPublisher* pub)
     ms_subpubs.erase(pub);
 }
 
+void ISSubscriber::on_received_data(SerializedPayload_t* payload)
+{
+    for (ISBridge* bridge : mv_bridges)
+    {
+        bridge->on_received_data(this, payload);
+    }
+}
+
 void ISBridge::on_received_data(const ISSubscriber *sub, SerializedPayload_t *data)
 {
     std::vector<std::string> funcNames = mm_functions[sub->getName()];
