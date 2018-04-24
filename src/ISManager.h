@@ -18,6 +18,7 @@
 
 #include <map>
 #include <iostream>
+#include <fastrtps/attributes/ParticipantAttributes.h>
 #include "ISBridge.h"
 #include "dynamicload/dynamicload.h"
 #include "xmlUtils.h"
@@ -30,20 +31,24 @@ class ISManager {
     std::map<std::string, ISPublisher*> publishers;
     std::map<std::string, void*> handles;
     bool active;
+    void parseProperties(tinyxml2::XMLElement *parent_element,
+                         std::vector<std::pair<std::string, std::string>> &props);
 public:
     ISManager(const std::string &xml_file_path);
     ~ISManager();
     bool isActive();
-    void addHandle(const std::string &path, void* h);
     void addBridge(ISBridge* b);
     void addPublisher(ISPublisher* p);
     void addSubscriber(ISSubscriber* s);
+    void addPublisher(const std::string &part_name, ISPublisher* p);
+    void addSubscriber(const std::string &part_name, ISSubscriber* s);
     void loadParticipant(tinyxml2::XMLElement *participant_element);
     void loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *subscriber_element);
     void loadPublisher(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *publisher_element);
     void loadBridge(tinyxml2::XMLElement *bridge_element);
     void loadConnector(tinyxml2::XMLElement *connector_element);
     void onTerminate();
+    void* getLibraryHandle(const std::string &libpath);
     std::string getEndPointName(const std::string &partName, const std::string &epName)
     {
         return partName + "." + epName;

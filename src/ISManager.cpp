@@ -29,43 +29,27 @@ ISManager::ISManager(const std::string &xml_file_path) : active(false)
         return;
     }
 
-    for (auto child = bridge_element->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
+    for (auto child = doc.FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
     {
-        /*
-        tinyxml2::XMLElement *current_element = _assignOptionalElement(child, "bridge_type");
-        const char* bridge_type = (current_element) ? current_element->GetText() : "unidirectional";
-        if (strncmp(bridge_type, "unidirectional", 14) == 0)
-        {
-            loadUnidirectional(this, child);
-        }
-        else if (strncmp(bridge_type, "bidirectional", 13) == 0)
-        {
-            loadBidirectional(this, child);
-        }
-        */
-        //if (child->Name())
         tinyxml2::XMLElement *participant = child->FirstChildElement("participant");
         while(participant)
         {
-            // TODO parse participants
             loadParticipant(participant);
-            participant = child->NextSiblingElement();
+            participant = participant->NextSiblingElement("participant");
         }
 
         tinyxml2::XMLElement *bridge = child->FirstChildElement("bridge");
         while(bridge)
         {
-            // TODO parse bridges
             loadBridge(bridge);
-            bridge = child->NextSiblingElement();
+            bridge = bridge->NextSiblingElement("bridge");
         }
 
         tinyxml2::XMLElement *connector = child->FirstChildElement("connector");
         while(connector)
         {
-            // TODO parse connectors
             loadConnector(connector);
-            connector = child->NextSiblingElement();
+            connector = connector->NextSiblingElement("connector");
         }
     }
 
@@ -92,10 +76,14 @@ void ISManager::addPublisher(ISPublisher* p)
     publishers[p->getName()] = p;
 }
 
-void ISManager::addHandle(const std::string &path, void* h)
+void ISManager::addSubscriber(const std::string &part_name, ISSubscriber* s)
 {
-    //handle.emplace_back(h);
-    handles[path] = h;
+    subscribers[getEndPointName(part_name, s->getName())] = s;
+}
+
+void ISManager::addPublisher(const std::string &part_name, ISPublisher* p)
+{
+    publishers[getEndPointName(part_name, p->getName())] = p;
 }
 
 void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
@@ -134,14 +122,14 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
         while (subscribers)
         {
             loadSubscriber(part_params, subscribers);
-            subscribers = participant_element->NextSiblingElement();
+            subscribers = subscribers->NextSiblingElement("subscriber");
         }
 
         tinyxml2::XMLElement *publishers = participant_element->FirstChildElement("publisher");
         while (publishers)
         {
             loadPublisher(part_params, publishers);
-            publishers = participant_element->NextSiblingElement();
+            publishers = publishers->NextSiblingElement("publisher");
         }
     }
     catch (int e_code)
@@ -156,12 +144,19 @@ void ISManager::loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLE
     {
         const char* sub_name = subscriber_element->Attribute("name");
 
-        tinyxml2::XMLElement *current_element = _assignNextElement(subscriber_element, "topic");
+        tinyxml2::XMLElement *attribs = subscriber_element->FirstChildElement("attributes");
+        if (!attribs)
+        {
+            std::cout << "No attributes found for subscriber " << sub_name << std::endl;
+            throw 0;
+        }
+
+        tinyxml2::XMLElement *current_element = _assignNextElement(attribs, "topic");
         const char* topic_name = current_element->GetText();
-        current_element = _assignNextElement(subscriber_element, "type");
+        current_element = _assignNextElement(attribs, "type");
         const char* type_name = current_element->GetText();
 
-        current_element = _assignOptionalElement(subscriber_element, "partition");
+        current_element = _assignOptionalElement(attribs, "partition");
         const char* partition = (current_element == nullptr) ? nullptr : current_element->GetText();
 
         // Subscriber configuration
@@ -197,6 +192,8 @@ void ISManager::loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLE
         }
 
         addSubscriber(listener);
+        std::cout << "Added subscriber " << listener->getName()
+            << "[" << topic_name << ":" << part_attrs.rtps.builtin.domainId << "]" << std::endl;
     }
     catch (int e_code)
     {
@@ -210,12 +207,19 @@ void ISManager::loadPublisher(ParticipantAttributes &part_attrs, tinyxml2::XMLEl
     {
         const char* pub_name = publisher_element->Attribute("name");
 
-        tinyxml2::XMLElement *current_element = _assignNextElement(publisher_element, "topic");
+        tinyxml2::XMLElement *attribs = publisher_element->FirstChildElement("attributes");
+        if (!attribs)
+        {
+            std::cout << "No attributes found for publisher " << pub_name << std::endl;
+            throw 0;
+        }
+
+        tinyxml2::XMLElement *current_element = _assignNextElement(attribs, "topic");
         const char* topic_name = current_element->GetText();
-        current_element = _assignNextElement(publisher_element, "type");
+        current_element = _assignNextElement(attribs, "type");
         const char* type_name = current_element->GetText();
 
-        current_element = _assignOptionalElement(publisher_element, "partition");
+        current_element = _assignOptionalElement(attribs, "partition");
         const char* partition = (current_element == nullptr) ? nullptr : current_element->GetText();
 
         // Publisher configuration
@@ -254,6 +258,8 @@ void ISManager::loadPublisher(ParticipantAttributes &part_attrs, tinyxml2::XMLEl
         }
 
         addPublisher(publisher);
+        std::cout << "Added publisher " << publisher->getName()
+            << "[" << topic_name << ":" << part_attrs.rtps.builtin.domainId << "]" << std::endl;
     }
     catch (int e_code)
     {
@@ -266,7 +272,49 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
 {
     try
     {
+        const char* bridge_name = bridge_element->Attribute("name");
+        const char *library = _assignNextElement(bridge_element, "library")->GetText();
+        tinyxml2::XMLElement *properties = _assignOptionalElement(bridge_element, "properties");
+        void *handle = getLibraryHandle(library);
+        createBridgef_t create_bridge = (createBridgef_t)eProsimaGetProcAddress(handle, "create_bridge");
+        createSubf_t create_subscriber = (createSubf_t)eProsimaGetProcAddress(handle, "create_subscriber");
+        createPubf_t create_publisher = (createPubf_t)eProsimaGetProcAddress(handle, "create_publisher");
 
+        ISBridge *bridge = nullptr;
+        if (properties)
+        {
+            std::vector<std::pair<std::string, std::string>> configuration;
+
+            parseProperties(bridge_element, configuration);
+
+            bridge = create_bridge(&configuration);
+        }
+        else
+        {
+            bridge = create_bridge(nullptr);
+        }
+
+        addBridge(bridge);
+
+        tinyxml2::XMLElement *subscribers = bridge_element->FirstChildElement("subscriber");
+        while (subscribers)
+        {
+            std::vector<std::pair<std::string, std::string>> configuration;
+            parseProperties(subscribers, configuration);
+            ISSubscriber* sub = create_subscriber(bridge, &configuration);
+            addSubscriber(bridge->getName(), sub);
+            subscribers = subscribers->NextSiblingElement("subscriber");
+        }
+
+        tinyxml2::XMLElement *publishers = bridge_element->FirstChildElement("publisher");
+        while (publishers)
+        {
+            std::vector<std::pair<std::string, std::string>> configuration;
+            parseProperties(publishers, configuration);
+            ISPublisher* pub = create_publisher(bridge, &configuration);
+            addPublisher(bridge->getName(), pub);
+            publishers = publishers->NextSiblingElement("publisher");
+        }
     }
     catch (int e_code)
     {
@@ -278,13 +326,106 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 {
     try
     {
+        const char* connector_name = connector_element->Attribute("name");
+        tinyxml2::XMLElement *sub_el = _assignNextElement(connector_element, "subscriber");
+        tinyxml2::XMLElement *pub_el = _assignNextElement(connector_element, "publisher");
+        tinyxml2::XMLElement *trans_el = _assignOptionalElement(connector_element, "transformation");
 
+        const char* sub_part = sub_el->Attribute("participant_name");
+        const char* sub_name = sub_el->Attribute("subscriber_name");
+        const char* pub_part = pub_el->Attribute("participant_name");
+        const char* pub_name = pub_el->Attribute("publisher_name");
+
+        std::string subName = getEndPointName(sub_part, sub_name);
+        std::string pubName = getEndPointName(pub_part, pub_name);
+
+        auto its = subscribers.find(subName);
+        if (its == subscribers.end())
+        {
+            std::cout << "Subscriber " << sub_name << " of participant " << sub_part << " cannot be found." << std::endl;
+            throw 0;
+        }
+
+        auto itp = publishers.find(pubName);
+        if (itp == publishers.end())
+        {
+            std::cout << "Publisher " << pub_name << " of participant " << pub_part << " cannot be found." << std::endl;
+            throw 0;
+        }
+
+        ISSubscriber* sub = its->second;
+        ISPublisher* pub = itp->second;
+
+        std::string function_name;
+        userf_t function = nullptr;
+        if (trans_el)
+        {
+            const char* f_file = pub_el->Attribute("file");
+            const char* f_name = pub_el->Attribute("function");
+            function_name = std::string(f_file) + "@" + f_name;
+            void* handle = getLibraryHandle(f_file);
+            function = (userf_t)eProsimaGetProcAddress(handle, f_name);
+        }
+
+        // Any participant is a bridge?
+        ISBridge* bridge;
+        auto itsb = bridges.find(sub_part);
+        auto itpb = bridges.find(pub_part);
+        if (itsb == bridges.end() && itpb == bridges.end())
+        {
+            // Create the RTPS bridge
+            bridge = (ISBridge*)new ISBridgeRTPS(connector_name);
+            addBridge(bridge);
+        }
+        else if (itsb != bridges.end() && itpb != bridges.end())
+        {
+            // No RTPS endpoint?
+            std::cout << "Connector " << connector_name << " without RTPS endpoint!" << std::endl;
+            throw 0; // Not allowed.
+        }
+        else if(itsb != bridges.end())
+        {
+            // Subscriber has the custom bridge
+            bridge = itsb->second;
+        }
+        else // itpb != bridges.end()
+        {
+            // Publisher has the custom bridge
+            bridge = itpb->second;
+        }
+
+        bridge->addSubscriber(sub);
+        bridge->addPublisher(sub->getName(), function_name, pub);
+        bridge->addFunction(sub->getName(), function_name, function);
+
+        std::cout << "Set bridge between " << sub->getName() << " and " << pub->getName() << std::endl;
     }
     catch (int e_code)
     {
         std::cout << "Error ocurred while loading connector " << e_code << std::endl;
     }
 }
+
+void ISManager::parseProperties(tinyxml2::XMLElement *parent_element,
+                                std::vector<std::pair<std::string, std::string>> &props)
+{
+    tinyxml2::XMLElement *props_element = _assignOptionalElement(parent_element, "properties");
+    while (props_element)
+    {
+        try
+        {
+            std::pair<std::string, std::string> newPair;
+            const char *type = _assignNextElement(props_element, "name")->GetText();
+            const char *value = _assignNextElement(props_element, "value")->GetText();
+            newPair.first = type;
+            newPair.second = value;
+            props.emplace_back(newPair);
+        }
+        catch (...) {}
+        props_element = props_element->NextSiblingElement("properties");
+    }
+}
+
     /*
     try
     {
@@ -615,8 +756,29 @@ void ISManager::onTerminate()
     }
 }
 
-bool ISManager::isActive(){
+bool ISManager::isActive()
+{
     return active;
+}
+
+void* ISManager::getLibraryHandle(const std::string &libpath)
+{
+    auto it = handles.find(libpath);
+
+    if (it == handles.end())
+    {
+        void *handle = eProsimaLoadLibrary(libpath.c_str());
+        if (handle)
+        {
+            handles[libpath] = handle;
+        }
+        else
+        {
+            std::cout << "Cannot load library " << libpath << std::endl;
+        }
+    }
+
+    return handles[libpath];
 }
 
 ISManager::~ISManager()

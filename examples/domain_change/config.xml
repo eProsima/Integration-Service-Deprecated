@@ -1,19 +1,33 @@
 <?xml version="1.0"?>
 <is>
-	<bridge>
-        <bridge_type>unidirectional</bridge_type>
-		<subscriber>
-			<participant>is_subscriber</participant>
-			<domain>0</domain>
-			<topic>TextPubSubTopic</topic>
-			<type>Text</type>
-		</subscriber>
-		<publisher>
-			<participant>is_publisher</participant>
-			<domain>5</domain>
-			<topic>TextPubSubTopic</topic>
-			<type>Text</type>
-		</publisher>
-		<transformation></transformation>
-	</bridge>
+    <participant name="domain0">
+        <attributes>
+            <domain>0</domain>
+        </attributes>
+
+        <subscriber name="is_subscriber">
+            <attributes>
+				<topic>TextPubSubTopic</topic>
+				<type>Text</type>
+            </attributes>
+        </subscriber>
+    </participant>
+
+    <participant name="domain5">
+        <attributes>
+            <domain>5</domain>
+        </attributes>
+
+        <publisher name="is_publisher">
+            <attributes>
+				<topic>TextPubSubTopic</topic>
+				<type>Text</type>
+            </attributes>
+        </publisher>
+    </participant>
+
+    <connector name="domain_change"> 
+        <subscriber participant_name="domain0" subscriber_name="is_subscriber"/>
+        <publisher participant_name="domain5" publisher_name="is_publisher"/>
+    </connector>
 </is>

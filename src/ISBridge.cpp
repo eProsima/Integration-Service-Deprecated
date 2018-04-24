@@ -34,6 +34,7 @@ void ISBridge::addSubscriber(ISSubscriber *sub)
 {
     mv_subscriber.emplace_back(sub);
     ms_subpubs.emplace(sub);
+    sub->addBridge(this);
 }
 
 void ISBridge::addFunction(const std::string &sub, const std::string &fname, userf_t func)
@@ -91,4 +92,15 @@ void ISBridge::on_received_data(const ISSubscriber *sub, SerializedPayload_t *da
             pub->publish(&output);
         }
     }
+}
+
+ISBridge* ISPublisher::setBridge(ISBridge *bridge)
+{
+    ISBridge *old = mb_bridge;
+    mb_bridge = bridge;
+    if (old)
+    {
+        old->removePublisher(this);
+    }
+    return old;
 }

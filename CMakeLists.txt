@@ -48,6 +48,7 @@ if(WIN32)
 	add_library(islib
 	    src/dynamicload/dynamicload.cpp
 	    src/ISManager.cpp
+        src/ISBridge.cpp
         src/ISBridgeRTPS.cpp
 	    src/GenericPubSubTypes.cpp
 	    thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
@@ -57,6 +58,7 @@ else()
 	add_library(islib SHARED
 	    src/dynamicload/dynamicload.cpp
 	    src/ISManager.cpp
+        src/ISBridge.cpp
         src/ISBridgeRTPS.cpp
 	    src/GenericPubSubTypes.cpp)
 endif()

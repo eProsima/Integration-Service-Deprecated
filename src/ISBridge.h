@@ -24,8 +24,13 @@
 
 typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
 
+class ISPublisher;
 class ISSubscriber;
 class ISBridge;
+
+typedef ISBridge* (*createBridgef_t)(const std::vector<std::pair<std::string, std::string>> *config);
+typedef ISPublisher* (*createPubf_t)(ISBridge *bridge, const std::vector<std::pair<std::string, std::string>> *config);
+typedef ISSubscriber* (*createSubf_t)(ISBridge *bridge, const std::vector<std::pair<std::string, std::string>> *config);
 
 class ISBaseClass
 {
@@ -34,7 +39,7 @@ protected:
     virtual void setName(const std::string &name) { this->name = name; }
 public:
     virtual const std::string& getName() const { return name; }
-    virtual void onTerminate();
+    virtual void onTerminate() {};
     virtual ~ISBaseClass() = default;
 };
 
@@ -46,17 +51,8 @@ protected:
 public:
     ISPublisher(const std::string &name) : mb_bridge(nullptr) { setName(name); };
     virtual ~ISPublisher() = default;
-    virtual bool publish(void *data) = 0;
-    virtual ISBridge* setBridge(ISBridge *bridge)
-    {
-        ISBridge *old = mb_bridge;
-        mb_bridge = bridge;
-        if (old)
-        {
-            old->removePublisher(this);
-        }
-        return old;
-    }
+    virtual bool publish(void *data) {};
+    virtual ISBridge* setBridge(ISBridge *bridge);
 
     // Forbid copy
     ISPublisher(const ISPublisher&) = delete;

@@ -41,7 +41,6 @@ class RTPSPublisher : public PublisherListener, public ISPublisher
 private:
     Publisher *mp_publisher;
     Participant *mp_participant;
-    static int counter = 0;
 public:
     GenericPubSubType *output_type;
     //RTPSPublisher() {}
@@ -52,23 +51,19 @@ public:
     }
     ~RTPSPublisher() override;
     void onPublicationMatched(Publisher* pub, MatchingInfo& info) override;
-    static RTPSPublisher* configureRTPSPublisher(void* configuration);
-    void setParticipant(const Participant* part) { mp_participant = part; }
+    void setParticipant(Participant* part) { mp_participant = part; }
     bool hasParticipant() { return mp_participant != nullptr; }
     Participant* getParticipant() { return mp_participant; }
     bool hasRTPSPublisher() { return mp_publisher != nullptr; }
-    void setRTPSPublisher(const Publisher* pub) { mp_publisher = pub; }
+    void setRTPSPublisher(Publisher* pub) { mp_publisher = pub; }
 };
 
 class RTPSListener : public SubscriberListener, public ISSubscriber
 {
 private:
     SampleInfo_t m_info;
-    int n_matched;
-    int n_msg;
     Participant *ms_participant;
     Subscriber *ms_subscriber;
-    static int counter = 0;
 public:
     GenericPubSubType *input_type;
     //RTPSListener();
@@ -76,10 +71,8 @@ public:
     ~RTPSListener() override;
     void onSubscriptionMatched(Subscriber* sub,MatchingInfo& info) override;
     void onNewDataMessage(Subscriber* sub) override;
-    static RTPSListener* configureRTPSSubscriber(void* configuration);
-
-    void setParticipant(const Participant* part) { ms_participant = part; }
-    void setRTPSSubscriber(const Subscriber* sub) { ms_subscriber = sub; }
+    void setParticipant(Participant* part) { ms_participant = part; }
+    void setRTPSSubscriber(Subscriber* sub) { ms_subscriber = sub; }
     bool hasParticipant() { return ms_participant != nullptr; }
     bool hasRTPSSubscriber() { return ms_subscriber != nullptr; }
     Participant* getParticipant() { return ms_participant; }
@@ -88,11 +81,8 @@ public:
 class ISBridgeRTPS : public ISBridge
 {
 public:
-    //ISBridgeRTPS(RTPSPublisher *publisher, RTPSListener *listener, const char* file_path);
-    //ISBridgeRTPS();
     ISBridgeRTPS(const std::string &name) : ISBridge(name) {}
-    virtual ~ISBridgeRTPS();
-    static ISBridge* configureBridge(void* configuration);
+    virtual ~ISBridgeRTPS() {};
 };
 
 #endif // _Header__SUBSCRIBER_H_
