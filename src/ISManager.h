@@ -18,10 +18,10 @@
 
 #include <map>
 #include <iostream>
-#include <fastrtps/attributes/ParticipantAttributes.h>
 #include "ISBridge.h"
 #include "dynamicload/dynamicload.h"
 #include "xmlUtils.h"
+#include <fastrtps/participant/Participant.h>
 
 typedef ISBridge* (*loadbridgef_t)(const char *config);
 
@@ -43,8 +43,8 @@ public:
     void addPublisher(const std::string &part_name, ISPublisher* p);
     void addSubscriber(const std::string &part_name, ISSubscriber* s);
     void loadParticipant(tinyxml2::XMLElement *participant_element);
-    void loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *subscriber_element);
-    void loadPublisher(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *publisher_element);
+    void loadSubscriber(Participant* participant, tinyxml2::XMLElement *subscriber_element);
+    void loadPublisher(Participant* participant, tinyxml2::XMLElement *publisher_element);
     void loadBridge(tinyxml2::XMLElement *bridge_element);
     void loadConnector(tinyxml2::XMLElement *connector_element);
     void onTerminate();

@@ -118,17 +118,19 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
         part_params.rtps.builtin.leaseDuration = c_TimeInfinite;
         part_params.rtps.setName(part_name);
 
+        Participant* participant = Domain::createParticipant(part_params);
+
         tinyxml2::XMLElement *subscribers = participant_element->FirstChildElement("subscriber");
         while (subscribers)
         {
-            loadSubscriber(part_params, subscribers);
+            loadSubscriber(participant, subscribers);
             subscribers = subscribers->NextSiblingElement("subscriber");
         }
 
         tinyxml2::XMLElement *publishers = participant_element->FirstChildElement("publisher");
         while (publishers)
         {
-            loadPublisher(part_params, publishers);
+            loadPublisher(participant, publishers);
             publishers = publishers->NextSiblingElement("publisher");
         }
     }
@@ -138,7 +140,7 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
     }
 }
 
-void ISManager::loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *subscriber_element)
+void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *subscriber_element)
 {
     try
     {
@@ -170,8 +172,8 @@ void ISManager::loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLE
             sub_params.qos.m_partition.push_back(partition);
         }
 
-        RTPSListener* listener = new RTPSListener(getEndPointName(part_attrs.rtps.getName(), sub_name));
-        listener->setParticipant(Domain::createParticipant(part_attrs));
+        RTPSListener* listener = new RTPSListener(getEndPointName(participant->getAttributes().rtps.getName(), sub_name));
+        listener->setParticipant(participant);
         if(!listener->hasParticipant())
         {
             delete listener;
@@ -193,7 +195,7 @@ void ISManager::loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLE
 
         addSubscriber(listener);
         std::cout << "Added subscriber " << listener->getName()
-            << "[" << topic_name << ":" << part_attrs.rtps.builtin.domainId << "]" << std::endl;
+            << "[" << topic_name << ":" << participant->getAttributes().rtps.builtin.domainId << "]" << std::endl;
     }
     catch (int e_code)
     {
@@ -201,7 +203,7 @@ void ISManager::loadSubscriber(ParticipantAttributes &part_attrs, tinyxml2::XMLE
     }
 }
 
-void ISManager::loadPublisher(ParticipantAttributes &part_attrs, tinyxml2::XMLElement *publisher_element)
+void ISManager::loadPublisher(Participant* participant, tinyxml2::XMLElement *publisher_element)
 {
     try
     {
@@ -233,10 +235,10 @@ void ISManager::loadPublisher(ParticipantAttributes &part_attrs, tinyxml2::XMLEl
             pub_params.qos.m_partition.push_back(partition);
         }
 
-        RTPSPublisher* publisher = new RTPSPublisher(getEndPointName(part_attrs.rtps.getName(), pub_name));
+        RTPSPublisher* publisher = new RTPSPublisher(getEndPointName(participant->getAttributes().rtps.getName(), pub_name));
 
         // Create RTPSParticipant
-        publisher->setParticipant(Domain::createParticipant(part_attrs));
+        publisher->setParticipant(participant);
         if(!publisher->hasParticipant())
         {
             delete publisher;
@@ -259,7 +261,7 @@ void ISManager::loadPublisher(ParticipantAttributes &part_attrs, tinyxml2::XMLEl
 
         addPublisher(publisher);
         std::cout << "Added publisher " << publisher->getName()
-            << "[" << topic_name << ":" << part_attrs.rtps.builtin.domainId << "]" << std::endl;
+            << "[" << topic_name << ":" << participant->getAttributes().rtps.builtin.domainId << "]" << std::endl;
     }
     catch (int e_code)
     {
