@@ -411,7 +411,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 void ISManager::parseProperties(tinyxml2::XMLElement *parent_element,
                                 std::vector<std::pair<std::string, std::string>> &props)
 {
-    tinyxml2::XMLElement *props_element = _assignOptionalElement(parent_element, "properties");
+    tinyxml2::XMLElement *props_element = parent_element->FirstChildElement("property");
     while (props_element)
     {
         try
@@ -424,7 +424,7 @@ void ISManager::parseProperties(tinyxml2::XMLElement *parent_element,
             props.emplace_back(newPair);
         }
         catch (...) {}
-        props_element = props_element->NextSiblingElement("properties");
+        props_element = props_element->NextSiblingElement("property");
     }
 }
 
