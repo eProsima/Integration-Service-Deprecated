@@ -362,8 +362,8 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         userf_t function = nullptr;
         if (trans_el)
         {
-            const char* f_file = pub_el->Attribute("file");
-            const char* f_name = pub_el->Attribute("function");
+            const char* f_file = trans_el->Attribute("file");
+            const char* f_name = trans_el->Attribute("function");
             function_name = std::string(f_file) + "@" + f_name;
             void* handle = getLibraryHandle(f_file);
             function = (userf_t)eProsimaGetProcAddress(handle, f_name);
