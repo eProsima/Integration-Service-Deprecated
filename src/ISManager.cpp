@@ -184,7 +184,7 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
         listener->input_type->setName(sub_params.topic.topicDataType.c_str());
 
         // Make sure register this type only once per participant
-        std::string typeId = listener->getName() + listener->input_type->getName();
+        std::string typeId = std::string(listener->getParticipant()->getAttributes().rtps.getName()) + listener->input_type->getName();
         auto it = registered_types.find(typeId);
         if (it == registered_types.end() || !(*it).second)
         {
@@ -258,7 +258,7 @@ void ISManager::loadPublisher(Participant* participant, tinyxml2::XMLElement *pu
         publisher->output_type->setName(pub_params.topic.topicDataType.c_str());
 
         // Make sure register this type only once per participant
-        std::string typeId = publisher->getName() + publisher->output_type->getName();
+        std::string typeId = std::string(publisher->getParticipant()->getAttributes().rtps.getName()) + publisher->output_type->getName();
         auto it = registered_types.find(typeId);
         if (it == registered_types.end() || !(*it).second)
         {
