@@ -182,7 +182,15 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
 
         listener->input_type = new GenericPubSubType();
         listener->input_type->setName(sub_params.topic.topicDataType.c_str());
-        Domain::registerType(listener->getParticipant(),(TopicDataType*) listener->input_type);
+
+        // Make sure register this type only once per participant
+        std::string typeId = listener->getName() + listener->input_type->getName();
+        auto it = registered_types.find(typeId);
+        if (it == registered_types.end() || !(*it).second)
+        {
+            Domain::registerType(listener->getParticipant(),(TopicDataType*) listener->input_type);
+            registered_types[typeId] = true;
+        }
 
         // Create Subscriber
         listener->setRTPSSubscriber(Domain::createSubscriber(listener->getParticipant(), sub_params,
@@ -248,7 +256,15 @@ void ISManager::loadPublisher(Participant* participant, tinyxml2::XMLElement *pu
         //Register types
         publisher->output_type = new GenericPubSubType();
         publisher->output_type->setName(pub_params.topic.topicDataType.c_str());
-        Domain::registerType(publisher->getParticipant(), (TopicDataType*)publisher->output_type);
+
+        // Make sure register this type only once per participant
+        std::string typeId = publisher->getName() + publisher->output_type->getName();
+        auto it = registered_types.find(typeId);
+        if (it == registered_types.end() || !(*it).second)
+        {
+            Domain::registerType(publisher->getParticipant(), (TopicDataType*)publisher->output_type);
+            registered_types[typeId] = true;
+        }
 
         //Create publisher
         publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), pub_params,

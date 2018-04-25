@@ -30,6 +30,7 @@ class ISManager {
     std::map<std::string, ISSubscriber*> subscribers;
     std::map<std::string, ISPublisher*> publishers;
     std::map<std::string, void*> handles;
+    std::map<std::string, bool> registered_types;
     bool active;
     void parseProperties(tinyxml2::XMLElement *parent_element,
                          std::vector<std::pair<std::string, std::string>> &props);
