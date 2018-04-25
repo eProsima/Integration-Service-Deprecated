@@ -14,35 +14,20 @@
   #define USER_LIB_EXPORT
 #endif
 
-ISBridgeDummy* loadDummyBridge(void *bridge_config);
-
-// TODO ISBridge must be now an interface (or abstract class) that all Bridges must implement.
-// bridge_config is the string in the xml element <bridge_configuration>
-extern "C" ISBridge* USER_LIB_EXPORT createBridge(const char *bridge_config)
+extern "C" USER_LIB_EXPORT ISBridge* create_bridge(const char* name,
+    const std::vector<std::pair<std::string, std::string>> *config)
 {
-    // Add Bridge constructor and...
-    //return new ISBridgeDummy(bridge_config);
-
-    // OR configure here and return a cleaner Bridge class!
-    //return loadDummyBridge(bridge_config);
+    return loadDummyBridge(name);
 }
 
-// TODO parse the config and return a configured ISBRidgeDummy
-ISBridgeDummy* loadDummyBridge(const char *bridge_config)
+extern "C" USER_LIB_EXPORT ISSubscriber* create_subscriber(ISBridge *bridge, const char* name,
+    const std::vector<std::pair<std::string, std::string>> *config)
 {
-    try
-    {
-        ISBRidgeDummyConfig* config = ISBRidgeDummyConfig::Parse(bridge_config); // Or open file, etc.
-
-        // TODO Parse and configure
-        // [...]
-
-        ISBridgeDummy *bridge = new ISBridgeDummy(config);
-
-        return bridge;
-    }
-    catch (int e_code){
-        std::cout << "Invalid configuration, skipping bridge " << e_code << std::endl;
-    }
+    return loadDummySubscriber(name, config);
 }
 
+extern "C" USER_LIB_EXPORT ISPublisher* create_publisher(ISBridge *bridge, const char* name,
+    const std::vector<std::pair<std::string, std::string>> *config)
+{
+    return loadDummyPublisher(name, config);
+}

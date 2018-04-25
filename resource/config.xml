@@ -1,49 +1,94 @@
 <?xml version="1.0"?>
 <is>
-    <!-- Generic bridges -->
-    <bridge>
-        <!-- RTPS Bridge (Builtin bridge_library) -->
-        <bridge_type>unidirectional</bridge_type>
-        <subscriber>
-            <!-- RTPS subscriber parameters -->
+    <participant name="2Dshapes">
+        <attributes>
+            <!-- RTPS participant attributes -->
+        </attributes>
+
+        <subscriber name="2d_subscriber">
+            <attributes>
+				<!-- RTPS subscriber attributes -->
+            </attributes>
         </subscriber>
-        <publisher>
-            <!-- RTPS publisher parameters -->
+
+        <publisher name="2d_publisher">
+            <attributes>
+                <!-- RTPS publisher attributes -->
+            </attributes>
         </publisher>
-        <transformation>/path/to/transformation/library</transformation> <!-- OPTIONAL, must define transform function -->
-    </bridge>
-    <bridge>
-        <!-- RTPS -> Other -->
-        <bridge_type>unidirectional</bridge_type>
-        <subscriber>
-            <!-- RTPS subscriber parameters -->
+    </participant>
+
+    <participant name="3Dshapes">
+        <attributes>
+            <!-- RTPS participant attributes -->
+        </attributes>
+
+        <subscriber name="3d_subscriber">
+            <attributes>
+				<!-- RTPS subscriber attributes -->
+            </attributes>
         </subscriber>
-        <transformation>/path/to/transformation/library</transformation> <!-- OPTIONAL, must define transform function -->
-        <bridge_library>/path/to/bridge/library</bridge_library> <!-- must load tranform function as well -->
-        <bridge_configuration>bridge/and/other/configuration</bridge_configuration> <!-- Configuration for bridge -->
-    </bridge>
-    <bridge>
-        <!-- Other -> RTPS -->
-        <bridge_type>unidirectional</bridge_type>
-        <publisher>
-            <!-- RTPS publisher parameters -->
+
+        <publisher name="3d_publisher">
+            <attributes>
+                <!-- RTPS publisher attributes -->
+            </attributes>
         </publisher>
-        <bridge_library>/path/to/bridge/library</bridge_library> <!-- must load tranform function as well -->
-        <bridge_configuration>bridge/and/other/configuration</bridge_configuration> <!-- Configuration for bridge -->
+    </participant>
+
+    <bridge name="protocol">
+        <library>/path/to/bridge/library/libprotocol.so</library>
+        <properties>
+            <property>
+                <name>property1</name>
+                <value>value1</value>
+            </property>
+        </properties>
+
+        <publisher name="protocol_publisher">
+            <property>
+                <name>property1</name>
+                <value>value1</value>
+            </property>
+            <property>
+                <name>property2</name>
+                <value>value2</value>
+            </property>
+        </publisher>
+
+        <subscriber name="protocol_subscriber">
+            <property>
+                <name>property1</name>
+                <value>value1</value>
+            </property>
+            <property>
+                <name>property2</name>
+                <value>value2</value>
+            </property>
+        </subscriber>
     </bridge>
-    <bridge>
-        <!-- RTPS <-> Other -->
-        <bridge_type>bidirectional</bridge_type>
-        <rtps>
-            <subscriber>
-                <!-- RTPS subscriber parameters -->
-            </subscriber>
-            <publisher>
-                <!-- RTPS publisher parameters -->
-            </publisher>
-        </rtps>
-        <transformation>/path/to/transformation/library</transformation> <!-- OPTIONAL, must define transform function -->
-        <bridge_library>/path/to/bridge/library</bridge_library> <!-- RTPS <-> Other logic -->
-        <bridge_configuration>bridge/and/other/configuration</bridge_configuration> <!-- Configuration for bridge -->
-    </bridge>
+
+    <connector name="shapes_projection">
+        <subscriber participant_name="3Dshapes" subscriber_name="3d_subscriber"/>
+        <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
+        <transformation file="/path/to/transform/libuserlib.so" function="transform3D_to_2D"/>
+    </connector>
+
+    <connector name="shapes_stereo">
+        <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
+        <publisher participant_name="3Dshapes" publisher_name="3d_publisher"/>
+        <transformation file="/path/to/transform/libuserlib.so" function="transform2D_to_3D"/>
+    </connector>
+
+    <connector name="shapes_protocol">
+        <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
+        <publisher participant_name="protocol" publisher_name="protocol_publisher"/>
+        <transformation file="/path/to/transform/libprotocoltransf.so" function="transformFrom2D"/>
+    </connector>
+
+    <connector name="protocol_shapes">
+        <subscriber participant_name="protocol" subscriber_name="protocol_subscriber"/>
+        <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
+        <transformation file="/path/to/transform/libprotocoltransf.so" function="transformTo2D"/>
+    </connector>
 </is>
