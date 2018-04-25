@@ -40,6 +40,7 @@ protected:
     std::string name;
     virtual void setName(const std::string &name) { this->name = name; }
 public:
+    ISBaseClass(const std::string &name) : name(name) {};
     virtual const std::string& getName() const { return name; }
     virtual void onTerminate() {};
     virtual ~ISBaseClass() = default;
@@ -51,7 +52,7 @@ class ISPublisher : public ISBaseClass
 protected:
     ISBridge *mb_bridge;
 public:
-    ISPublisher(const std::string &name) : mb_bridge(nullptr) { setName(name); };
+    ISPublisher(const std::string &name) : ISBaseClass(name), mb_bridge(nullptr) { };
     virtual ~ISPublisher() = default;
     virtual bool publish(void *data) {};
     virtual ISBridge* setBridge(ISBridge *bridge);
@@ -67,7 +68,7 @@ class ISSubscriber : public ISBaseClass
 protected:
     std::vector<ISBridge*> mv_bridges;
 public:
-    ISSubscriber(const std::string &name) { setName(name); };
+    ISSubscriber(const std::string &name) : ISBaseClass(name) { };
     virtual ~ISSubscriber() = default;
     virtual void addBridge(ISBridge* bridge){
         mv_bridges.push_back(bridge);
@@ -98,7 +99,7 @@ protected:
         return sub + "@" + funct;
     }
 public:
-    ISBridge(const std::string &name) { setName(name); };
+    ISBridge(const std::string &name) : ISBaseClass(name) { };
     /**
      * This method will be called by ISManager when terminating the execution of the bridge.
      * Any handle, subscription, and resources that the bridge needed to work must be closed.
