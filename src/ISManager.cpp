@@ -287,7 +287,7 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
         {
             std::vector<std::pair<std::string, std::string>> configuration;
 
-            parseProperties(bridge_element, configuration);
+            parseProperties(properties, configuration);
 
             bridge = create_bridge(bridge_name, &configuration);
         }
