@@ -54,7 +54,7 @@ protected:
 public:
     ISPublisher(const std::string &name) : ISBaseClass(name), mb_bridge(nullptr) { };
     virtual ~ISPublisher() = default;
-    virtual bool publish(void *data) {};
+    virtual bool publish(SerializedPayload_t *data) {};
     virtual ISBridge* setBridge(ISBridge *bridge);
 
     // Forbid copy

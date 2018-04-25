@@ -45,7 +45,7 @@ public:
     GenericPubSubType *output_type;
     //RTPSPublisher() {}
     RTPSPublisher(const std::string &name) : ISPublisher(name) {}
-    virtual bool publish(void * data) override
+    virtual bool publish(SerializedPayload_t * data) override
     {
         return mp_publisher->write(data);
     }
