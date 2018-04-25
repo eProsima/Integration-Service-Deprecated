@@ -44,44 +44,34 @@ add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 
-if(WIN32)
-	add_library(islib
-	    src/dynamicload/dynamicload.cpp
-	    src/ISManager.cpp
-        src/ISBridge.cpp
-        src/ISBridgeRTPS.cpp
-	    src/GenericPubSubTypes.cpp
-	    thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
+add_library(islib SHARED
+    src/dynamicload/dynamicload.cpp
+    src/ISManager.cpp
+    src/GenericPubSubTypes.cpp
+    thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
 
-	target_include_directories(islib PUBLIC thirdparty/tinyxml2)
-else()
-	add_library(islib SHARED
-	    src/dynamicload/dynamicload.cpp
-	    src/ISManager.cpp
-        src/ISBridge.cpp
-        src/ISBridgeRTPS.cpp
-	    src/GenericPubSubTypes.cpp)
-endif()
+target_include_directories(islib PUBLIC thirdparty/tinyxml2)
+
+add_library(isrtpsbridgelib SHARED
+    src/builtin/RTPS/ISBridgeRTPS.cpp
+    src/builtin/RTPS/bridgertpslib.cpp)
 
 if(WIN32)
-	target_link_libraries(islib
-	    fastrtps_static
-	    fastcdr_static
-	    ${CMAKE_DL_LIBS}
-	    IPHLPAPI
-	    shlwapi)
+    target_link_libraries(islib
+        fastrtps_static
+        fastcdr_static
+        ${CMAKE_DL_LIBS}
+        IPHLPAPI
+        shlwapi)
 else()
-	target_link_libraries(islib
-	    fastrtps
-	    fastcdr
-	    tinyxml2
-	    -L/usr/lib/x86_64-linux-gnu
-	    curl
-	    curlpp
-	    ${Boost_LIBRARIES}
-	    boost_system
-	    ${CMAKE_DL_LIBS})
+    target_link_libraries(islib
+        fastrtps
+        fastcdr
+        -L/usr/lib/x86_64-linux-gnu
+        ${CMAKE_DL_LIBS})
 endif()
+
+target_link_libraries(isrtpsbridgelib islib)
 
 target_link_libraries(${PROJECT_NAME} islib)
 
@@ -107,6 +97,16 @@ install(
 
 export(
     TARGETS islib
+    FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
+
+install(
+    TARGETS isrtpsbridgelib
+    EXPORT ${PROJECT_NAME}Targets
+    COMPONENT libraries
+    DESTINATION ${LIB_INSTALL_DIR})
+
+export(
+    TARGETS isrtpsbridgelib islib
     FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
 
 install(
