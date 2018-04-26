@@ -39,14 +39,17 @@ There are two kind of libraries that the user can implement:
 
 **Bridge Library**: This library must export the following functions as defined in the *resource/templatebridgelib.cpp* file:
 
-    ISBridge* create_bridge(std::vector<std::pair<std::string, std::string>> *configuration);
-    ISSubscriber* create_subscriber(ISBridge* bridge, std::vector<std::pair<std::string, std::string>> *configuration);
-    ISPublisher* create_publisher(ISBridge* bridge, std::vector<std::pair<std::string, std::string>> *configuration);
+    ISBridge* create_bridge(const char* name,
+    	std::vector<std::pair<std::string, std::string>> *configuration);
+    ISSubscriber* create_subscriber(ISBridge* bridge, const char* name,
+    	std::vector<std::pair<std::string, std::string>> *configuration);
+    ISPublisher* create_publisher(ISBridge* bridge, const char* name,
+    	std::vector<std::pair<std::string, std::string>> *configuration);
 	
 The function *create_bridge* must return a pointer to an instance of a derived class of ISBridge, or nullptr if failed. 
 The function *create_subscriber* must return a pointer to an instance of a derived class of ISSubscriber, or nullptr if failed. 
 The function *create_publisher* must return a pointer to an instance of a derived class of ISPublisher, or nullptr if failed. 
-Integration Services will deallocate this object from memory when the bridge is stopped.
+Integration Services will deallocate this objects from memory when the bridge is stopped.
 
 Let's take a look to this interfaces:
 
@@ -92,6 +95,7 @@ When implementing your ISBridge derived class, you must take in account:
 - When your subscriber receives data, you must call on_received_data function with the data properly converted into SerializedPayload_t.
 - You can override the default behaviour, but isn't recommended in general. This behaviour follows this diagram:
 
+```plantuml
 @startuml
 hide footbox
 
@@ -110,15 +114,16 @@ ISBridge -> ISPublisher : publish
 
 ISPublisher ->] : write
 @enduml
+```
 
 When the subscriber calls it self to *on_received_data*, it will call all the *bridges* it belongs, calling the method *on_received_data* of each bridge.
 Then the bridges will apply each respective transformation functions to the data and will call the *publish* method of each of their publishers.
 All this behaviour will only accors with the declared connectors in the XML configuration file.
 
 
-**Tranformation Library**: This *optional* library must implement transformation functions for the received data.
+**Transformation Library**: This *optional* library must implement transformation functions for the received data.
 This *Transformation Libraries* are indicated in each connector.
-The *Bridges* will be provided with the function to call in each case.
+The *Bridge* connector will be configured with the function to call in each case.
 There is a prototype in *resource/templatelib.cpp*:
 
 	extern "C" void USER_LIB_EXPORT transform(
@@ -131,6 +136,7 @@ For both types of libraries, there are examples in each example folder of [FIROS
 May be necessary generate data types from IDL files to communicate with *Fast-RTPS*.
 
 The **config.xml** file must be adapted to each protocol. **ISManager** will provide the parsed *properties* node inside *bridge* node to the *create_bridge* function as a vector of pairs, as defined in the *Bridge Libraries*.
+The same applies for each publisher and subscriber inside *bridge* node and its *property* nodes.
 
 Your custom publisher/subscriber must inherit ISPublisher/ISSubscriber respectively.
 
@@ -141,7 +147,7 @@ How to instantiate your bridge, publisher and/or subscriber is responsability of
 The configuration files defines RTPS *participants*, *bridges* and *connectors*. 
 The *participants* can have one or more *endpoints*. *endpoints* can be subscribers or publishers. All this concepts are the same as the ones in Fast-RTPS.
 The *bridges* are the defined by the *bridge library* that implements the bridge and the definitions of the subscribers and publishers that we want to instantiate.
-Finally, the *conectors* are just relationhips between subscribers and publishers, and optionally, transformation functions.
+Finally, the *connectors* are just relationhips between subscribers and publishers, and optionally, transformation functions.
 
 As reference, let's take this configuration file:
 
@@ -239,14 +245,14 @@ As reference, let's take this configuration file:
 	    </connector>
 	</is>
 
-In this file there are defined two RTPS *participants*, and a *bridge*. All of them has a subscriber and a publisher.
+In this file there are defined two RTPS *participants*, and a *bridge*. All of them have a subscriber and a publisher.
 There are four connectors defined: *shapes_projection*, *shapes_stereo*, *shapes_protocol* and *protocol_shapes*.
 
-There are several possible types of connections depending of the kind of its participants.
+There are several possible types of connectors depending of the kind of its participants.
 
 - RTPS Bridge:
 
-In this kind of bridge, both participant are RTPS compliant, like *shapes_projection* and *shapes_stereo* in our example file.
+In this kind of connector, both participant are RTPS compliant, like *shapes_projection* and *shapes_stereo* in our example file.
 
 ```plantuml
 @startuml
@@ -276,12 +282,12 @@ UserLibrary -left-> Subscriber
 
 This connector will communicate a RTPS environment with another protocol. Just like our *shapes_protocol* connector.
 
-Your *Bridge Library* must define at least a publisher to your desired protocol and it is responsible to communicate with it and follow the ISPublisher interface. By default, the transformation function will be applied after the instance of ISBridge is called in the om_received_data method. If you want to change this behaviour you will need to override the complete data flow.
+Your *Bridge Library* must define at least a publisher to your desired protocol and it is responsible to communicate with it and follow the ISPublisher interface. By default, the transformation function will be applied after the instance of ISBridge is called in the on_received_data method. If you want to change this behaviour you will need to override the complete data flow.
 
-*bridge_configuration* node can contain configuration information that *Bridge Library* must understands. ISManager will parse the *property* nodes of each element and will call the respective *create_* function of the library with a vector of pairs with the data contained.
-If no *bridge_configuration* is provided, then your createBridge will be called with nullptr as parameter config.
+*Bridge_configuration* node can contain configuration information that *Bridge Library* must understand. ISManager will parse the *property* nodes of each element and will call the respective *create_* function of the library with a vector of pairs with the data contained.
+If no *bridge_configuration* is provided, then your createBridge will be called with nullptr or an empty vector as parameter config.
 
-*transformation* library could be reused by your bridge library, with the same or another transformation function inside the same transformation library (an example of reusing the transformation library can be found on [FIROS2](https://github.com/eProsima/FIROS2/tree/master/examples/TIS_NGSIv2). 
+*Transformation* library could be reused by your bridge library, with the same or another transformation function inside the same transformation library (an example of reusing the transformation library can be found on [FIROS2](https://github.com/eProsima/FIROS2/tree/master/examples/TIS_NGSIv2). 
 Of course, you can add builted in transformation functions inside your *bridge library*.
 
 * Other procotol -> RTPS
