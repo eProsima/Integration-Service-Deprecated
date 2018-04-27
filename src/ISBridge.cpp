@@ -53,6 +53,7 @@ void ISBridge::addPublisher(const std::string &sub, const std::string &funcName,
     //mm_publisher.emplace(key, pub);
     mm_inv_publisher[pub] = key;
     ms_subpubs.emplace(pub);
+    pub->setBridge(this);
 }
 
 ISPublisher* ISBridge::removePublisher(ISPublisher* pub)
@@ -106,7 +107,7 @@ ISBridge* ISPublisher::setBridge(ISBridge *bridge)
 {
     ISBridge *old = mb_bridge;
     mb_bridge = bridge;
-    if (old)
+    if (old && old != bridge)
     {
         old->removePublisher(this);
     }
