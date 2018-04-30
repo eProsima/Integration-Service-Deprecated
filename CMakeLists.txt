@@ -43,18 +43,17 @@ endif()
 add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
-
-add_library(islib SHARED
-    src/dynamicload/dynamicload.cpp
-    src/ISManager.cpp
-    src/ISBridge.cpp
-    src/ISBridgeRTPS.cpp
-    src/GenericPubSubTypes.cpp
-    thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
-
-target_include_directories(islib PRIVATE thirdparty/tinyxml2)
+target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
 
 if(WIN32)
+    add_library(islib
+        src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
+        src/ISManager.cpp src/ISManager.h
+        src/ISBridge.cpp src/ISBridge.h
+        src/ISBridgeRTPS.cpp src/ISBridgeRTPS.h
+        src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
+        thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
+
     target_link_libraries(islib
         fastrtps_static
         fastcdr_static
@@ -62,6 +61,14 @@ if(WIN32)
         IPHLPAPI
         shlwapi)
 else()
+    add_library(islib SHARED
+        src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
+        src/ISManager.cpp src/ISManager.h
+        src/ISBridge.cpp src/ISBridge.h
+        src/ISBridgeRTPS.cpp src/ISBridgeRTPS.h
+        src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
+        thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
+
     target_link_libraries(islib
         fastrtps
         fastcdr
@@ -69,6 +76,7 @@ else()
         ${CMAKE_DL_LIBS})
 endif()
 
+target_include_directories(islib PRIVATE thirdparty/tinyxml2)
 target_link_libraries(${PROJECT_NAME} islib)
 
 install(

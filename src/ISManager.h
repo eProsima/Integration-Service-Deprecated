@@ -25,7 +25,8 @@
 
 typedef ISBridge* (*loadbridgef_t)(const char *config);
 
-class ISManager {
+class ISManager
+{
     std::map<std::string, ISBridge*> bridges;
     std::map<std::string, ISSubscriber*> subscribers;
     std::map<std::string, ISPublisher*> publishers;

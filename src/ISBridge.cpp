@@ -70,6 +70,7 @@ ISPublisher* ISBridge::removePublisher(ISPublisher* pub)
         }
     }
     ms_subpubs.erase(pub);
+    return pub;
 }
 
 void ISSubscriber::on_received_data(SerializedPayload_t* payload)

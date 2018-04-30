@@ -25,7 +25,8 @@
 #include "GenericPubSubTypes.h"
 #include "xmlUtils.h"
 
-void RTPSListener::onSubscriptionMatched(Subscriber* sub, MatchingInfo& info){
+void RTPSListener::onSubscriptionMatched(Subscriber* sub, MatchingInfo& info)
+{
     if (info.status == MATCHED_MATCHING)
     {
         std::cout << "Subscriber matched" << std::endl;
@@ -63,8 +64,10 @@ RTPSListener::~RTPSListener()
 void RTPSListener::onNewDataMessage(Subscriber* sub)
 {
     SerializedPayload_t serialized_input;
-    if(sub->takeNextData(&serialized_input, &m_info)){
-        if(m_info.sampleKind == ALIVE){
+    if(sub->takeNextData(&serialized_input, &m_info))
+    {
+        if(m_info.sampleKind == ALIVE)
+        {
             on_received_data(&serialized_input);
             /*
             for (ISBridge* bridge : mv_bridges)

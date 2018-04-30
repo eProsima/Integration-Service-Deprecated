@@ -43,13 +43,13 @@ static const std::string s_sFile("file");
 static const std::string s_sFunction("function");
 static const std::string s_sValue("value");
 
-ISManager::ISManager(const std::string &xml_file_path) : active(false)
+ISManager::ISManager(const std::string &xml_file_path)
+    : active(false)
 {
     tinyxml2::XMLDocument doc;
     doc.LoadFile(xml_file_path.c_str());
 
     tinyxml2::XMLElement *bridge_element = doc.FirstChildElement(s_sIS.c_str());
-
     if (!bridge_element)
     {
         std::cout << "Invalid config file" << std::endl;
@@ -146,7 +146,6 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
         part_params.rtps.setName(part_name);
 
         Participant* participant = Domain::createParticipant(part_params);
-
         tinyxml2::XMLElement *subscribers = participant_element->FirstChildElement(s_sSubscriber.c_str());
         while (subscribers)
         {
@@ -172,7 +171,6 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
     try
     {
         const char* sub_name = subscriber_element->Attribute(s_sName.c_str());
-
         tinyxml2::XMLElement *attribs = subscriber_element->FirstChildElement(s_sAttributes.c_str());
         if (!attribs)
         {
@@ -243,7 +241,6 @@ void ISManager::loadPublisher(Participant* participant, tinyxml2::XMLElement *pu
     try
     {
         const char* pub_name = publisher_element->Attribute(s_sName.c_str());
-
         tinyxml2::XMLElement *attribs = publisher_element->FirstChildElement(s_sAttributes.c_str());
         if (!attribs)
         {
