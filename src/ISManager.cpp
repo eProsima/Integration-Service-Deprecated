@@ -14,6 +14,7 @@
 
 #include "ISManager.h"
 #include "ISBridgeRTPS.h"
+#include "log/ISLog.h"
 #include <fastrtps/Domain.h>
 
 // String literals
@@ -52,7 +53,7 @@ ISManager::ISManager(const std::string &xml_file_path)
     tinyxml2::XMLElement *bridge_element = doc.FirstChildElement(s_sIS.c_str());
     if (!bridge_element)
     {
-        std::cout << "Invalid config file" << std::endl;
+        LOG("Invalid config file");
         return;
     }
 
@@ -120,14 +121,14 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
         const char* part_name = participant_element->Attribute(s_sName.c_str());
         if (!part_name)
         {
-           std::cout << "Found participant without name." << std::endl;
+           LOG("Found participant without name.");
            throw 0;
         }
 
         tinyxml2::XMLElement *attribs = participant_element->FirstChildElement(s_sAttributes.c_str());
         if (!attribs)
         {
-            std::cout << "No attributes found for participant " << part_name << std::endl;
+            LOG("No attributes found for participant " << part_name);
             throw 0;
         }
 
@@ -135,7 +136,7 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
         tinyxml2::XMLElement *current_element = _assignNextElement(attribs, s_sDomain);
         if(current_element->QueryIntText(&output_domain))
         {
-            std::cout << "Cannot parse domain for participant " << part_name << std::endl;
+            LOG("Cannot parse domain for participant ");
             throw 0;
         }
 
@@ -162,7 +163,7 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
     }
     catch (int e_code)
     {
-        std::cout << "Error ocurred while loading participant " << e_code << std::endl;
+        LOG_ERROR("Error ocurred while loading participant " << e_code);
     }
 }
 
@@ -174,7 +175,7 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
         tinyxml2::XMLElement *attribs = subscriber_element->FirstChildElement(s_sAttributes.c_str());
         if (!attribs)
         {
-            std::cout << "No attributes found for subscriber " << sub_name << std::endl;
+            LOG("No attributes found for subscriber " << sub_name);
             throw 0;
         }
 
@@ -227,12 +228,12 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
         }
 
         addSubscriber(listener);
-        std::cout << "Added subscriber " << listener->getName()
-            << "[" << topic_name << ":" << participant->getAttributes().rtps.builtin.domainId << "]" << std::endl;
+        LOG_INFO("Added subscriber " << listener->getName() << "[" << topic_name << ":"
+            << participant->getAttributes().rtps.builtin.domainId << "]");
     }
     catch (int e_code)
     {
-        std::cout << "Error ocurred while loading subscriber " << e_code << std::endl;
+        LOG_ERROR("Error ocurred while loading subscriber " << e_code);
     }
 }
 
@@ -244,7 +245,7 @@ void ISManager::loadPublisher(Participant* participant, tinyxml2::XMLElement *pu
         tinyxml2::XMLElement *attribs = publisher_element->FirstChildElement(s_sAttributes.c_str());
         if (!attribs)
         {
-            std::cout << "No attributes found for publisher " << pub_name << std::endl;
+            LOG("No attributes found for publisher " << pub_name);
             throw 0;
         }
 
@@ -300,12 +301,12 @@ void ISManager::loadPublisher(Participant* participant, tinyxml2::XMLElement *pu
         }
 
         addPublisher(publisher);
-        std::cout << "Added publisher " << publisher->getName()
-            << "[" << topic_name << ":" << participant->getAttributes().rtps.builtin.domainId << "]" << std::endl;
+        LOG_INFO("Added publisher " << publisher->getName()<< "[" << topic_name << ":"
+            << participant->getAttributes().rtps.builtin.domainId << "]");
     }
     catch (int e_code)
     {
-        std::cout << "Error ocurred while loading publisher " << e_code << std::endl;
+        LOG_ERROR("Error ocurred while loading publisher " << e_code);
     }
 }
 
@@ -362,7 +363,7 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
     }
     catch (int e_code)
     {
-        std::cout << "Error ocurred while loading bridge " << e_code << std::endl;
+        LOG_ERROR("Error ocurred while loading bridge " << e_code);
     }
 }
 
@@ -386,14 +387,14 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         auto its = subscribers.find(subName);
         if (its == subscribers.end())
         {
-            std::cout << "Subscriber " << sub_name << " of participant " << sub_part << " cannot be found." << std::endl;
+            LOG_ERROR("Subscriber " << sub_name << " of participant " << sub_part << " cannot be found.");
             throw 0;
         }
 
         auto itp = publishers.find(pubName);
         if (itp == publishers.end())
         {
-            std::cout << "Publisher " << pub_name << " of participant " << pub_part << " cannot be found." << std::endl;
+            LOG_ERROR("Publisher " << pub_name << " of participant " << pub_part << " cannot be found.");
             throw 0;
         }
 
@@ -424,7 +425,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         else if (itsb != bridges.end() && itpb != bridges.end())
         {
             // No RTPS endpoint?
-            std::cout << "Connector " << connector_name << " without RTPS endpoint!" << std::endl;
+            LOG_ERROR("Connector " << connector_name << " without RTPS endpoint!");
             throw 0; // Not allowed.
         }
         else if(itsb != bridges.end())
@@ -442,11 +443,11 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         bridge->addPublisher(sub->getName(), function_name, pub);
         bridge->addFunction(sub->getName(), function_name, function);
 
-        std::cout << "Set bridge between " << sub->getName() << " and " << pub->getName() << std::endl;
+        LOG_INFO("Set bridge between " << sub->getName() << " and " << pub->getName());
     }
     catch (int e_code)
     {
-        std::cout << "Error ocurred while loading connector " << e_code << std::endl;
+        LOG_ERROR("Error ocurred while loading connector " << e_code);
     }
 }
 
@@ -506,7 +507,7 @@ void* ISManager::getLibraryHandle(const std::string &libpath)
         }
         else
         {
-            std::cout << "Cannot load library " << libpath << std::endl;
+            LOG_WARN("Cannot load library " << libpath);
         }
     }
 

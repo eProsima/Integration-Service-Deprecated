@@ -1,5 +1,6 @@
 #include <iostream>
 #include "dynamicload.h"
+#include "../log/ISLog.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -21,9 +22,9 @@ void* eProsimaLoadLibrary(const char *filename)
     if(libraryHandle == nullptr)
     {
         #ifdef _WIN32
-        std::cout << "Load failed: " << GetLastError() << std::endl;
+        LOG_ERROR("Load failed: " << GetLastError());
         #else
-        std::cout << "Load failed: " << dlerror() << std::endl;
+        LOG_ERROR("Load failed: " << dlerror());
         #endif
     }
 
@@ -43,7 +44,7 @@ void* eProsimaGetProcAddress(void *libraryHandle, const char *functionName)
     }
     else
     {
-        std::cout << "Bad parameters" << std::endl;
+        LOG_WARN("Bad parameters " << functionName);
     }
     return functionPointer;
 }

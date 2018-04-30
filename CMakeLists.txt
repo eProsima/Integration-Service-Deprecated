@@ -40,7 +40,7 @@ else()
     set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
 endif()
 
-add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS)
+add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS -DLOG_LEVEL_ERROR)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
@@ -48,7 +48,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
 if(WIN32)
     add_library(islib
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
-        src/ISManager.cpp src/ISManager.h
+        src/ISManager.cpp src/ISManager.h src/log/ISLog.h
         src/ISBridge.cpp src/ISBridge.h
         src/ISBridgeRTPS.cpp src/ISBridgeRTPS.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
@@ -63,7 +63,7 @@ if(WIN32)
 else()
     add_library(islib SHARED
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
-        src/ISManager.cpp src/ISManager.h
+        src/ISManager.cpp src/ISManager.h src/log/ISLog.h
         src/ISBridge.cpp src/ISBridge.h
         src/ISBridgeRTPS.cpp src/ISBridgeRTPS.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h

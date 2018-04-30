@@ -24,16 +24,17 @@
 #include "ISBridgeRTPS.h"
 #include "GenericPubSubTypes.h"
 #include "xmlUtils.h"
+#include "log/ISLog.h"
 
 void RTPSListener::onSubscriptionMatched(Subscriber* sub, MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
-        std::cout << "Subscriber matched" << std::endl;
+        LOG_INFO("Subscriber matched");
     }
     else
     {
-        std::cout << "Subscriber unmatched" << std::endl;
+        LOG_INFO("Subscriber unmatched");
     }
 }
 
@@ -41,11 +42,11 @@ void RTPSPublisher::onPublicationMatched(Publisher* pub, MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
-        std::cout << "Publisher matched" << std::endl;
+        LOG_INFO("Publisher matched");
     }
     else
     {
-        std::cout << "Publisher unmatched" << std::endl;
+        LOG_INFO("Publisher unmatched");
     }
 }
 
