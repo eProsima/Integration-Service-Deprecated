@@ -4,19 +4,19 @@
 #include <iostream>
 
 #ifndef LOG_LEVEL_DEBUG
-/* #undef LOG_LEVEL_DEBUG */
+#cmakedefine LOG_LEVEL_DEBUG
 #endif
 
 #ifndef LOG_LEVEL_INFO
-#define LOG_LEVEL_INFO
+#cmakedefine LOG_LEVEL_INFO
 #endif
 
 #ifndef LOG_LEVEL_WARN
-/* #undef LOG_LEVEL_WARN */
+#cmakedefine LOG_LEVEL_WARN
 #endif
 
 #ifndef LOG_LEVEL_ERROR
-#define LOG_LEVEL_ERROR
+#cmakedefine LOG_LEVEL_ERROR
 #endif
 
 #if defined _DEBUG || defined DEBUG
