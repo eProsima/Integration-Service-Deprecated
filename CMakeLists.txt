@@ -62,11 +62,6 @@ IF (NOT DEFINED LOG_LEVEL_ERROR)
 ENDIF()
 ADD_DEFINITIONS(-DLOG_LEVEL_ERROR=${LOG_LEVEL_ERROR})
 
-#set(LOG_LEVEL_DEBUG OFF)
-#set(LOG_LEVEL_INFO OFF)
-#set(LOG_LEVEL_WARN OFF)
-#set(LOG_LEVEL_ERROR ON)
-
 configure_file(src/log/ISLog.h.in ${PROJECT_SOURCE_DIR}/src/log/ISLog.h)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
@@ -77,7 +72,9 @@ if(WIN32)
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
         src/ISManager.cpp src/ISManager.h src/log/ISLog.h
         src/ISBridge.cpp src/ISBridge.h
-        src/ISBridgeRTPS.cpp src/ISBridgeRTPS.h
+        src/RTPSBridge.cpp src/RTPSBridge.h
+        src/RTPSPublisher.cpp src/RTPSPublisher.h
+        src/RTPSSubscriber.cpp src/RTPSSubscriber.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
         thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
 
@@ -92,7 +89,9 @@ else()
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
         src/ISManager.cpp src/ISManager.h src/log/ISLog.h
         src/ISBridge.cpp src/ISBridge.h
-        src/ISBridgeRTPS.cpp src/ISBridgeRTPS.h
+        src/RTPSBridge.cpp src/RTPSBridge.h
+        src/RTPSPublisher.cpp src/RTPSPublisher.h
+        src/RTPSSubscriber.cpp src/RTPSSubscriber.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
         thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
 

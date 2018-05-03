@@ -13,7 +13,9 @@
 // limitations under the License.
 
 #include "ISManager.h"
-#include "ISBridgeRTPS.h"
+#include "RTPSBridge.h"
+#include "RTPSPublisher.h"
+#include "RTPSSubscriber.h"
 #include "log/ISLog.h"
 #include <fastrtps/Domain.h>
 
@@ -198,7 +200,7 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
             sub_params.qos.m_partition.push_back(partition);
         }
 
-        RTPSListener* listener = new RTPSListener(getEndPointName(participant->getAttributes().rtps.getName(), sub_name));
+        RTPSSubscriber* listener = new RTPSSubscriber(getEndPointName(participant->getAttributes().rtps.getName(), sub_name));
         listener->setParticipant(participant);
         if(!listener->hasParticipant())
         {
@@ -419,7 +421,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         if (itsb == bridges.end() && itpb == bridges.end())
         {
             // Create the RTPS bridge
-            bridge = (ISBridge*)new ISBridgeRTPS(connector_name);
+            bridge = (ISBridge*)new RTPSBridge(connector_name);
             addBridge(bridge);
         }
         else if (itsb != bridges.end() && itpb != bridges.end())

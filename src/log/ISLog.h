@@ -8,7 +8,7 @@
 #endif
 
 #ifndef LOG_LEVEL_INFO
-#define LOG_LEVEL_INFO
+/* #undef LOG_LEVEL_INFO */
 #endif
 
 #ifndef LOG_LEVEL_WARN
