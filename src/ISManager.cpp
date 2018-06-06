@@ -18,6 +18,7 @@
 #include "RTPSSubscriber.h"
 #include "log/ISLog.h"
 #include <fastrtps/Domain.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 
 // String literals
 static const std::string s_sIS("is");
@@ -45,6 +46,11 @@ static const std::string s_sPublisherName("publisher_name");
 static const std::string s_sFile("file");
 static const std::string s_sFunction("function");
 static const std::string s_sValue("value");
+// TCP parameters
+static const std::string s_sProtocol("protocol");
+static const std::string s_sRemoteAddress("remoteAddesss");
+static const std::string s_sRemotePort("remotePort");
+static const std::string s_sListeningPort("listeningPort");
 
 ISManager::ISManager(const std::string &xml_file_path)
     : active(false)
@@ -144,6 +150,70 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
 
         // Participant configuration
         ParticipantAttributes part_params;
+
+        // Is TCP?
+        current_element = _assignOptionalElement(attribs, s_sProtocol);
+        //current_element = attribs->FirstChildElement(s_sProtocol.c_str());
+        const char* protocol = (current_element == nullptr) ? nullptr : current_element->GetText();
+        if (protocol != nullptr && strncmp(protocol, "tcp", 3) == 0)
+        {
+            const char* address = _assignNextElement(attribs, s_sRemoteAddress)->GetText();
+            int remotePort, localPort;
+            current_element = _assignNextElement(attribs, s_sRemotePort);
+            if(current_element->QueryIntText(&remotePort))
+            {
+                LOG("Cannot parse remote port for TCP participant ");
+                throw 0;
+            }
+            current_element = _assignNextElement(attribs, s_sListeningPort);
+            if(current_element->QueryIntText(&localPort))
+            {
+                LOG("Cannot parse listening port for TCP participant ");
+                throw 0;
+            }
+
+            std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+            descriptor->listening_ports.emplace_back(localPort);
+            descriptor->sendBufferSize = 0;
+            descriptor->receiveBufferSize = 0;
+            descriptor->set_WAN_address(address);
+
+            Locator_t initial_peer_locator;
+            initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
+            initial_peer_locator.set_IP4_address("127.0.0.1");
+            initial_peer_locator.set_port(remotePort);
+            //initial_peer_locator.set_logical_port(7402);
+            // Remote meta channel
+            part_params.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
+
+            Locator_t out_locator;
+            out_locator.kind = LOCATOR_KIND_TCPv4;
+            out_locator.set_IP4_address("127.0.0.1");
+            out_locator.set_port(remotePort);
+            //out_locator.set_logical_port(7410);
+            // Remote data channel
+            part_params.rtps.defaultOutLocatorList.push_back(out_locator);
+
+            Locator_t unicast_locator;
+            unicast_locator.kind = LOCATOR_KIND_TCPv4;
+            unicast_locator.set_IP4_address("127.0.0.1");
+            unicast_locator.set_port(localPort);
+            //unicast_locator.set_logical_port(7410);
+            // Our data channel
+            part_params.rtps.defaultUnicastLocatorList.push_back(unicast_locator); 
+
+            Locator_t meta_locator;
+            meta_locator.kind = LOCATOR_KIND_TCPv4;
+            meta_locator.set_IP4_address("127.0.0.1");
+            meta_locator.set_port(localPort);
+            //meta_locator.set_logical_port(7402);
+            // Our meta channel 
+            part_params.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  
+
+            part_params.rtps.useBuiltinTransports = false;
+            part_params.rtps.userTransports.push_back(descriptor);
+        }
+
         part_params.rtps.builtin.domainId = output_domain;
         part_params.rtps.builtin.leaseDuration = c_TimeInfinite;
         part_params.rtps.setName(part_name);
