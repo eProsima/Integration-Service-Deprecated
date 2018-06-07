@@ -14,7 +14,7 @@
 
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
-/*
+
 #include "GenericPubSubTypes.h"
 
 GenericPubSubType::GenericPubSubType()
@@ -53,9 +53,3 @@ std::function<uint32_t()> GenericPubSubType::getSerializedSizeProvider(void* dat
 		return p_type->length;
 	};
 }
-
-void* GenericPubSubType::createData()
-{
-	return new SerializedPayload_t(m_typeSize + 4);
-}
-*/

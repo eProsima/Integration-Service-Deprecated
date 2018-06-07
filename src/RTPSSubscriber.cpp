@@ -13,10 +13,12 @@
 // limitations under the License.
 
 #include <fastrtps/Domain.h>
+#include <fastcdr/Cdr.h>
 #include "RTPSSubscriber.h"
 #include "GenericPubSubTypes.h"
 #include "log/ISLog.h"
 #include "Shape.h"
+#include "ShapePubSubTypes.h"
 
 RTPSSubscriber::RTPSSubscriber(const std::string &name)
     : ISSubscriber(name)
@@ -45,16 +47,22 @@ void RTPSSubscriber::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& in
 
 void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
 {
-    SerializedPayload_t serialized_input(this->input_type->m_typeSize);
+    SerializedPayload_t serialized_input(input_type->m_typeSize);
+    //octet* buffer = new octet[ShapeType::getKeyMaxCdrSerializedSize() + 4];
     if(sub->takeNextData(serialized_input.data, &m_info))
     {
-        ShapeType* shape = (ShapeType*) serialized_input.data;
-        serialized_input.length = static_cast<uint32_t>(ShapeType::getCdrSerializedSize(*shape)) + 4;
+        //ShapeTypePubSubType pubSub;
+        //pubSub.serialize(buffer, &serialized_input);
+        //ShapeType* shape = (ShapeType*) serialized_input.data;
+        serialized_input.length = input_type->m_typeSize + 4; //static_cast<uint32_t>(ShapeType::getCdrSerializedSize(*shape) + 4);
+        serialized_input.encapsulation = 
+            eprosima::fastcdr::Cdr::DEFAULT_ENDIAN == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         if(m_info.sampleKind == ALIVE)
         {
             on_received_data(&serialized_input);
         }
     }
+    //delete buffer;
 }
 
 void RTPSSubscriber::setParticipant(Participant* part)
