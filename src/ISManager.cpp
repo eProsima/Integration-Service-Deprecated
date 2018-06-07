@@ -191,13 +191,11 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
             // Remote meta channel
             part_params.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
 
-            Locator_t out_locator;
-            out_locator.kind = LOCATOR_KIND_TCPv4;
-            out_locator.set_IP4_address("127.0.0.1");
-            out_locator.set_port(remotePort);
-            //out_locator.set_logical_port(7410);
-            // Remote data channel
-            part_params.rtps.defaultOutLocatorList.push_back(out_locator);
+            //Locator_t out_locator;
+            //out_locator.kind = LOCATOR_KIND_TCPv4;
+            //out_locator.set_IP4_address("127.0.0.1");
+            //out_locator.set_port(remotePort);
+            //part_params.rtps.defaultOutLocatorList.push_back(out_locator);
 
             Locator_t unicast_locator;
             unicast_locator.kind = LOCATOR_KIND_TCPv4;
