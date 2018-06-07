@@ -16,6 +16,7 @@
 #include "RTPSSubscriber.h"
 #include "GenericPubSubTypes.h"
 #include "log/ISLog.h"
+#include "Shape.h"
 
 RTPSSubscriber::RTPSSubscriber(const std::string &name)
     : ISSubscriber(name)
@@ -44,9 +45,11 @@ void RTPSSubscriber::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& in
 
 void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
 {
-    SerializedPayload_t serialized_input;
-    if(sub->takeNextData(&serialized_input, &m_info))
+    SerializedPayload_t serialized_input(this->input_type->m_typeSize);
+    if(sub->takeNextData(serialized_input.data, &m_info))
     {
+        ShapeType* shape = (ShapeType*) serialized_input.data;
+        serialized_input.length = static_cast<uint32_t>(ShapeType::getCdrSerializedSize(*shape)) + 4;
         if(m_info.sampleKind == ALIVE)
         {
             on_received_data(&serialized_input);

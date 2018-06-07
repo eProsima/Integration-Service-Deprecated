@@ -158,10 +158,11 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
         const char* protocol = (current_element == nullptr) ? nullptr : current_element->GetText();
         if (protocol != nullptr && strncmp(protocol, "tcp", 3) == 0)
         {
-            const char* address = _assignNextElement(attribs, s_sRemoteAddress)->GetText();
-            int remotePort, localPort;
-            current_element = _assignNextElement(attribs, s_sRemotePort);
-            if(current_element->QueryIntText(&remotePort))
+            current_element = _assignOptionalElement(attribs, s_sRemoteAddress);
+            const char* address = (current_element == nullptr) ? nullptr : current_element->GetText();
+            int remotePort(0), localPort(0);
+            current_element = _assignOptionalElement(attribs, s_sRemotePort);
+            if(current_element != nullptr && current_element->QueryIntText(&remotePort))
             {
                 LOG("Cannot parse remote port for TCP participant ");
                 throw 0;
@@ -177,7 +178,10 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
             descriptor->listening_ports.emplace_back(localPort);
             descriptor->sendBufferSize = 0;
             descriptor->receiveBufferSize = 0;
-            descriptor->set_WAN_address(address);
+            if (address != nullptr)
+            {
+                descriptor->set_WAN_address(address);
+            }
 
             Locator_t initial_peer_locator;
             initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
@@ -201,15 +205,15 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
             unicast_locator.set_port(localPort);
             //unicast_locator.set_logical_port(7410);
             // Our data channel
-            part_params.rtps.defaultUnicastLocatorList.push_back(unicast_locator); 
+            part_params.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
 
             Locator_t meta_locator;
             meta_locator.kind = LOCATOR_KIND_TCPv4;
             meta_locator.set_IP4_address("127.0.0.1");
             meta_locator.set_port(localPort);
             //meta_locator.set_logical_port(7402);
-            // Our meta channel 
-            part_params.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  
+            // Our meta channel
+            part_params.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
             part_params.rtps.useBuiltinTransports = false;
             part_params.rtps.userTransports.push_back(descriptor);

@@ -41,7 +41,7 @@ void RTPSPublisher::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 
 bool RTPSPublisher::publish(SerializedPayload_t * data)
 {
-    return mp_publisher->write(data);
+    return mp_publisher->write(data->data);
 }
 
 void RTPSPublisher::setParticipant(Participant* part)

@@ -99,7 +99,7 @@ bool ShapeTypePubSubType::getKey(void *data, rtps::InstanceHandle_t* handle) {
         return false;
     ShapeType* p_type = (ShapeType*) data;
     eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,ShapeType::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN); 	// Object that serializes the data.
     p_type->serializeKey(ser);
     if(ShapeType::getKeyMaxCdrSerializedSize()>16)	{
         m_md5.init();
