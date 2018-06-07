@@ -2,102 +2,103 @@
 <is>
     <participant name="LocalShapes">
         <attributes>
-            <domain>0</domain>
+            <domain>1</domain>
         </attributes>
 
         <subscriber name="subscriberSquare">
             <attributes>
 				<topic>Square</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </subscriber>
 
         <subscriber name="subscriberTriangle">
             <attributes>
 				<topic>Triangle</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </subscriber>
 
         <subscriber name="subscriberCircle">
             <attributes>
 				<topic>Circle</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </subscriber>
-
+<!--
         <publisher name="publisherSquare">
             <attributes>
 				<topic>Square</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </publisher>
 
         <publisher name="publisherTriangle">
             <attributes>
 				<topic>Triangle</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </publisher>
 
         <publisher name="publisherCircle">
             <attributes>
 				<topic>Circle</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </publisher>
+-->
     </participant>
 
     <participant name="TCPShapes">
         <attributes>
-            <domain>0</domain>
-            <!-- TODO TCP parameters -->
+            <domain>3</domain>
+            <!-- TODO TCP parameters 
             <protocol>tcp</protocol>
             <remoteAddesss>192.168.1.55</remoteAddesss>
             <remotePort>5100</remotePort>
-            <listeningPort>5100</listeningPort> <!-- Our port -->
+            <listeningPort>0</listeningPort> <!-- Our port -->
             <!-- TODO Use default logical ports? Or specify them? -->
         </attributes>
-
+<!--
         <subscriber name="subscriberSquare">
             <attributes>
 				<topic>Square</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </subscriber>
 
         <subscriber name="subscriberTriangle">
             <attributes>
 				<topic>Triangle</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </subscriber>
 
         <subscriber name="subscriberCircle">
             <attributes>
 				<topic>Circle</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </subscriber>
-
+-->
         <publisher name="publisherSquare">
             <attributes>
 				<topic>Square</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </publisher>
 
         <publisher name="publisherTriangle">
             <attributes>
 				<topic>Triangle</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </publisher>
 
         <publisher name="publisherCircle">
             <attributes>
 				<topic>Circle</topic>
-				<type>Shape</type>
+				<type>ShapeType</type>
             </attributes>
         </publisher>
     </participant>
@@ -116,7 +117,7 @@
         <subscriber participant_name="LocalShapes" subscriber_name="subscriberCircle"/>
         <publisher participant_name="TCPShapes" publisher_name="publisherCircle"/>
     </connector>
-
+<!--
     <connector name="TCP_Local_SQUARES"> 
         <subscriber participant_name="TCPShapes" subscriber_name="subscriberSquare"/>
         <publisher participant_name="LocalShapes" publisher_name="publisherSquare"/>
@@ -131,4 +132,5 @@
         <subscriber participant_name="TCPShapes" subscriber_name="subscriberCircle"/>
         <publisher participant_name="LocalShapes" publisher_name="publisherCircle"/>
     </connector>
+-->
 </is>

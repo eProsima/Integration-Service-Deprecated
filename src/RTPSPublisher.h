@@ -25,9 +25,9 @@
 #include "fastrtps/attributes/PublisherAttributes.h"
 #include "fastrtps/subscriber/SampleInfo.h"
 #include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/TopicDataType.h>
 
 #include "ISBridge.h"
-#include "GenericPubSubTypes.h"
 #include "dynamicload/dynamicload.h"
 
 using namespace eprosima::fastrtps;
@@ -39,7 +39,7 @@ private:
     Publisher *mp_publisher;
     Participant *mp_participant;
 public:
-    GenericPubSubType *output_type;
+    TopicDataType *output_type;
     RTPSPublisher(const std::string &name);
     virtual bool publish(SerializedPayload_t * data) override;
     ~RTPSPublisher() override;

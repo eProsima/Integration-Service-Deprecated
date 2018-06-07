@@ -18,12 +18,38 @@
 
 #include <map>
 #include <iostream>
+#include <tinyxml2.h>
+#include "log/ISLog.h"
 #include "ISBridge.h"
 #include "dynamicload/dynamicload.h"
-#include "xmlUtils.h"
 #include <fastrtps/participant/Participant.h>
+#include <fastrtps/participant/ParticipantListener.h>
 
 typedef ISBridge* (*loadbridgef_t)(const char *config);
+
+class MyParticipantListener : public ParticipantListener
+{
+public:
+    virtual void onParticipantDiscovery(Participant* /*p*/, ParticipantDiscoveryInfo info)
+    {
+        if (info.rtps.m_status == DISCOVERY_STATUS::DISCOVERED_RTPSPARTICIPANT)
+        {
+            LOG_INFO("Participant discovered " << info.rtps.m_RTPSParticipantName);
+        }
+        else if (info.rtps.m_status == DISCOVERY_STATUS::REMOVED_RTPSPARTICIPANT)
+        {
+            LOG_INFO("Participant removed " << info.rtps.m_RTPSParticipantName);
+        }
+        else if (info.rtps.m_status == DISCOVERY_STATUS::DROPPED_RTPSPARTICIPANT)
+        {
+            LOG_INFO("Participant dropped " << info.rtps.m_RTPSParticipantName);
+        }
+        else if (info.rtps.m_status == DISCOVERY_STATUS::CHANGED_QOS_RTPSPARTICIPANT)
+        {
+            LOG_INFO("Participant changed QOS " << info.rtps.m_RTPSParticipantName);
+        }
+    }
+};
 
 class ISManager
 {
@@ -35,6 +61,7 @@ class ISManager
     bool active;
     void parseProperties(tinyxml2::XMLElement *parent_element,
                          std::vector<std::pair<std::string, std::string>> &props);
+    MyParticipantListener myParticipantListener;
 public:
     ISManager(const std::string &xml_file_path);
     ~ISManager();

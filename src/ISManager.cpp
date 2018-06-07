@@ -16,9 +16,10 @@
 #include "RTPSBridge.h"
 #include "RTPSPublisher.h"
 #include "RTPSSubscriber.h"
-#include "log/ISLog.h"
+#include "xmlUtils.h"
 #include <fastrtps/Domain.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include "ShapePubSubTypes.h"
 
 // String literals
 static const std::string s_sIS("is");
@@ -218,7 +219,7 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
         part_params.rtps.builtin.leaseDuration = c_TimeInfinite;
         part_params.rtps.setName(part_name);
 
-        Participant* participant = Domain::createParticipant(part_params);
+        Participant* participant = Domain::createParticipant(part_params, &myParticipantListener);
         tinyxml2::XMLElement *subscribers = participant_element->FirstChildElement(s_sSubscriber.c_str());
         while (subscribers)
         {
@@ -262,9 +263,20 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
         // Subscriber configuration
         SubscriberAttributes sub_params;
         sub_params.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
-        sub_params.topic.topicKind = NO_KEY;
+        //sub_params.topic.topicKind = NO_KEY;
+        sub_params.topic.topicKind = WITH_KEY;
         sub_params.topic.topicDataType = type_name;
         sub_params.topic.topicName = topic_name;
+
+        // TODO To config?
+        sub_params.expectsInlineQos = false;
+        sub_params.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+        sub_params.topic.historyQos.depth = 5;
+        sub_params.qos.m_presentation.hasChanged = true;
+        sub_params.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        sub_params.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        sub_params.qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
+
         if (partition != nullptr)
         {
             sub_params.qos.m_partition.push_back(partition);
@@ -278,8 +290,10 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
             throw 0;
         }
 
-        listener->input_type = new GenericPubSubType();
+        //listener->input_type = new GenericPubSubType();
+        listener->input_type = new ShapeTypePubSubType();
         listener->input_type->setName(sub_params.topic.topicDataType.c_str());
+        listener->input_type->m_isGetKeyDefined = true;
 
         // Make sure register this type only once per participant
         std::string typeId = std::string(listener->getParticipant()->getAttributes().rtps.getName()) + listener->input_type->getName();
@@ -295,8 +309,9 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
                                                         (SubscriberListener*)listener));
         if(!listener->hasRTPSSubscriber())
         {
+            LOG_ERROR("Error ocurred while loading subscriber");
             delete listener;
-            throw 0;
+            return;
         }
 
         addSubscriber(listener);
@@ -332,9 +347,20 @@ void ISManager::loadPublisher(Participant* participant, tinyxml2::XMLElement *pu
         // Publisher configuration
         PublisherAttributes pub_params;
         pub_params.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
-        pub_params.topic.topicKind = NO_KEY;
+        //pub_params.topic.topicKind = NO_KEY;
+        pub_params.topic.topicKind = WITH_KEY;
         pub_params.topic.topicDataType = type_name;
         pub_params.topic.topicName = topic_name;
+
+        // TODO to config?
+        pub_params.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+        pub_params.topic.historyQos.depth = 5;
+        pub_params.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        pub_params.qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
+        pub_params.qos.m_liveliness.lease_duration = c_TimeInfinite;
+        pub_params.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        pub_params.qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
+
         if (partition != nullptr)
         {
             pub_params.qos.m_partition.push_back(partition);
@@ -351,8 +377,10 @@ void ISManager::loadPublisher(Participant* participant, tinyxml2::XMLElement *pu
         }
 
         //Register types
-        publisher->output_type = new GenericPubSubType();
+        //publisher->output_type = new GenericPubSubType();
+        publisher->output_type = new ShapeTypePubSubType();        
         publisher->output_type->setName(pub_params.topic.topicDataType.c_str());
+        publisher->output_type->m_isGetKeyDefined = true;
 
         // Make sure register this type only once per participant
         std::string typeId = std::string(publisher->getParticipant()->getAttributes().rtps.getName()) + publisher->output_type->getName();

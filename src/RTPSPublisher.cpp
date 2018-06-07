@@ -14,7 +14,6 @@
 
 #include <fastrtps/Domain.h>
 #include "RTPSPublisher.h"
-#include "xmlUtils.h"
 #include "log/ISLog.h"
 
 
@@ -27,7 +26,7 @@ RTPSPublisher::~RTPSPublisher()
     if(mp_participant != nullptr) Domain::removeParticipant(mp_participant);
 }
 
-void RTPSPublisher::onPublicationMatched(Publisher* pub, MatchingInfo& info)
+void RTPSPublisher::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {

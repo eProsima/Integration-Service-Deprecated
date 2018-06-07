@@ -20,17 +20,17 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class GenericPubSubType : public TopicDataType {
-public:
-	GenericPubSubType();
-	virtual ~GenericPubSubType();
-	bool serialize(void *data, SerializedPayload_t *payload);
-	bool deserialize(SerializedPayload_t *payload, void *data);
-    std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	void* createData(){return 0;}
-	void deleteData(void*){}
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
-};
+// class GenericPubSubType : public TopicDataType {
+// public:
+// 	GenericPubSubType();
+// 	virtual ~GenericPubSubType();
+// 	bool serialize(void *data, SerializedPayload_t *payload);
+// 	bool deserialize(SerializedPayload_t *payload, void *data);
+//     std::function<uint32_t()> getSerializedSizeProvider(void* data);
+// 	void* createData();
+// 	void deleteData(void* /*data*/){ }
+// 	MD5 m_md5;
+// 	unsigned char* m_keyBuffer;
+// };
 
 #endif // _GENERIC_PUBSUBTYPE_H_

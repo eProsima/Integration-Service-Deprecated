@@ -28,7 +28,7 @@ class RTPSBridge : public ISBridge
 {
 public:
     RTPSBridge(const std::string &name);
-    virtual ~RTPSBridge();;
+    virtual ~RTPSBridge();
 };
 
 #endif // _Header__SUBSCRIBER_H_

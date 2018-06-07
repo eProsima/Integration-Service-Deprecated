@@ -10,6 +10,7 @@ include(CheckCXXCompilerFlag)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
         CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     check_cxx_compiler_flag(--std=c++11 SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -Wextra -pedantic")
     if(SUPPORTS_CXX11)
         add_compile_options(--std=c++11)
     else()
@@ -67,6 +68,8 @@ configure_file(src/log/ISLog.h.in ${PROJECT_SOURCE_DIR}/src/log/ISLog.h)
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
 
+include_directories(examples/shapes_demo_tcp)
+
 if(WIN32)
     add_library(islib
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
@@ -76,6 +79,7 @@ if(WIN32)
         src/RTPSPublisher.cpp src/RTPSPublisher.h
         src/RTPSSubscriber.cpp src/RTPSSubscriber.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
+        examples/shapes_demo_tcp/Shape.cxx examples/shapes_demo_tcp/ShapePubSubTypes.cxx
         thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
 
     target_link_libraries(islib
@@ -93,6 +97,7 @@ else()
         src/RTPSPublisher.cpp src/RTPSPublisher.h
         src/RTPSSubscriber.cpp src/RTPSSubscriber.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
+        examples/shapes_demo_tcp/Shape.cxx examples/shapes_demo_tcp/ShapePubSubTypes.cxx
         thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
 
     target_link_libraries(islib

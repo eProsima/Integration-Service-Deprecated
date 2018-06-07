@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,22 +25,24 @@
 
 #include <fastrtps/TopicDataType.h>
 
+using namespace eprosima::fastrtps;
+
 #include "Shape.h"
 
 /*!
  * @brief This class represents the TopicDataType of the type ShapeType defined by the user in the IDL file.
  * @ingroup SHAPE
  */
-class ShapeTypePubSubType : public eprosima::fastrtps::TopicDataType {
+class ShapeTypePubSubType : public TopicDataType {
 public:
         typedef ShapeType type;
 
 	ShapeTypePubSubType();
 	virtual ~ShapeTypePubSubType();
-	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
-	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
+    bool serialize(void *data, rtps::SerializedPayload_t *payload);
+    bool deserialize(rtps::SerializedPayload_t *payload, void *data);
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle);
+    bool getKey(void *data, rtps::InstanceHandle_t *ihandle);
 	void* createData();
 	void deleteData(void * data);
 	MD5 m_md5;

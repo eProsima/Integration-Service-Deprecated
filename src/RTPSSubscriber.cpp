@@ -15,7 +15,6 @@
 #include <fastrtps/Domain.h>
 #include "RTPSSubscriber.h"
 #include "GenericPubSubTypes.h"
-#include "xmlUtils.h"
 #include "log/ISLog.h"
 
 RTPSSubscriber::RTPSSubscriber(const std::string &name)
@@ -31,7 +30,7 @@ RTPSSubscriber::~RTPSSubscriber()
     if(ms_participant != nullptr) Domain::removeParticipant(ms_participant);
 }
 
-void RTPSSubscriber::onSubscriptionMatched(Subscriber* sub, MatchingInfo& info)
+void RTPSSubscriber::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {

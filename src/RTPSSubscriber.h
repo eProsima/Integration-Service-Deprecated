@@ -25,9 +25,9 @@
 #include "fastrtps/subscriber/SampleInfo.h"
 #include "fastrtps/attributes/SubscriberAttributes.h"
 #include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/TopicDataType.h>
 
 #include "ISBridge.h"
-#include "GenericPubSubTypes.h"
 #include "dynamicload/dynamicload.h"
 
 using namespace eprosima::fastrtps;
@@ -40,7 +40,7 @@ private:
     Participant *ms_participant;
     Subscriber *ms_subscriber;
 public:
-    GenericPubSubType *input_type;
+    TopicDataType *input_type;
     RTPSSubscriber(const std::string &name);
     ~RTPSSubscriber() override;
     void onSubscriptionMatched(Subscriber* sub, MatchingInfo& info) override;

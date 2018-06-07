@@ -15,4 +15,4 @@
 #include "RTPSBridge.h"
 
 RTPSBridge::RTPSBridge(const std::string &name) : ISBridge(name) {}
-RTPSBridge::~RTPSBridge() {};
+RTPSBridge::~RTPSBridge() {}
