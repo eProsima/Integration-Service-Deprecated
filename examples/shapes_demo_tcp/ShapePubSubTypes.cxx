@@ -1,4 +1,4 @@
-// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
 
-#include <ShapePubSubTypes.h>
-#include <iostream>
+#include "ShapePubSubTypes.h"
+
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 ShapeTypePubSubType::ShapeTypePubSubType() {
     setName("ShapeType");
@@ -38,31 +40,31 @@ ShapeTypePubSubType::~ShapeTypePubSubType() {
         free(m_keyBuffer);
 }
 
-bool ShapeTypePubSubType::serialize(void *data, rtps::SerializedPayload_t *payload) {
+bool ShapeTypePubSubType::serialize(void *data, SerializedPayload_t *payload) {
     ShapeType *p_type = (ShapeType*) data;
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload->data, payload->max_size); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR);
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     // Serialize encapsulation
     ser.serialize_encapsulation();
 
     try
     {
-        p_type->serialize(ser); 	// Serialize the object:
+        p_type->serialize(ser); // Serialize the object:
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); 	//Get the serialized length
+    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
     return true;
 }
 
-bool ShapeTypePubSubType::deserialize(rtps::SerializedPayload_t* payload, void* data) {
+bool ShapeTypePubSubType::deserialize(SerializedPayload_t* payload, void* data) {
     ShapeType* p_type = (ShapeType*) data; 	//Convert DATA to pointer of your type
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); 	// Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
     // Deserialize encapsulation.
@@ -71,8 +73,7 @@ bool ShapeTypePubSubType::deserialize(rtps::SerializedPayload_t* payload, void* 
 
     try
     {
-        p_type->deserialize(deser);	//Deserialize the object:
-        //std::cout << "Deserialized: " << p_type->color() << std::endl;
+        p_type->deserialize(deser); //Deserialize the object:
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
@@ -83,7 +84,10 @@ bool ShapeTypePubSubType::deserialize(rtps::SerializedPayload_t* payload, void* 
 }
 
 std::function<uint32_t()> ShapeTypePubSubType::getSerializedSizeProvider(void* data) {
-    return [data]() -> uint32_t { return (uint32_t)type::getCdrSerializedSize(*static_cast<ShapeType*>(data)); };
+    return [data]() -> uint32_t
+    {
+        return (uint32_t)type::getCdrSerializedSize(*static_cast<ShapeType*>(data)) + 4 /*encapsulation*/;
+    };
 }
 
 void* ShapeTypePubSubType::createData() {
@@ -94,12 +98,12 @@ void ShapeTypePubSubType::deleteData(void* data) {
     delete((ShapeType*)data);
 }
 
-bool ShapeTypePubSubType::getKey(void *data, rtps::InstanceHandle_t* handle) {
+bool ShapeTypePubSubType::getKey(void *data, InstanceHandle_t* handle) {
     if(!m_isGetKeyDefined)
         return false;
     ShapeType* p_type = (ShapeType*) data;
     eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer,ShapeType::getKeyMaxCdrSerializedSize()); 	// Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN); 	// Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS); 	// Object that serializes the data.
     p_type->serializeKey(ser);
     if(ShapeType::getKeyMaxCdrSerializedSize()>16)	{
         m_md5.init();

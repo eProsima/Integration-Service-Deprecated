@@ -1,4 +1,4 @@
-// Copyright 2017 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include <Shape.h>
+#include "Shape.h"
 
 #include <fastcdr/Cdr.h>
 
@@ -115,16 +115,10 @@ size_t ShapeType::getCdrSerializedSize(const ShapeType& data, size_t current_ali
 
 void ShapeType::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    if(m_color.length() <= 255)
     scdr << m_color;
-    else
-        throw eprosima::fastcdr::exception::BadParamException("color field exceeds the maximum length");
     scdr << m_x;
-
     scdr << m_y;
-
     scdr << m_shapesize;
-
 }
 
 void ShapeType::deserialize(eprosima::fastcdr::Cdr &dcdr)
@@ -155,10 +149,7 @@ bool ShapeType::isKeyDefined()
 
 void ShapeType::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
-	 if(m_color.length() <= 255)
-	scdr << m_color;
-	else
-	    throw eprosima::fastcdr::exception::BadParamException("color field exceeds the maximum length");  
+	 scdr << m_color;  
 	 
 	 
 	 
