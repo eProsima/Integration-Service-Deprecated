@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
-        <type name="ShapeType">libshapelib.so</type>
-        <types_library>libshapelib.so</types_library> <!-- Only one needed in this case. Kept for testing. -->
-    </topic_types>
     <participant name="LocalShapes">
         <attributes>
             <domain>1</domain>
@@ -56,12 +52,12 @@
     <participant name="TCPShapes">
         <attributes>
             <domain>0</domain>
-            <!-- TODO TCP parameters 
+            <!-- TODO TCP parameters -->
             <protocol>tcp</protocol>
-            <!--<remoteAddesss>192.168.1.55</remoteAddesss>
+            <!--<remoteAddesss>192.168.1.55</remoteAddesss>-->
             <remoteAddesss>192.168.1.46</remoteAddesss>
             <remotePort>5100</remotePort>
-            <listeningPort>0</listeningPort> <!-- Our port 
+            <listeningPort>0</listeningPort> <!-- Our port -->
             <logicalInitialPeerPort>7401</logicalInitialPeerPort>
             <logicalMetadataPort>7403</logicalMetadataPort>
             <logicalUserPort>7411</logicalUserPort>

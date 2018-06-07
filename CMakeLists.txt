@@ -68,8 +68,6 @@ configure_file(src/log/ISLog.h.in ${PROJECT_SOURCE_DIR}/src/log/ISLog.h)
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
 
-include_directories(examples/shapes_demo_tcp)
-
 if(WIN32)
     add_library(islib
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
@@ -79,7 +77,6 @@ if(WIN32)
         src/RTPSPublisher.cpp src/RTPSPublisher.h
         src/RTPSSubscriber.cpp src/RTPSSubscriber.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
-        examples/shapes_demo_tcp/Shape.cxx examples/shapes_demo_tcp/ShapePubSubTypes.cxx
         thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
 
     target_link_libraries(islib
@@ -97,7 +94,6 @@ else()
         src/RTPSPublisher.cpp src/RTPSPublisher.h
         src/RTPSSubscriber.cpp src/RTPSSubscriber.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
-        examples/shapes_demo_tcp/Shape.cxx examples/shapes_demo_tcp/ShapePubSubTypes.cxx
         thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
 
     target_link_libraries(islib

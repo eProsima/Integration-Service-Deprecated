@@ -19,7 +19,7 @@
 #include "xmlUtils.h"
 #include <fastrtps/Domain.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include "ShapePubSubTypes.h"
+//#include "ShapePubSubTypes.h"
 
 // String literals
 static const std::string s_sIS("is");
@@ -52,6 +52,13 @@ static const std::string s_sProtocol("protocol");
 static const std::string s_sRemoteAddress("remoteAddesss");
 static const std::string s_sRemotePort("remotePort");
 static const std::string s_sListeningPort("listeningPort");
+static const std::string s_sLogicalInitialPeerPort("logicalInitialPeerPort");
+static const std::string s_sLogicalMetadataPort("logicalMetadataPort");
+static const std::string s_sLogicalUserPort("logicalUserPort");
+// Topic types libraries
+static const std::string s_sTopicTypes("topic_types");
+static const std::string s_sTypesLibrary("types_library");
+
 
 ISManager::ISManager(const std::string &xml_file_path)
     : active(false)
@@ -68,6 +75,12 @@ ISManager::ISManager(const std::string &xml_file_path)
 
     for (auto child = doc.FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
     {
+        tinyxml2::XMLElement *topic_types = child->FirstChildElement(s_sTopicTypes.c_str());
+        if(topic_types)
+        {
+            loadTopicTypes(topic_types);
+        }
+
         tinyxml2::XMLElement *participant = child->FirstChildElement(s_sParticipant.c_str());
         while(participant)
         {
@@ -123,6 +136,53 @@ void ISManager::addPublisher(const std::string &part_name, ISPublisher* p)
     publishers[getEndPointName(part_name, p->getName())] = p;
 }
 
+void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
+{
+    try
+    {
+        tinyxml2::XMLElement *type = topic_types_element->FirstChildElement(s_sType.c_str());
+        if (!type)
+        {
+            LOG("No types found in topic_types");
+            throw 0;
+        }
+
+        while (type)
+        {
+            const char* type_name = type->Attribute(s_sName.c_str());
+
+            // Has his own library?
+            const char* lib = (type->GetText() == nullptr) ? nullptr : type->GetText();
+            if (lib != nullptr)
+            {
+                void* handle = getLibraryHandle(lib);
+                typef_t function = (typef_t)eProsimaGetProcAddress(handle, "GetTopicType");
+                typesLibs[type_name] = function;
+            }
+
+            type = type->NextSiblingElement(s_sType.c_str());
+        }
+
+        tinyxml2::XMLElement *typesLib = topic_types_element->FirstChildElement(s_sTypesLibrary.c_str());
+        while (typesLib)
+        {
+            const char* lib = (typesLib->GetText() == nullptr) ? nullptr : typesLib->GetText();
+            if (lib != nullptr)
+            {
+                void* handle = getLibraryHandle(lib);
+                typef_t function = (typef_t)eProsimaGetProcAddress(handle, "GetTopicType");
+                defaultTypesLibs.emplace_back(function);
+                typesLib = typesLib->NextSiblingElement(s_sTypesLibrary.c_str());
+            }
+        }
+        
+    }
+    catch (int e_code)
+    {
+        LOG_ERROR("Error ocurred while loading topic types " << e_code);
+    }
+}
+
 void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
 {
     try
@@ -158,6 +218,9 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
         const char* protocol = (current_element == nullptr) ? nullptr : current_element->GetText();
         if (protocol != nullptr && strncmp(protocol, "tcp", 3) == 0)
         {
+
+            part_params.rtps.useBuiltinTransports = false;
+
             current_element = _assignOptionalElement(attribs, s_sRemoteAddress);
             const char* address = (current_element == nullptr) ? nullptr : current_element->GetText();
             int remotePort(0), localPort(0);
@@ -174,6 +237,29 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
                 throw 0;
             }
 
+            int logicalMeta(0), logicalPeer(0), logicalUser(0);
+
+            current_element = _assignOptionalElement(attribs, s_sLogicalMetadataPort);
+            if(current_element != nullptr && current_element->QueryIntText(&logicalMeta))
+            {
+                LOG("Cannot parse logical meta port for TCP participant ");
+                throw 0;
+            }
+
+            current_element = _assignOptionalElement(attribs, s_sLogicalInitialPeerPort);
+            if(current_element != nullptr && current_element->QueryIntText(&logicalPeer))
+            {
+                LOG("Cannot parse logical peer port for TCP participant ");
+                throw 0;
+            }
+
+            current_element = _assignOptionalElement(attribs, s_sLogicalUserPort);
+            if(current_element != nullptr && current_element->QueryIntText(&logicalUser))
+            {
+                LOG("Cannot parse logical user port for TCP participant ");
+                throw 0;
+            }
+
             std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
             descriptor->listening_ports.emplace_back(localPort);
             descriptor->sendBufferSize = 0;
@@ -187,7 +273,7 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
             initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
             initial_peer_locator.set_IP4_address("127.0.0.1");
             initial_peer_locator.set_port(remotePort);
-            //initial_peer_locator.set_logical_port(7402);
+            initial_peer_locator.set_logical_port(logicalPeer);
             // Remote meta channel
             part_params.rtps.builtin.initialPeersList.push_back(initial_peer_locator);
 
@@ -201,7 +287,7 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
             unicast_locator.kind = LOCATOR_KIND_TCPv4;
             unicast_locator.set_IP4_address("127.0.0.1");
             unicast_locator.set_port(localPort);
-            //unicast_locator.set_logical_port(7410);
+            unicast_locator.set_logical_port(logicalUser);
             // Our data channel
             part_params.rtps.defaultUnicastLocatorList.push_back(unicast_locator);
 
@@ -209,11 +295,12 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
             meta_locator.kind = LOCATOR_KIND_TCPv4;
             meta_locator.set_IP4_address("127.0.0.1");
             meta_locator.set_port(localPort);
-            //meta_locator.set_logical_port(7402);
+            meta_locator.set_logical_port(logicalMeta);
             // Our meta channel
             part_params.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);
 
             part_params.rtps.useBuiltinTransports = false;
+            descriptor->metadata_logical_port = logicalMeta;
             part_params.rtps.userTransports.push_back(descriptor);
         }
 
@@ -240,6 +327,36 @@ void ISManager::loadParticipant(tinyxml2::XMLElement *participant_element)
     {
         LOG_ERROR("Error ocurred while loading participant " << e_code);
     }
+}
+
+TopicDataType* ISManager::getTopicDataType(const std::string &name)
+{
+    TopicDataType* type = nullptr;
+    if (typesLibs.find(name) != typesLibs.end())
+    {
+        typef_t func = typesLibs[name];
+        if (func)
+        {
+            type = func(name.c_str());
+        }
+        else
+        {
+            for (typef_t func : defaultTypesLibs)
+            {
+                type = func(name.c_str());
+                if (type != nullptr)
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    if (type == nullptr)
+    {
+        type = new GenericPubSubType();
+    }
+    return type;
 }
 
 void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *subscriber_element)
@@ -291,9 +408,10 @@ void ISManager::loadSubscriber(Participant* participant, tinyxml2::XMLElement *s
             delete listener;
             throw 0;
         }
-
+        
         //listener->input_type = new GenericPubSubType();
-        listener->input_type = new ShapeTypePubSubType();
+        //listener->input_type = new ShapeTypePubSubType();
+        listener->input_type = getTopicDataType(sub_params.topic.topicDataType);
         listener->input_type->setName(sub_params.topic.topicDataType.c_str());
         listener->input_type->m_isGetKeyDefined = true;
 
@@ -379,8 +497,8 @@ void ISManager::loadPublisher(Participant* participant, tinyxml2::XMLElement *pu
         }
 
         //Register types
-        //publisher->output_type = new GenericPubSubType();
-        publisher->output_type = new ShapeTypePubSubType();        
+        publisher->output_type = getTopicDataType(pub_params.topic.topicDataType); //new GenericPubSubType();
+        //publisher->output_type = new ShapeTypePubSubType();        
         publisher->output_type->setName(pub_params.topic.topicDataType.c_str());
         publisher->output_type->m_isGetKeyDefined = true;
 

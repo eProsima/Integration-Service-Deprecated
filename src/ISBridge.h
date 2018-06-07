@@ -23,6 +23,7 @@
 #include "GenericPubSubTypes.h"
 
 typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
+typedef TopicDataType* (*typef_t)(const char *name);
 
 class ISPublisher;
 class ISSubscriber;
