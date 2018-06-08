@@ -50,6 +50,7 @@ public:
     bool hasParticipant();
     bool hasRTPSSubscriber();
     Participant* getParticipant();
+    Subscriber* getRTPSSubscriber() { return ms_subscriber; }
 };
 
 #endif // _Header__SUBSCRIBER_H_

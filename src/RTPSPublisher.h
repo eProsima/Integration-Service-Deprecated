@@ -49,6 +49,7 @@ public:
     Participant* getParticipant();
     bool hasRTPSPublisher();
     void setRTPSPublisher(Publisher* pub);
+    Publisher* getRTPSPublisher() { return mp_publisher; }
 };
 
 #endif // _Header__SUBSCRIBER_H_

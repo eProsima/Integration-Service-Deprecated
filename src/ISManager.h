@@ -57,9 +57,11 @@ class ISManager
     std::map<std::string, ISSubscriber*> subscribers;
     std::map<std::string, ISPublisher*> publishers;
     std::map<std::string, void*> handles;
-    std::map<std::string, bool> registered_types;
+    std::vector<std::pair<std::string, std::string>> to_register_types;
     std::map<std::string, typef_t> typesLibs;
+    std::map<std::string, Participant*> rtps_participants;
     std::vector<typef_t> defaultTypesLibs;
+    std::map<std::pair<std::string, std::string>, TopicDataType*> data_types;
     bool active;
     void parseProperties(tinyxml2::XMLElement *parent_element,
                          std::vector<std::pair<std::string, std::string>> &props);
@@ -75,9 +77,11 @@ public:
     void addPublisher(const std::string &part_name, ISPublisher* p);
     void addSubscriber(const std::string &part_name, ISSubscriber* s);
     void loadTopicTypes(tinyxml2::XMLElement *topic_types_element);
-    void loadParticipant(tinyxml2::XMLElement *participant_element);
-    void loadSubscriber(Participant* participant, tinyxml2::XMLElement *subscriber_element);
-    void loadPublisher(Participant* participant, tinyxml2::XMLElement *publisher_element);
+    void loadProfiles(tinyxml2::XMLElement *profiles);
+    //void loadParticipant(tinyxml2::XMLElement *participant_element);
+    Participant* getParticipant(const std::string &name);
+    void createSubscriber(Participant* participant, const std::string &name);
+    void createPublisher(Participant* participant, const std::string &name);
     void loadBridge(tinyxml2::XMLElement *bridge_element);
     void loadConnector(tinyxml2::XMLElement *connector_element);
     void onTerminate();
