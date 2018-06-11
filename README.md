@@ -142,110 +142,127 @@ Your custom publisher/subscriber must inherit ISPublisher/ISSubscriber respectiv
 
 How to instantiate your bridge, publisher and/or subscriber is responsability of your *Bridge Library*, but remember that "RTPS" publisher and subscribers will be filled automatically by ISManager with the configuration from the *participant* node of the *config.xml*.
 
+**Data Types Libraries**: This *optional* libraries must implement a single function *GetTopicType* that will return a new instance of the desired data type. The library could support multiple types or be integrated in other libraries such as the *Transformation Library*.
+There is a prototype in *resource/typelib.cpp*:
+
+	extern "C" TopicDataType* SHAPES_LIB_EXPORT GetTopicType(const char *name)
+	{
+		if (strncmp(name, "MyType", 6) == 0)
+		{
+			return new MyType();
+		}
+		return nullptr;
+	}
+
 #### Configuration options in **config.xml**
 
-The configuration files defines RTPS *participants*, *bridges* and *connectors*. 
-The *participants* can have one or more *endpoints*. *endpoints* can be subscribers or publishers. All this concepts are the same as the ones in Fast-RTPS.
+The configuration files defines *topic_types*, *profiles*, *bridges* and *connectors*. 
+The *topic_types* are the Topic Data Types that will be used by the participants. If these data types uses Keys or you want to define how to instante them, *topic_types* allows to define *data types libraries*.
+The *profiles* define participants, subscribers, publishers, etc, following the format used by **FastRTPS XML configuration files**.
 The *bridges* are the defined by the *bridge library* that implements the bridge and the definitions of the subscribers and publishers that we want to instantiate.
 Finally, the *connectors* are just relationhips between subscribers and publishers, and optionally, transformation functions.
 
 As reference, let's take this configuration file:
 
-	<is>
-	    <participant name="2Dshapes">
-		<attributes>
-		    <!-- RTPS participant attributes -->
-		</attributes>
+    <is>
+        <topic_types>
+            <type name="ShapeType">
+                <library>libshapelib.so</library> <!-- Library for ShapeType -->
+                <participants> <!-- Participants who will register it -->
+                    <participant name="2Dshapes"/>
+                    <participant name="3Dshapes"/>
+                </participants>
+            </type>
+            <type name="Unused type"/>
+            <!-- Can be used to pack types or types without their own library -->
+            <types_library>libotherlib.so</types_library> 
+        </topic_types>
 
-		<subscriber name="2d_subscriber">
-		    <attributes>
-					<!-- RTPS subscriber attributes -->
-		    </attributes>
-		</subscriber>
+        <profiles>
+            <participant profile_name="2Dshapes">
+                <!-- RTPS participant attributes -->
+            </participant>
 
-		<publisher name="2d_publisher">
-		    <attributes>
-		        <!-- RTPS publisher attributes -->
-		    </attributes>
-		</publisher>
-	    </participant>
+            <participant profile_name="3Dshapes">
+                <!-- RTPS participant attributes -->
+            </participant>
 
-	    <participant name="3Dshapes">
-		<attributes>
-		    <!-- RTPS participant attributes -->
-		</attributes>
+            <subscriber profile_name="2d_subscriber">
+                <!-- RTPS subscriber attributes -->
+            </subscriber>
 
-		<subscriber name="3d_subscriber">
-		    <attributes>
-					<!-- RTPS subscriber attributes -->
-		    </attributes>
-		</subscriber>
+            <subscriber profile_name="3d_subscriber">
+                <!-- RTPS subscriber attributes -->
+            </subscriber>
 
-		<publisher name="3d_publisher">
-		    <attributes>
-		        <!-- RTPS publisher attributes -->
-		    </attributes>
-		</publisher>
-	    </participant>
+            <publisher profile_name="2d_publisher">
+                <!-- RTPS publisher attributes -->
+            </publisher>
 
-	    <bridge name="protocol">
-		<library>/path/to/bridge/library/libprotocol.so</library>
-		<properties>
-		    <property>
-		        <name>property1</name>
-		        <value>value1</value>
-		    </property>
-		</properties>
+            <publisher profile_name="3d_publisher">
+                <!-- RTPS publisher attributes -->
+            </publisher>
+        </profiles>
 
-		<publisher name="protocol_publisher">
-		    <property>
-		        <name>property1</name>
-		        <value>value1</value>
-		    </property>
-		    <property>
-		        <name>property2</name>
-		        <value>value2</value>
-		    </property>
-		</publisher>
+        <bridge name="protocol">
+        <library>/path/to/bridge/library/libprotocol.so</library>
+        <properties>
+            <property>
+                <name>property1</name>
+                <value>value1</value>
+            </property>
+        </properties>
 
-		<subscriber name="protocol_subscriber">
-		    <property>
-		        <name>property1</name>
-		        <value>value1</value>
-		    </property>
-		    <property>
-		        <name>property2</name>
-		        <value>value2</value>
-		    </property>
-		</subscriber>
-	    </bridge>
+        <publisher name="protocol_publisher">
+            <property>
+                <name>property1</name>
+                <value>value1</value>
+            </property>
+            <property>
+                <name>property2</name>
+                <value>value2</value>
+            </property>
+        </publisher>
 
-	    <connector name="shapes_projection">
-		<subscriber participant_name="3Dshapes" subscriber_name="3d_subscriber"/>
-		<publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
-		<transformation file="/path/to/transform/libuserlib.so" function="transform3D_to_2D"/>
-	    </connector>
+        <subscriber name="protocol_subscriber">
+            <property>
+                <name>property1</name>
+                <value>value1</value>
+            </property>
+            <property>
+                <name>property2</name>
+                <value>value2</value>
+            </property>
+        </subscriber>
+        </bridge>
 
-	    <connector name="shapes_stereo">
-		<subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
-		<publisher participant_name="3Dshapes" publisher_name="3d_publisher"/>
-		<transformation file="/path/to/transform/libuserlib.so" function="transform2D_to_3D"/>
-	    </connector>
+        <connector name="shapes_projection">
+        <subscriber participant_name="3Dshapes" subscriber_name="3d_subscriber"/>
+        <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
+        <transformation file="/path/to/transform/libuserlib.so" function="transform3D_to_2D"/>
+        </connector>
 
-	    <connector name="shapes_protocol">
-		<subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
-		<publisher participant_name="protocol" publisher_name="protocol_publisher"/>
-		<transformation file="/path/to/transform/libprotocoltransf.so" function="transformFrom2D"/>
-	    </connector>
+        <connector name="shapes_stereo">
+        <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
+        <publisher participant_name="3Dshapes" publisher_name="3d_publisher"/>
+        <transformation file="/path/to/transform/libuserlib.so" function="transform2D_to_3D"/>
+        </connector>
 
-	    <connector name="protocol_shapes">
-		<subscriber participant_name="protocol" subscriber_name="protocol_subscriber"/>
-		<publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
-		<transformation file="/path/to/transform/libprotocoltransf.so" function="transformTo2D"/>
-	    </connector>
-	</is>
+        <connector name="shapes_protocol">
+        <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
+        <publisher participant_name="protocol" publisher_name="protocol_publisher"/>
+        <transformation file="/path/to/transform/libprotocoltransf.so" function="transformFrom2D"/>
+        </connector>
+
+        <connector name="protocol_shapes">
+        <subscriber participant_name="protocol" subscriber_name="protocol_subscriber"/>
+        <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
+        <transformation file="/path/to/transform/libprotocoltransf.so" function="transformTo2D"/>
+        </connector>
+    </is>
 
 In this file there are defined two RTPS *participants*, and a *bridge*. All of them have a subscriber and a publisher.
+Relationship between *participants* and *subscribers*/*publishers* defined in the *profiles* section are stablished by each *connector*. This allows to share *subscribers*/*publishers* configurations between *participants*.
 There are four connectors defined: *shapes_projection*, *shapes_stereo*, *shapes_protocol* and *protocol_shapes*.
 
 There are several possible types of connectors depending of the kind of its participants.

@@ -1,40 +1,43 @@
-<?xml version="1.0"?>
+
 <is>
-    <participant name="2Dshapes">
-        <attributes>
-            <!-- RTPS participant attributes -->
-        </attributes>
+    <topic_types>
+        <type name="ShapeType">
+            <library>libshapelib.so</library> <!-- Library for ShapeType -->
+            <participants> <!-- Participants who will register it -->
+                <participant name="2Dshapes"/>
+                <participant name="3Dshapes"/>
+            </participants>
+        </type>
+        <type name="Unused type"/>
+        <!-- Can be used to pack types or types without their own library -->
+        <types_library>libotherlib.so</types_library> 
+    </topic_types>
 
-        <subscriber name="2d_subscriber">
-            <attributes>
-				<!-- RTPS subscriber attributes -->
-            </attributes>
+    <profiles>
+        <participant profile_name="2Dshapes">
+            <!-- RTPS participant attributes -->
+        </participant>
+
+        <participant profile_name="3Dshapes">
+            <!-- RTPS participant attributes -->
+        </participant>
+
+        <subscriber profile_name="2d_subscriber">
+            <!-- RTPS subscriber attributes -->
         </subscriber>
 
-        <publisher name="2d_publisher">
-            <attributes>
-                <!-- RTPS publisher attributes -->
-            </attributes>
-        </publisher>
-    </participant>
-
-    <participant name="3Dshapes">
-        <attributes>
-            <!-- RTPS participant attributes -->
-        </attributes>
-
-        <subscriber name="3d_subscriber">
-            <attributes>
-				<!-- RTPS subscriber attributes -->
-            </attributes>
+        <subscriber profile_name="3d_subscriber">
+            <!-- RTPS subscriber attributes -->
         </subscriber>
 
-        <publisher name="3d_publisher">
-            <attributes>
-                <!-- RTPS publisher attributes -->
-            </attributes>
+        <publisher profile_name="2d_publisher">
+            <!-- RTPS publisher attributes -->
         </publisher>
-    </participant>
+
+        <publisher profile_name="3d_publisher">
+            <!-- RTPS publisher attributes -->
+        </publisher>
+    </profiles>
 
     <bridge name="protocol">
         <library>/path/to/bridge/library/libprotocol.so</library>
@@ -69,26 +72,26 @@
     </bridge>
 
     <connector name="shapes_projection">
-        <subscriber participant_name="3Dshapes" subscriber_name="3d_subscriber"/>
-        <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
-        <transformation file="/path/to/transform/libuserlib.so" function="transform3D_to_2D"/>
+    <subscriber participant_name="3Dshapes" subscriber_name="3d_subscriber"/>
+    <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
+    <transformation file="/path/to/transform/libuserlib.so" function="transform3D_to_2D"/>
     </connector>
 
     <connector name="shapes_stereo">
-        <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
-        <publisher participant_name="3Dshapes" publisher_name="3d_publisher"/>
-        <transformation file="/path/to/transform/libuserlib.so" function="transform2D_to_3D"/>
+    <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
+    <publisher participant_name="3Dshapes" publisher_name="3d_publisher"/>
+    <transformation file="/path/to/transform/libuserlib.so" function="transform2D_to_3D"/>
     </connector>
 
     <connector name="shapes_protocol">
-        <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
-        <publisher participant_name="protocol" publisher_name="protocol_publisher"/>
-        <transformation file="/path/to/transform/libprotocoltransf.so" function="transformFrom2D"/>
+    <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
+    <publisher participant_name="protocol" publisher_name="protocol_publisher"/>
+    <transformation file="/path/to/transform/libprotocoltransf.so" function="transformFrom2D"/>
     </connector>
 
     <connector name="protocol_shapes">
-        <subscriber participant_name="protocol" subscriber_name="protocol_subscriber"/>
-        <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
-        <transformation file="/path/to/transform/libprotocoltransf.so" function="transformTo2D"/>
+    <subscriber participant_name="protocol" subscriber_name="protocol_subscriber"/>
+    <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
+    <transformation file="/path/to/transform/libprotocoltransf.so" function="transformTo2D"/>
     </connector>
 </is>
