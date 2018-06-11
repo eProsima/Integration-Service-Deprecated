@@ -395,22 +395,26 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
 Participant* ISManager::getParticipant(const std::string &name)
 {
     Participant* participant = nullptr;
-    if (rtps_participants.find(name) != rtps_participants.end())
+    // Ensure isn't a bridge
+    if (bridges.find(name) == bridges.end())
     {
-        participant = rtps_participants[name];
-    }
-    else
-    {
-        participant = Domain::createParticipant(name);
-        rtps_participants[name] = participant;
-
-        // Register its types
-        for (auto &pair : to_register_types)
+        if (rtps_participants.find(name) != rtps_participants.end())
         {
-            if (pair.first == name)
+            participant = rtps_participants[name];
+        }
+        else
+        {
+            participant = Domain::createParticipant(name);
+            rtps_participants[name] = participant;
+
+            // Register its types
+            for (auto &pair : to_register_types)
             {
-                TopicDataType* type = data_types[pair];
-                Domain::registerType(participant, type);
+                if (pair.first == name)
+                {
+                    TopicDataType* type = data_types[pair];
+                    Domain::registerType(participant, type);
+                }
             }
         }
     }
@@ -433,8 +437,16 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 
         Participant* participant_subscriber = getParticipant(sub_part);
         Participant* participant_publisher = getParticipant(pub_part);
-        createSubscriber(participant_subscriber, sub_name);
-        createPublisher(participant_publisher, pub_name);
+        
+        if (participant_subscriber != nullptr)
+        {
+            createSubscriber(participant_subscriber, sub_name);
+        }
+
+        if (participant_publisher != nullptr)
+        {
+            createPublisher(participant_publisher, pub_name);
+        }
 
         std::string subName = getEndPointName(sub_part, sub_name);
         std::string pubName = getEndPointName(pub_part, pub_name);
