@@ -1,112 +1,208 @@
 <?xml version="1.0"?>
 <is>
-    <participant name="LocalShapes">
-        <attributes>
-            <domain>1</domain>
-        </attributes>
+    <topic_types>
+        <type name="ShapeType">
+            <library>libshapelib.so</library>
+            <participants> <!-- Participants who will register it -->
+                <participant name="LocalShapes"/>
+                <participant name="TCPShapes"/>
+            </participants>
+        </type>
+        <types_library>libshapelib.so</types_library> <!-- Only one needed in this case. Kept for testing. -->
+    </topic_types>
 
-        <subscriber name="subscriberSquare">
-            <attributes>
-				<topic>Square</topic>
-				<type>ShapeType</type>
-            </attributes>
+    <profiles>
+        <participant profile_name="LocalShapes">
+            <rtps>
+                <builtin>
+                    <domainId>1</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="TCPShapes">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriberSquare">
+            <topic>
+                <name>Square</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>6</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <ownership>
+                    <kind>SHARED</kind>
+                </ownership>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
 
-        <subscriber name="subscriberTriangle">
-            <attributes>
-				<topic>Triangle</topic>
-				<type>ShapeType</type>
-            </attributes>
+        <subscriber profile_name="subscriberTriangle">
+            <topic>
+                <name>Triangle</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>6</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <ownership>
+                    <kind>SHARED</kind>
+                </ownership>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
 
-        <subscriber name="subscriberCircle">
-            <attributes>
-				<topic>Circle</topic>
-				<type>ShapeType</type>
-            </attributes>
+        <subscriber profile_name="subscriberCircle">
+            <topic>
+                <name>Circle</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>6</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <ownership>
+                    <kind>SHARED</kind>
+                </ownership>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
+
+        <publisher profile_name="publisherSquare">
+            <topic>
+                <name>Square</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <ownership>
+                    <kind>SHARED</kind>
+                </ownership>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+
+        <publisher profile_name="publisherTriangle">
+            <topic>
+                <name>Triangle</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <ownership>
+                    <kind>SHARED</kind>
+                </ownership>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+
+        <publisher profile_name="publisherCircle">
+            <topic>
+                <name>Circle</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <ownership>
+                    <kind>SHARED</kind>
+                </ownership>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+    </profiles>
 <!--
-        <publisher name="publisherSquare">
-            <attributes>
-				<topic>Square</topic>
-				<type>ShapeType</type>
-            </attributes>
-        </publisher>
-
-        <publisher name="publisherTriangle">
-            <attributes>
-				<topic>Triangle</topic>
-				<type>ShapeType</type>
-            </attributes>
-        </publisher>
-
-        <publisher name="publisherCircle">
-            <attributes>
-				<topic>Circle</topic>
-				<type>ShapeType</type>
-            </attributes>
-        </publisher>
--->
-    </participant>
-
-    <participant name="TCPShapes">
-        <attributes>
-            <domain>0</domain>
-            <!-- TODO TCP parameters -->
-            <protocol>tcp</protocol>
-            <!--<remoteAddesss>192.168.1.55</remoteAddesss>-->
-            <remoteAddesss>192.168.1.46</remoteAddesss>
-            <remotePort>5100</remotePort>
-            <listeningPort>0</listeningPort> <!-- Our port -->
-            <logicalInitialPeerPort>7401</logicalInitialPeerPort>
-            <logicalMetadataPort>7403</logicalMetadataPort>
-            <logicalUserPort>7411</logicalUserPort>
-            <!-- TODO Use default logical ports? Or specify them? -->
-        </attributes>
-<!--
-        <subscriber name="subscriberSquare">
-            <attributes>
-				<topic>Square</topic>
-				<type>ShapeType</type>
-            </attributes>
-        </subscriber>
-
-        <subscriber name="subscriberTriangle">
-            <attributes>
-				<topic>Triangle</topic>
-				<type>ShapeType</type>
-            </attributes>
-        </subscriber>
-
-        <subscriber name="subscriberCircle">
-            <attributes>
-				<topic>Circle</topic>
-				<type>ShapeType</type>
-            </attributes>
-        </subscriber>
--->
-        <publisher name="publisherSquare">
-            <attributes>
-				<topic>Square</topic>
-				<type>ShapeType</type>
-            </attributes>
-        </publisher>
-
-        <publisher name="publisherTriangle">
-            <attributes>
-				<topic>Triangle</topic>
-				<type>ShapeType</type>
-            </attributes>
-        </publisher>
-
-        <publisher name="publisherCircle">
-            <attributes>
-				<topic>Circle</topic>
-				<type>ShapeType</type>
-            </attributes>
-        </publisher>
-    </participant>
-
     <connector name="Local_TCP_SQUARES"> 
         <subscriber participant_name="LocalShapes" subscriber_name="subscriberSquare"/>
         <publisher participant_name="TCPShapes" publisher_name="publisherSquare"/>
@@ -121,7 +217,7 @@
         <subscriber participant_name="LocalShapes" subscriber_name="subscriberCircle"/>
         <publisher participant_name="TCPShapes" publisher_name="publisherCircle"/>
     </connector>
-<!--
+-->
     <connector name="TCP_Local_SQUARES"> 
         <subscriber participant_name="TCPShapes" subscriber_name="subscriberSquare"/>
         <publisher participant_name="LocalShapes" publisher_name="publisherSquare"/>
@@ -136,5 +232,5 @@
         <subscriber participant_name="TCPShapes" subscriber_name="subscriberCircle"/>
         <publisher participant_name="LocalShapes" publisher_name="publisherCircle"/>
     </connector>
--->
+
 </is>

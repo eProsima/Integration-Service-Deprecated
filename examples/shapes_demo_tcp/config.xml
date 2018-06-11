@@ -3,7 +3,7 @@
     <topic_types>
         <type name="ShapeType">
             <library>libshapelib.so</library>
-            <participants>
+            <participants> <!-- Participants who will register it -->
                 <participant name="LocalShapes"/>
                 <participant name="TCPShapes"/>
             </participants>
