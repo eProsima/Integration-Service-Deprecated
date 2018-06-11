@@ -28,6 +28,7 @@
 
 #include "TextSubscriber.h"
 
+using namespace eprosima::fastrtps::rtps;
 
 TextSubscriber::TextSubscriber() : mp_participant(nullptr), mp_subscriber(nullptr) {}
 
@@ -61,7 +62,7 @@ bool TextSubscriber::init()
 	return true;
 }
 
-void TextSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub,MatchingInfo& info)
+void TextSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub, rtps::MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{

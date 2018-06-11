@@ -85,10 +85,7 @@ size_t Text::getCdrSerializedSize(const Text& data, size_t current_alignment)
 
 void Text::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    if(m_message.length() <= 255)
     scdr << m_message;
-    else
-        throw eprosima::fastcdr::exception::BadParamException("message field exceeds the maximum length");
 }
 
 void Text::deserialize(eprosima::fastcdr::Cdr &dcdr)

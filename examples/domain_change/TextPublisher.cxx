@@ -31,7 +31,7 @@
 
 #include "TextPublisher.h"
 
-
+using namespace eprosima::fastrtps::rtps;
 
 
 TextPublisher::TextPublisher() : mp_participant(nullptr), mp_publisher(nullptr) {}
@@ -67,7 +67,7 @@ bool TextPublisher::init()
 	return true;
 }
 
-void TextPublisher::PubListener::onPublicationMatched(Publisher* pub,MatchingInfo& info)
+void TextPublisher::PubListener::onPublicationMatched(Publisher* pub, rtps::MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{
