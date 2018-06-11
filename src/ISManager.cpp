@@ -18,9 +18,7 @@
 #include "RTPSSubscriber.h"
 #include "xmlUtils.h"
 #include <fastrtps/Domain.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-//#include "ShapePubSubTypes.h"
 
 // String literals
 static const std::string s_sIS("is");
@@ -66,7 +64,7 @@ static const std::string s_sTypesLibrary("types_library");
 ISManager::ISManager(const std::string &xml_file_path)
     : active(false)
 {
-    Log::SetVerbosity(Log::Warning);
+    //Log::SetVerbosity(Log::Warning);
     tinyxml2::XMLDocument doc;
     doc.LoadFile(xml_file_path.c_str());
 
