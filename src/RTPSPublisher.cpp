@@ -41,7 +41,14 @@ void RTPSPublisher::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 
 bool RTPSPublisher::publish(SerializedPayload_t * data)
 {
-    return mp_publisher->write(data->data);
+    if (dynamic_cast<GenericPubSubType*>(output_type) == nullptr) // Only if our type isn't the default
+    {
+        return mp_publisher->write(data->data);
+    }
+    else
+    {
+        return mp_publisher->write(data); // Only when the type is the default
+    }
 }
 
 void RTPSPublisher::setParticipant(Participant* part)

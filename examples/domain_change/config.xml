@@ -1,30 +1,53 @@
 <?xml version="1.0"?>
 <is>
-    <participant name="domain0">
-        <attributes>
-            <domain>0</domain>
-        </attributes>
+    <topic_types>
+        <type name="Text">
+            <participants>
+                <participant name="domain0"/>
+                <participant name="domain5"/>
+            </participants>
+        </type>
+    </topic_types>
 
-        <subscriber name="is_subscriber">
-            <attributes>
-				<topic>TextPubSubTopic</topic>
-				<type>Text</type>
-            </attributes>
+    <profiles>
+        <participant profile_name="domain0">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="domain5">
+            <rtps>
+                <builtin>
+                    <domainId>5</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="is_subscriber">
+            <topic>
+                <name>TextPubSubTopic</name>
+                <dataType>Text</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
-    </participant>
 
-    <participant name="domain5">
-        <attributes>
-            <domain>5</domain>
-        </attributes>
-
-        <publisher name="is_publisher">
-            <attributes>
-				<topic>TextPubSubTopic</topic>
-				<type>Text</type>
-            </attributes>
+        <publisher profile_name="is_publisher">
+            <topic>
+                <name>TextPubSubTopic</name>
+                <dataType>Text</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>
-    </participant>
+    </profiles>
 
     <connector name="domain_change"> 
         <subscriber participant_name="domain0" subscriber_name="is_subscriber"/>

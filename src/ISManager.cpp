@@ -258,6 +258,7 @@ TopicDataType* ISManager::getTopicDataType(const std::string &name)
     if (type == nullptr)
     {
         type = new GenericPubSubType();
+        type->setName(name.c_str());
     }
     return type;
 }
