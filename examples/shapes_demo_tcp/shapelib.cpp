@@ -21,7 +21,7 @@ TopicDataType* GetShapeType()
     return new ShapeTypePubSubType();
 }
 
-extern "C" TopicDataType* SHAPES_LIB_EXPORT GetTopicType(const char *name)
+extern "C" SHAPES_LIB_EXPORT TopicDataType* GetTopicType(const char *name)
 {
     if (strncmp(name, "ShapeType", 9) == 0)
     {

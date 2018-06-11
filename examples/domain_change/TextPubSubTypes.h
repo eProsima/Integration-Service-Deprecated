@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file TextPubSubTypes.h
  * This header file contains the declaration of the serialization functions.
  *
@@ -26,6 +26,7 @@
 #include <fastrtps/TopicDataType.h>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 #include "Text.h"
 
