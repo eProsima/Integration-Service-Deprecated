@@ -5,9 +5,9 @@
 
 
 int main(int argc, char * argv[]){
-    Log::SetVerbosity(Log::Kind::Warning);
-    std::regex filter("RTCP(?!_SEQ)");  
-    Log::SetCategoryFilter(filter);
+    //Log::SetVerbosity(Log::Kind::Warning);
+    //std::regex filter("RTCP(?!_SEQ)");  
+    //Log::SetCategoryFilter(filter);
     if (!(argc > 1)){
         std::cout << "Usage: integration-services CONFIG_XML" << std::endl;
         return 0;

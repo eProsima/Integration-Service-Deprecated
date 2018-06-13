@@ -12,10 +12,22 @@
     </topic_types>
 
     <profiles>
+        <transports>
+            <transport>
+                <transport_id>TCPv4_Server</transport_id>
+                <type>TCPv4</type>
+                <wan_addr>127.0.0.1</wan_addr>
+                <listening_ports>
+                    <port>5100</port>
+                </listening_ports>
+                <metadata_logical_port>7401</metadata_logical_port>
+            </transport>
+        </transports>
+
         <participant profile_name="LocalShapes">
             <rtps>
                 <builtin>
-                    <domainId>1</domainId>
+                    <domainId>0</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -25,12 +37,44 @@
 
         <participant profile_name="TCPShapes">
             <rtps>
+                <userTransports>
+                    <transport_id>TCPv4_Server</transport_id>
+                </userTransports>   
+                <defaultUnicastLocatorList>
+                    <locator>
+                        <kind>TCPv4</kind>
+                        <address>127.0.0.1</address>
+                        <ports_>
+                            <physical_port>5100</physical_port>
+                            <logical_port>7410</logical_port>
+                        </ports_>
+                    </locator>
+                </defaultUnicastLocatorList>
                 <builtin>
                     <domainId>0</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>0</seconds>
+                            <fraction>333</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                    <metatrafficUnicastLocatorList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>5100</physical_port>
+                                <logical_port>7401</logical_port>
+                            </ports_>
+                        </locator>
+                    </metatrafficUnicastLocatorList>
                 </builtin>
+                <use_IP4_to_send>true</use_IP4_to_send>
+                <use_IP6_to_send>false</use_IP6_to_send>
+                <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
 
@@ -217,20 +261,4 @@
         <subscriber participant_name="LocalShapes" subscriber_name="subscriberCircle"/>
         <publisher participant_name="TCPShapes" publisher_name="publisherCircle"/>
     </connector>
-<!--
-    <connector name="TCP_Local_SQUARES"> 
-        <subscriber participant_name="TCPShapes" subscriber_name="subscriberSquare"/>
-        <publisher participant_name="LocalShapes" publisher_name="publisherSquare"/>
-    </connector>
-
-    <connector name="TCP_Local_TRIANGLES"> 
-        <subscriber participant_name="TCPShapes" subscriber_name="subscriberTriangle"/>
-        <publisher participant_name="LocalShapes" publisher_name="publisherTriangle"/>
-    </connector>
-
-    <connector name="TCP_Local_CIRCLES"> 
-        <subscriber participant_name="TCPShapes" subscriber_name="subscriberCircle"/>
-        <publisher participant_name="LocalShapes" publisher_name="publisherCircle"/>
-    </connector>
--->
 </is>
