@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles>
+    <transports>
+        <transport>
+            <transport_id>TRANSPORT_1</transport_id>
+            <type>TCPv4</type>
+            <wan_addr>127.0.0.1</wan_addr>
+            <listening_ports>
+                <port>5100</port>
+            </listening_ports>
+            <keep_alive_frequency_ms>100</keep_alive_frequency_ms>
+            <keep_alive_timeout_ms>100</keep_alive_timeout_ms>
+            <max_logical_port>0</max_logical_port>
+            <logical_port_range>0</logical_port_range>
+            <logical_port_increment>0</logical_port_increment>
+            <metadata_logical_port>0</metadata_logical_port>
+
+            <!-- UDP-->
+            <output_port>0</output_port>
+            
+            <!-- Common-->
+            <sendBufferSize>0</sendBufferSize>
+            <receiveBufferSize>0</receiveBufferSize>
+            <interfaceWhiteList>
+                <address>127.0.0.1</address>
+                <address>127.0.0.2</address>
+            </interfaceWhiteList>
+            <TTL>255</TTL>
+        </transport>
+    </transports>
+    <participant profile_name="participant_profile">
+        <rtps>            
+            <builtin>
+                <domainId>80</domainId>
+                <leaseDuration>
+                    <durationbyname>INFINITE</durationbyname>
+                </leaseDuration>
+            </builtin>
+            <userTransports>
+                <transport_id>TRANSPORT_1</transport_id>
+            </userTransports>            
+        </rtps>
+    </participant>
+
+    <publisher profile_name="publisher_profile">
+        <topic>
+            <name>xml_profiles_topic</name>
+            <dataType>XMLProfilesExample</dataType>
+            <kind>NO_KEY</kind>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+        </topic>
+        <qos>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+        </qos>
+        <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+    </publisher>
+
+    <subscriber profile_name="subscriber_profile">
+        <topic>
+            <name>xml_profiles_topic</name>
+            <dataType>XMLProfilesExample</dataType>
+            <kind>NO_KEY</kind>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+        </topic>
+        <qos>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+        </qos>
+        <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+    </subscriber>
+
+</profiles>
