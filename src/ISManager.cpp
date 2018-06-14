@@ -404,7 +404,7 @@ Participant* ISManager::getParticipant(const std::string &name)
         }
         else
         {
-            participant = Domain::createParticipant(name);
+            participant = Domain::createParticipant(name, nullptr, true); // Use profile name as participant name
             rtps_participants[name] = participant;
 
             // Register its types
