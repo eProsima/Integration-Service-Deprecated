@@ -1,12 +1,64 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project("integration_services")
+###############################################################################
+# Version information                                                         #
+###############################################################################
+
+#If not set, copy over product version from configure.ac
+file(STRINGS
+    configure.ac
+    LIB_MAJOR_VERSION_TMP
+    REGEX "^m4_define\\(\\[?version_major\\]?, *\\[?[0-9]+\\]?\\)"
+    )
+file(STRINGS
+    configure.ac
+    LIB_MINOR_VERSION_TMP
+    REGEX "^m4_define\\(\\[?version_minor\\]?, *\\[?[0-9]+\\]?\\)"
+    )
+file(STRINGS
+    configure.ac
+    LIB_PATCH_VERSION_TMP
+    REGEX "^m4_define\\(\\[?version_micro\\]?, *\\[?[0-9]+\\]?\\)"
+    )
+
+string(REGEX REPLACE "m4_define\\(\\[?version_major\\]?, *\\[?([0-9]+)\\]?\\)"
+    "\\1"
+    LIB_MAJOR_VERSION
+    ${LIB_MAJOR_VERSION_TMP}
+    )
+string(REGEX REPLACE "m4_define\\(\\[?version_minor\\]?, *\\[?([0-9]+)\\]?\\)"
+    "\\1"
+    LIB_MINOR_VERSION
+    ${LIB_MINOR_VERSION_TMP}
+    )
+string(REGEX REPLACE "m4_define\\(\\[?version_micro\\]?, *\\[?([0-9]+)\\]?\\)"
+    "\\1"
+    LIB_PATCH_VERSION
+    ${LIB_PATCH_VERSION_TMP}
+    )
+
+set(LIB_VERSION_STR "${LIB_MAJOR_VERSION}.${LIB_MINOR_VERSION}.${LIB_PATCH_VERSION}")
+
+###############################################################################
+# Project                                                                     #
+###############################################################################
+if(CMAKE_VERSION VERSION_LESS 3.0)
+    project("integration_services" C CXX)
+    set(PROJECT_VERSION_MAJOR "${LIB_MAJOR_VERSION}")
+    set(PROJECT_VERSION_MINOR "${LIB_MINOR_VERSION}")
+    set(PROJECT_VERSION_PATCH "${LIB_PATCH_VERSION}")
+    set(PROJECT_VERSION "${LIB_VERSION_STR}")
+else()
+    cmake_policy(SET CMP0048 NEW)
+    project("integration_services" VERSION "${LIB_VERSION_STR}" LANGUAGES C CXX)
+endif()
+#set(PROJECT_MAJOR_VERSION 0)
+#set(PROJECT_MINOR_VERSION 0)
+#set(PROJECT_VERSION_PATCH 0)
+#set(PROJECT_VERSION ${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PROJECT_MICRO_VERSION})
 set(PROJECT_NAME_STYLED "IntegrationServices")
 set(PROJECT_NAME_LARGE "Integration Services")
-set(PROJECT_MAJOR_VERSION 0)
-set(PROJECT_MINOR_VERSION 0)
-set(PROJECT_MICRO_VERSION 0)
-set(PROJECT_VERSION ${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PROJECT_MICRO_VERSION})
+set(PROJECT_NAME_UPPER "IS")
 
 include(CheckCXXCompilerFlag)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
@@ -41,6 +93,7 @@ set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
 #set(LICENSE_INSTALL_DIR ./ CACHE PATH "Installation directory for licenses")
 
 add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS)
+add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 
 IF (NOT DEFINED LOG_LEVEL_DEBUG)
     SET(LOG_LEVEL_DEBUG OFF)
@@ -63,12 +116,17 @@ ENDIF()
 ADD_DEFINITIONS(-DLOG_LEVEL_ERROR=${LOG_LEVEL_ERROR})
 
 configure_file(src/log/ISLog.h.in ${PROJECT_SOURCE_DIR}/src/log/ISLog.h)
+configure_file(${PROJECT_SOURCE_DIR}/src/config.h.in
+    ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h)
+
+include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
 
-if(WIN32)
-    add_library(islib
+set(${PROJECT_NAME}_source_files 
+        src/xmlUtils.h
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
         src/ISManager.cpp src/ISManager.h src/log/ISLog.h
         src/ISBridge.cpp src/ISBridge.h
@@ -76,7 +134,11 @@ if(WIN32)
         src/RTPSPublisher.cpp src/RTPSPublisher.h
         src/RTPSSubscriber.cpp src/RTPSSubscriber.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
-        thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
+        thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h
+    )
+
+if(WIN32)
+    add_library(islib ${${PROJECT_NAME}_source_files})
 
     target_link_libraries(islib
         fastrtps_static
@@ -85,15 +147,7 @@ if(WIN32)
         IPHLPAPI
         shlwapi)
 else()
-    add_library(islib SHARED
-        src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
-        src/ISManager.cpp src/ISManager.h src/log/ISLog.h
-        src/ISBridge.cpp src/ISBridge.h
-        src/RTPSBridge.cpp src/RTPSBridge.h
-        src/RTPSPublisher.cpp src/RTPSPublisher.h
-        src/RTPSSubscriber.cpp src/RTPSSubscriber.h
-        src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
-        thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h)
+    add_library(islib SHARED ${${PROJECT_NAME}_source_files})
 
     target_link_libraries(islib
         fastrtps
@@ -102,11 +156,15 @@ else()
         ${CMAKE_DL_LIBS})
 endif()
 
+# Add sources to Makefile.am
+set_sources(${${PROJECT_NAME}_source_files})
+
 target_include_directories(islib PRIVATE thirdparty/tinyxml2)
 target_link_libraries(${PROJECT_NAME} islib)
 
 install(
     FILES
+        src/xmlUtils.h
         src/ISBridge.h
         src/ISManager.h
         src/GenericPubSubTypes.h
@@ -117,55 +175,86 @@ install(
         src/RTPSSubscriber.h
         src/GenericPubSubTypes.h
     COMPONENT headers
-    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME})
+    DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME})
 
 install(
     FILES
         src/dynamicload/dynamicload.h
     COMPONENT headers
-    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME}/dynamicload)
+    DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}/dynamicload)
 
-install(
-    FILES
-        src/log/ISLog.h
-    COMPONENT headers
-    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME}/log)
 
-install(
-    FILES
-        thirdparty/tinyxml2/tinyxml2.h
-    COMPONENT headers
-    DESTINATION ${INCLUDE_SOURCE_DIR}/thirdparty/tinyxml2)
+if(EPROSIMA_INSTALLER)
+    install(
+        FILES
+            src/xmlUtils.h
+            src/ISBridge.h
+            src/ISManager.h
+            src/GenericPubSubTypes.h
+            src/ISManager.h
+            src/ISBridge.h
+            src/RTPSBridge.h
+            src/RTPSPublisher.h
+            src/RTPSSubscriber.h
+            src/GenericPubSubTypes.h
+        COMPONENT sources
+        DESTINATION ${INCLUDE_SOURCE_DIR}/src)
 
-install(
-    FILES
-        src/ISManager.cpp
-        src/ISBridge.cpp
-        src/RTPSBridge.cpp
-        src/RTPSPublisher.cpp
-        src/RTPSSubscriber.cpp
-        src/GenericPubSubTypes.cpp
-    COMPONENT sources
-    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME})
+    install(
+        FILES
+            src/dynamicload/dynamicload.h
+        COMPONENT sources
+        DESTINATION ${INCLUDE_SOURCE_DIR}/src/dynamicload)
 
-install(
-    FILES
-        src/dynamicload/dynamicload.cpp
-    COMPONENT sources
-    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME}/dynamicload)
+    install(
+        FILES
+            src/log/ISLog.h
+        COMPONENT sources
+        DESTINATION ${INCLUDE_SOURCE_DIR}/src/log)
 
-install(
-    FILES
-        thirdparty/tinyxml2/tinyxml2.cpp
-    COMPONENT sources
-    DESTINATION ${INCLUDE_SOURCE_DIR}/thirdparty/tinyxml2)
+    install(
+        FILES
+            thirdparty/tinyxml2/tinyxml2.h
+        COMPONENT sources
+        DESTINATION ${INCLUDE_SOURCE_DIR}/thirdparty/tinyxml2)
 
-# Install licenses
-install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
-    DESTINATION ./
-    COMPONENT licenses
-    )
-set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
+    install(
+        FILES
+            src/ISManager.cpp
+            src/ISBridge.cpp
+            src/RTPSBridge.cpp
+            src/RTPSPublisher.cpp
+            src/RTPSSubscriber.cpp
+            src/GenericPubSubTypes.cpp
+        COMPONENT sources
+        DESTINATION ${INCLUDE_SOURCE_DIR}/src)
+
+    install(
+        FILES
+            src/dynamicload/dynamicload.cpp
+        COMPONENT sources
+        DESTINATION ${INCLUDE_SOURCE_DIR}/src/dynamicload)
+
+    install(
+        FILES
+            thirdparty/tinyxml2/tinyxml2.cpp
+        COMPONENT sources
+        DESTINATION ${INCLUDE_SOURCE_DIR}/thirdparty/tinyxml2)
+
+    # Install licenses
+    install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
+        DESTINATION ./
+        COMPONENT licenses
+        )
+    set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
+
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/
+        DESTINATION .
+        USE_SOURCE_PERMISSIONS
+        OPTIONAL
+        COMPONENT sources
+        )
+endif()
 
 # Install examples
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples

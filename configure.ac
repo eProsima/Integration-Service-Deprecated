@@ -19,8 +19,8 @@
 #
 # Define variables for the Integration-Services version number.
 #
-m4_define([version_major],[1])
-m4_define([version_minor],[6])
+m4_define([version_major],[0])
+m4_define([version_minor],[1])
 m4_define([version_micro],[0])
 
 AC_INIT([integration_services], [version_major.version_minor.version_micro], [support@eprosima.com], [eProsima Integration-Services], [http://eprosima.com/])
@@ -31,6 +31,11 @@ AC_SUBST(CONFIG_ARGS)
 AC_PREREQ([2.59])
 
 AM_INIT_AUTOMAKE([1.10 no-define foreign subdir-objects])
+
+# Makes version available in config.h
+AC_DEFINE(IS_VERSION_MAJOR, version_major, [integration_services version major])
+AC_DEFINE(IS_VERSION_MINOR, version_minor, [integration_services version minor])
+AC_DEFINE(IS_VERSION_MICRO, version_micro, [integration_services version micro])
 
 # Check stdcxx
 AX_CXX_COMPILE_STDCXX_11(,optional)
@@ -60,6 +65,7 @@ AC_PROG_CPP
 AC_CONFIG_MACRO_DIR([m4])
 LT_INIT
 
+AC_CONFIG_HEADERS(include/integration_services/config.h:include/integration_services/config.h.in)
 AC_CONFIG_FILES([Makefile
                  src/Makefile])
 

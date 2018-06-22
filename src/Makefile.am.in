@@ -18,5 +18,8 @@ lib_LTLIBRARIES = lib${PROJECT_NAME}.la
 ${${PROJECT_NAME}_SOURCES_AUTOTOOLS}
 lib${PROJECT_NAME}_la_LDFLAGS = -version-number ${PROJECT_VERSION_AUTOTOOLS} -lpthread -ldl
 
-AM_CPPFLAGS = -I../thirdparty/tinyxml2
+AM_CPPFLAGS = -DIS_SOURCE -I../thirdparty/tinyxml2 -I${fastrtps_INCLUDE_DIR} -I${fastcdr_INCLUDE_DIR}
+
+library_includedir = $(includedir)
+nobase_library_include_HEADERS = ${${PROJECT_NAME}_PUBLIC_HEADERS_AUTOTOOLS}
 
