@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project("integration-services")
+project("integration_services")
+set(PROJECT_NAME_STYLED "IntegrationServices")
+set(PROJECT_NAME_LARGE "Integration Services")
 set(PROJECT_MAJOR_VERSION 0)
 set(PROJECT_MINOR_VERSION 0)
 set(PROJECT_MICRO_VERSION 0)
@@ -33,13 +35,10 @@ ENDIF("${isSystemDir}" STREQUAL "-1")
 
 set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
+set(INCLUDE_SOURCE_DIR src/ CACHE PATH "Installation directory for C++ sources")
 set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
 set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
-if(WIN32)
-    set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
-else()
-    set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
-endif()
+#set(LICENSE_INSTALL_DIR ./ CACHE PATH "Installation directory for licenses")
 
 add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS)
 
@@ -111,14 +110,71 @@ install(
         src/ISBridge.h
         src/ISManager.h
         src/GenericPubSubTypes.h
+        src/ISManager.h
+        src/ISBridge.h
+        src/RTPSBridge.h
+        src/RTPSPublisher.h
+        src/RTPSSubscriber.h
+        src/GenericPubSubTypes.h
     COMPONENT headers
-    DESTINATION ${INCLUDE_INSTALL_DIR}${PROJECT_NAME})
+    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME})
 
 install(
     FILES
         src/dynamicload/dynamicload.h
     COMPONENT headers
-    DESTINATION ${INCLUDE_INSTALL_DIR}${PROJECT_NAME}/dynamicload)
+    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME}/dynamicload)
+
+install(
+    FILES
+        src/log/ISLog.h
+    COMPONENT headers
+    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME}/log)
+
+install(
+    FILES
+        thirdparty/tinyxml2/tinyxml2.h
+    COMPONENT headers
+    DESTINATION ${INCLUDE_SOURCE_DIR}/thirdparty/tinyxml2)
+
+install(
+    FILES
+        src/ISManager.cpp
+        src/ISBridge.cpp
+        src/RTPSBridge.cpp
+        src/RTPSPublisher.cpp
+        src/RTPSSubscriber.cpp
+        src/GenericPubSubTypes.cpp
+    COMPONENT sources
+    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME})
+
+install(
+    FILES
+        src/dynamicload/dynamicload.cpp
+    COMPONENT sources
+    DESTINATION ${INCLUDE_SOURCE_DIR}/${PROJECT_NAME}/dynamicload)
+
+install(
+    FILES
+        thirdparty/tinyxml2/tinyxml2.cpp
+    COMPONENT sources
+    DESTINATION ${INCLUDE_SOURCE_DIR}/thirdparty/tinyxml2)
+
+# Install licenses
+install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
+    DESTINATION ./
+    COMPONENT licenses
+    )
+set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
+
+# Install examples
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
+    DESTINATION ./
+    COMPONENT examples
+    PATTERN "examples/CMakeLists.txt" EXCLUDE
+    )
+set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
+set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
 
 install(
     TARGETS islib
@@ -139,5 +195,7 @@ install(
     TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin)
+
+set(CPACK_COMPONENTS_ALL headers sources licenses examples)
 
 include(${PROJECT_SOURCE_DIR}/cmake/packaging/eProsimaPackaging.cmake)
