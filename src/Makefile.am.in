@@ -14,9 +14,13 @@
 
 ACLOCAL_AMFLAGS = -I m4 --install
 
-lib_LTLIBRARIES = lib${PROJECT_NAME}.la
+lib_LTLIBRARIES = lib${SHAREDLIB_NAME}.la
 ${${PROJECT_NAME}_SOURCES_AUTOTOOLS}
-lib${PROJECT_NAME}_la_LDFLAGS = -version-number ${PROJECT_VERSION_AUTOTOOLS} -lpthread -ldl
+lib${SHAREDLIB_NAME}_la_LDFLAGS = -version-number ${PROJECT_VERSION_AUTOTOOLS} -lpthread -ldl
+
+bin_PROGRAMS = ${PROJECT_NAME}
+${${PROJECT_NAME}_SOURCES_BIN_AUTOTOOLS}
+${PROJECT_NAME}_LDADD = -lpthread -ldl lib${SHAREDLIB_NAME}.la -L${fastrtps_LIB_DIR} -lfastrtps -L${fastcdr_LIB_DIR} -lfastcdr
 
 AM_CPPFLAGS = -DIS_SOURCE -I../thirdparty/tinyxml2 -I${fastrtps_INCLUDE_DIR} -I${fastcdr_INCLUDE_DIR}
 

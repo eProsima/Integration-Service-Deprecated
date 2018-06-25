@@ -14,7 +14,8 @@
 
 macro(generate_sources_for_autotools)
     set(@PROJECT_NAME@_SOURCES_TMP @@PROJECT_NAME@_SOURCES@)
-    set(@PROJECT_NAME@_SOURCES_AUTOTOOLS "lib@PROJECT_NAME@_la_SOURCES = ")
+    set(@PROJECT_NAME@_SOURCES_AUTOTOOLS "lib@SHAREDLIB_NAME@_la_SOURCES = ")
+    set(@PROJECT_NAME@_SOURCES_BIN_AUTOTOOLS "@PROJECT_NAME@_SOURCES = src/main.cpp")
     set(section_ FALSE)
     set(restart_ FALSE)
     foreach(@PROJECT_NAME@_SOURCE ${@PROJECT_NAME@_SOURCES_TMP})

@@ -59,6 +59,7 @@ endif()
 set(PROJECT_NAME_STYLED "IntegrationServices")
 set(PROJECT_NAME_LARGE "Integration Services")
 set(PROJECT_NAME_UPPER "IS")
+set(SHAREDLIB_NAME "islib")
 
 include(CheckCXXCompilerFlag)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
@@ -122,9 +123,6 @@ configure_file(${PROJECT_SOURCE_DIR}/src/config.h.in
 include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
-target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
-
 set(${PROJECT_NAME}_source_files 
         src/xmlUtils.h
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
@@ -137,19 +135,22 @@ set(${PROJECT_NAME}_source_files
         thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h
     )
 
-if(WIN32)
-    add_library(islib ${${PROJECT_NAME}_source_files})
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
 
-    target_link_libraries(islib
+if(WIN32)
+    add_library(${SHAREDLIB_NAME} ${${PROJECT_NAME}_source_files})
+
+    target_link_libraries(${SHAREDLIB_NAME}
         fastrtps_static
         fastcdr_static
         ${CMAKE_DL_LIBS}
         IPHLPAPI
         shlwapi)
 else()
-    add_library(islib SHARED ${${PROJECT_NAME}_source_files})
+    add_library(${SHAREDLIB_NAME} SHARED ${${PROJECT_NAME}_source_files})
 
-    target_link_libraries(islib
+    target_link_libraries(${SHAREDLIB_NAME}
         fastrtps
         fastcdr
         -L/usr/lib/x86_64-linux-gnu
@@ -159,8 +160,8 @@ endif()
 # Add sources to Makefile.am
 set_sources(${${PROJECT_NAME}_source_files})
 
-target_include_directories(islib PRIVATE thirdparty/tinyxml2)
-target_link_libraries(${PROJECT_NAME} islib)
+target_include_directories(${SHAREDLIB_NAME} PRIVATE thirdparty/tinyxml2)
+target_link_libraries(${PROJECT_NAME} ${SHAREDLIB_NAME})
 
 install(
     FILES
@@ -220,6 +221,7 @@ if(EPROSIMA_INSTALLER)
 
     install(
         FILES
+            src/main.cpp
             src/ISManager.cpp
             src/ISBridge.cpp
             src/RTPSBridge.cpp
@@ -266,13 +268,13 @@ set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
 set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
 
 install(
-    TARGETS islib
+    TARGETS ${SHAREDLIB_NAME}
     EXPORT ${PROJECT_NAME}Targets
     COMPONENT libraries
     DESTINATION ${LIB_INSTALL_DIR})
 
 export(
-    TARGETS islib
+    TARGETS ${SHAREDLIB_NAME}
     FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
 
 install(
