@@ -73,8 +73,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-find_package(fastrtps REQUIRED)
+include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
+
 find_package(fastcdr REQUIRED)
+find_package(fastrtps REQUIRED)
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
@@ -141,9 +143,18 @@ target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
 if(WIN32)
     add_library(${SHAREDLIB_NAME} ${${PROJECT_NAME}_source_files})
 
+    include_directories("${fastrtps_INCLUDE_DIR}")
+    include_directories("${fastcdr_INCLUDE_DIR}")
+
+    # Made linked libraries PRIVATE to prevent local directories in Windows installer.
+    #set(PRIVACY "")
+    #if(EPROSIMA_INSTALLER_MINION)
+    #    set(PRIVACY "PRIVATE")
+    #endif()
+
     target_link_libraries(${SHAREDLIB_NAME}
-        fastrtps_static
-        fastcdr_static
+        fastrtps
+        fastcdr
         ${CMAKE_DL_LIBS}
         IPHLPAPI
         shlwapi)
@@ -162,6 +173,41 @@ set_sources(${${PROJECT_NAME}_source_files})
 
 target_include_directories(${SHAREDLIB_NAME} PRIVATE thirdparty/tinyxml2)
 target_link_libraries(${PROJECT_NAME} ${SHAREDLIB_NAME})
+
+set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
+set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
+
+
+###############################################################################
+# Test system configuration
+###############################################################################
+include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
+check_stdcxx()
+check_compile_feature()
+check_endianness()
+
+###############################################################################
+# Check MSVC architecture
+###############################################################################
+if(MSVC OR MSVC_IDE)
+    check_msvc_arch()
+endif()
+
+# Create libraries
+if(MSVC OR MSVC_IDE)
+    if(EPROSIMA_INSTALLER)
+        generate_msvc_libraries(${MSVC_ARCH})
+        #generate_msvc_libraries(x64Win64VS2015)
+    else()
+        set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+        set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+        set_target_properties(${SHAREDLIB_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+
+        if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+            set_target_properties(${SHAREDLIB_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
+        endif()
+    endif()
+endif()
 
 install(
     FILES
@@ -267,11 +313,19 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
 set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
 set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
 
-install(
-    TARGETS ${SHAREDLIB_NAME}
-    EXPORT ${PROJECT_NAME}Targets
-    COMPONENT libraries
-    DESTINATION ${LIB_INSTALL_DIR})
+if(MSVC OR MSVC_IDE)
+    install(
+        TARGETS ${SHAREDLIB_NAME}
+        EXPORT ${PROJECT_NAME}Targets
+        COMPONENT libraries_${MSVC_ARCH}
+        DESTINATION ${LIB_INSTALL_DIR})
+else()
+    install(
+        TARGETS ${SHAREDLIB_NAME}
+        EXPORT ${PROJECT_NAME}Targets
+        COMPONENT libraries}
+        DESTINATION ${LIB_INSTALL_DIR})
+endif()
 
 export(
     TARGETS ${SHAREDLIB_NAME}
@@ -285,8 +339,59 @@ install(
 install(
     TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin)
+    RUNTIME DESTINATION bin
+    COMPONENT libraries_${MSVC_ARCH})
 
 set(CPACK_COMPONENTS_ALL headers sources licenses examples)
 
+if(MSVC OR MSVC_IDE)
+    #if(EPROSIMA_INSTALLER)
+    #    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL}
+    #        libraries_i86Win32VS2015
+    #        libraries_x64Win64VS2015
+    #        )
+    #else()
+    #    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})
+    #endif()
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})
+else()
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries)
+endif()
+
 include(${PROJECT_SOURCE_DIR}/cmake/packaging/eProsimaPackaging.cmake)
+
+# Install libraries
+if(MSVC OR MSVC_IDE)
+    if(EPROSIMA_INSTALLER)
+        install_msvc_libraries(i86Win32VS2015)
+        install_msvc_libraries(x64Win64VS2015)
+    else()
+        set(DIR_EXTENSION "")
+        if(EPROSIMA_INSTALLER_MINION)
+            set(DIR_EXTENSION "/${MSVC_ARCH}")
+        endif()
+
+        install(EXPORT ${PROJECT_NAME}Targets
+            DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}/${PROJECT_NAME}/cmake
+            COMPONENT cmake
+            )
+
+
+        # Install pdb files
+        #install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug/
+        #    DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
+        #    COMPONENT libraries_${MSVC_ARCH}
+        #    CONFIGURATIONS Debug
+        #    FILES_MATCHING
+        #    PATTERN "*.pdb"
+        #    )
+
+        string(TOUPPER "${MSVC_ARCH}" MSVC_ARCH_UPPER)
+        set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}" PARENT_SCOPE)
+        set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform ${MSVC_ARCH}" PARENT_SCOPE)
+        set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_GROUP "Libraries" PARENT_SCOPE)
+    endif()
+
+    set(CPACK_COMPONENT_GROUP_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries" PARENT_SCOPE)
+endif()
+

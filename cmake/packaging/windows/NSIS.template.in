@@ -570,7 +570,7 @@ FunctionEnd
   !include "EnvVarPage.nsh"
 
 ;Include installation of redistributable files.
-  !include InstallRedistributables.nsh
+;  !include InstallRedistributables.nsh
 
 ;--------------------------------
 ; Define some macro setting for the gui
@@ -581,14 +581,14 @@ FunctionEnd
 
 ;--------------------------------
 Function DisableReadme
-  ${IfNot} ${SectionIsSectionGroup} ${documentation}
-  ${AndIf} ${SectionIsSelected} ${documentation}
+;  ${IfNot} ${SectionIsSectionGroup} ${documentation}
+;  ${AndIf} ${SectionIsSelected} ${documentation}
   Goto done
-  ${EndIf}
+;  ${EndIf}
 
-  ReadINIStr $0 "$PLUGINSDIR\ioSpecial.ini" "Field 4" "HWND"
-  ${NSD_SetState} $0 0
-  EnableWindow $0 0
+;  ReadINIStr $0 "$PLUGINSDIR\ioSpecial.ini" "Field 4" "HWND"
+;  ${NSD_SetState} $0 0
+;  EnableWindow $0 0
 
   done:
 FunctionEnd
@@ -611,8 +611,8 @@ FunctionEnd
 
   Page custom VariablesEntornoPage
   !insertmacro MUI_PAGE_INSTFILES
-  !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\Readme.html
-  !define MUI_PAGE_CUSTOMFUNCTION_SHOW DisableReadme
+  ;!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\Readme.html
+  ;!define MUI_PAGE_CUSTOMFUNCTION_SHOW DisableReadme
   !insertmacro MUI_PAGE_FINISH
 
   !insertmacro MUI_UNPAGE_CONFIRM
@@ -746,10 +746,10 @@ Section "-Core installation"
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
 @CPACK_NSIS_CREATE_ICONS@
 @CPACK_NSIS_CREATE_ICONS_EXTRA@
-  ${IfNot} ${SectionIsSectionGroup} ${documentation}
-  ${AndIf} ${SectionIsSelected} ${documentation}
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\README.lnk" "$INSTDIR\README.html"
-  ${EndIf}
+  #${IfNot} ${SectionIsSectionGroup} ${documentation}
+  #${AndIf} ${SectionIsSelected} ${documentation}
+  #  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\README.lnk" "$INSTDIR\README.html"
+  #${EndIf}
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
   ;Read a value from an InstallOptions INI file
@@ -780,7 +780,7 @@ Section "-Core installation"
 
   call InstallVarEnvs
 
-  call InstallRedistributables
+;  call InstallRedistributables
 
 SectionEnd
 
