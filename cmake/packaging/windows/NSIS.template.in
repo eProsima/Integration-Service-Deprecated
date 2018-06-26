@@ -184,6 +184,8 @@ Var AR_RegFlags
   !define MUI_HEADERIMAGE
   !define MUI_HEADERIMAGE_RIGHT
   !define MUI_ABORTWARNING
+  
+  !define MUI_WELCOMEPAGE_TITLE_3LINES
 
 ;--------------------------------
 ; path functions
