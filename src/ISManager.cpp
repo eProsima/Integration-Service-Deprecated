@@ -19,6 +19,7 @@
 #include "xmlUtils.h"
 #include <fastrtps/Domain.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 
 // String literals
 static const std::string s_sIS("is");
@@ -36,6 +37,7 @@ static const std::string s_sTopic("topic");
 static const std::string s_sType("type");
 static const std::string s_sPartition("partition");
 static const std::string s_sLibrary("library");
+static const std::string s_sIsDynamicType("dynamic_type");
 static const std::string s_sProperties("properties");
 static const std::string s_sProperty("property");
 static const std::string s_sFuncCreateBridge("create_bridge");
@@ -75,7 +77,7 @@ ISManager::ISManager(const std::string &xml_file_path)
         return;
     }
 
-    for (auto child = doc.FirstChildElement(s_sIS.c_str()); 
+    for (auto child = doc.FirstChildElement(s_sIS.c_str());
         child != nullptr; child = child->NextSiblingElement(s_sIS.c_str()))
     {
         tinyxml2::XMLElement *topic_types = child->FirstChildElement(s_sTopicTypes.c_str());
@@ -181,7 +183,17 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
         {
             const char* type_name = type->Attribute(s_sName.c_str());
 
-            tinyxml2::XMLElement *element = _assignOptionalElement(type, s_sLibrary);
+            tinyxml2::XMLElement *element = _assignOptionalElement(type, s_sIsDynamicType);
+            if (element != nullptr)
+            {
+                const char* dyn = element->GetText();
+                if (strncmp(dyn, "true", 4)== 0)
+                {
+                    dynamicType[type_name] = true;
+                }
+            }
+
+            element = _assignOptionalElement(type, s_sLibrary);
             if (element != nullptr)
             {
                 // Has his own library
@@ -217,7 +229,7 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
                 typesLib = typesLib->NextSiblingElement(s_sTypesLibrary.c_str());
             }
         }
-        
+
         for(auto &pair : to_register_types)
         {
             TopicDataType* type = getTopicDataType(pair.second);
@@ -270,14 +282,14 @@ void ISManager::createSubscriber(Participant* participant, const std::string &na
         LOG_ERROR("Error creating subscriber");
         return;
     }
-    
+
     // Create Subscriber
     listener->setRTPSSubscriber(Domain::createSubscriber(participant, name, (SubscriberListener*)listener));
 
     //Associate types
     const std::string &typeName = listener->getRTPSSubscriber()->getAttributes().topic.topicDataType;
     const std::string &topic_name = listener->getRTPSSubscriber()->getAttributes().topic.topicName;
-    std::pair<std::string, std::string> idx = 
+    std::pair<std::string, std::string> idx =
         std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
     listener->input_type = data_types[idx];
     listener->input_type->setName(typeName.c_str());
@@ -309,19 +321,19 @@ void ISManager::createPublisher(Participant* participant, const std::string &nam
     }
 
     //Create publisher
-    publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name, 
+    publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name,
                                 (PublisherListener*)publisher));
 
     //Associate types
     const std::string &typeName = publisher->getRTPSPublisher()->getAttributes().topic.topicDataType;
     const std::string &topic_name = publisher->getRTPSPublisher()->getAttributes().topic.topicName;
-    std::pair<std::string, std::string> idx = 
+    std::pair<std::string, std::string> idx =
         std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
     publisher->output_type = data_types[idx];
     publisher->output_type->setName(typeName.c_str());
 
     //Create publisher
-    //publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name, 
+    //publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name,
     //                            (PublisherListener*)publisher));
     if(!publisher->hasRTPSPublisher())
     {
@@ -413,7 +425,15 @@ Participant* ISManager::getParticipant(const std::string &name)
                 if (pair.first == name)
                 {
                     TopicDataType* type = data_types[pair];
-                    Domain::registerType(participant, type);
+                    if (dynamicType.find(type->getName()) != dynamicType.end()
+                        && dynamicType[type->getName()])
+                    {
+                        Domain::registerDynamicType(participant, dynamic_cast<types::DynamicPubSubType*>(type));
+                    }
+                    else
+                    {
+                        Domain::registerType(participant, type);
+                    }
                 }
             }
         }
@@ -437,7 +457,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 
         Participant* participant_subscriber = getParticipant(sub_part);
         Participant* participant_publisher = getParticipant(pub_part);
-        
+
         if (participant_subscriber != nullptr)
         {
             createSubscriber(participant_subscriber, sub_name);

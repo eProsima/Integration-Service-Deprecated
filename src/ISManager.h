@@ -59,6 +59,7 @@ class ISManager
     std::map<std::string, void*> handles;
     std::vector<std::pair<std::string, std::string>> to_register_types;
     std::map<std::string, typef_t> typesLibs;
+    std::map<std::string, bool> dynamicType;
     std::map<std::string, Participant*> rtps_participants;
     std::vector<typef_t> defaultTypesLibs;
     std::map<std::pair<std::string, std::string>, TopicDataType*> data_types;
