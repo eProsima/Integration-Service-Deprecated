@@ -15,8 +15,9 @@
 #include <fastrtps/Domain.h>
 #include <fastcdr/Cdr.h>
 #include "RTPSSubscriber.h"
-#include "GenericPubSubTypes.h"
 #include "log/ISLog.h"
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicDataFactory.h>
 
 RTPSSubscriber::RTPSSubscriber(const std::string &name)
     : ISSubscriber(name)
@@ -45,25 +46,15 @@ void RTPSSubscriber::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& in
 
 void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
 {
-    SerializedPayload_t serialized_input(input_type->m_typeSize);
-
-    bool taken = false;
-    if (dynamic_cast<GenericPubSubType*>(input_type) == nullptr) // Only if our type isn't the default
-    {
-        taken = sub->takeNextData(serialized_input.data, &m_info);
-        using eprosima::fastcdr::Cdr;
-        serialized_input.length = input_type->m_typeSize + 4;
-        serialized_input.encapsulation = Cdr::DEFAULT_ENDIAN == Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    }
-    else
-    {
-        taken = sub->takeNextData(&serialized_input, &m_info); // Only when the type is the default
-    }
+    DynamicData* pData = DynamicDataFactory::GetInstance()->CreateData(input_type->GetDynamicType());
+    bool taken = taken = sub->takeNextData(pData, &m_info);
 
     if(taken && m_info.sampleKind == ALIVE)
     {
-        on_received_data(&serialized_input);
+        on_received_data(pData);
     }
+ 
+    DynamicDataFactory::GetInstance()->DeleteData(pData);
 }
 
 void RTPSSubscriber::setParticipant(Participant* part)

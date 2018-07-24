@@ -19,10 +19,15 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <fastrtps/TopicDataType.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+#include "ISBaseClass.h"
 
-#include "GenericPubSubTypes.h"
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
-typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
+typedef types::DynamicData* (*userf_t)(types::DynamicData *input_data);
 typedef TopicDataType* (*typef_t)(const char *name);
 
 class ISPublisher;
@@ -35,58 +40,13 @@ typedef ISPublisher* (*createPubf_t)(ISBridge *bridge, const char* name,
 typedef ISSubscriber* (*createSubf_t)(ISBridge *bridge, const char* name,
                                       const std::vector<std::pair<std::string, std::string>> *config);
 
-class ISBaseClass
-{
-protected:
-    std::string name;
-    virtual void setName(const std::string &name) { this->name = name; }
-public:
-    ISBaseClass(const std::string &name) : name(name) {};
-    virtual const std::string& getName() const { return name; }
-    virtual void onTerminate() {};
-    virtual ~ISBaseClass() = default;
-};
-
-/** Base class for publishers. Must know how to write into the destination protocol */
-class ISPublisher : public ISBaseClass
-{
-protected:
-    ISBridge *mb_bridge;
-public:
-    ISPublisher(const std::string &name) : ISBaseClass(name), mb_bridge(nullptr) { };
-    virtual ~ISPublisher() = default;
-    virtual bool publish(SerializedPayload_t* /*data*/) { return false; };
-    virtual ISBridge* setBridge(ISBridge *bridge);
-
-    // Forbid copy
-    ISPublisher(const ISPublisher&) = delete;
-    ISPublisher& operator=(const ISPublisher&) = delete;
-};
-
-/** Base class for subscribers. Must know how to read from the origin protocol */
-class ISSubscriber : public ISBaseClass
-{
-protected:
-    std::vector<ISBridge*> mv_bridges;
-public:
-    ISSubscriber(const std::string &name) : ISBaseClass(name) { };
-    virtual ~ISSubscriber() = default;
-    virtual void addBridge(ISBridge* bridge){
-        mv_bridges.push_back(bridge);
-    }
-    virtual void on_received_data(SerializedPayload_t* payload);
-
-    // Forbid copy
-    ISSubscriber(const ISSubscriber&) = delete;
-    ISSubscriber& operator=(const ISSubscriber&) = delete;
-};
-
 /**
  * Base class for Bridges. All implementation must inherit from it.
  */
 class ISBridge : public ISBaseClass
 {
 protected:
+    types::DynamicPubSubType m_pubSubType;
     std::vector<ISSubscriber*> mv_subscriber;
     std::map<std::string, userf_t> mm_functionsNames;
     std::map<std::string, std::vector<std::string>> mm_functions;
@@ -100,7 +60,7 @@ protected:
         return sub + "@" + funct;
     }
 public:
-    ISBridge(const std::string &name) : ISBaseClass(name) { };
+    ISBridge(const std::string &name) : ISBaseClass(name){ };
     /**
      * This method will be called by ISManager when terminating the execution of the bridge.
      * Any handle, subscription, and resources that the bridge needed to work must be closed.
@@ -110,7 +70,7 @@ public:
     virtual void addFunction(const std::string &sub, const std::string &fname, userf_t func);
     virtual void addPublisher(const std::string &sub, const std::string &funcName, ISPublisher* pub);
     virtual ISPublisher* removePublisher(ISPublisher* pub);
-    virtual void on_received_data(const ISSubscriber *sub, SerializedPayload_t *data);
+    virtual void on_received_data(const ISSubscriber *sub, types::DynamicData* pData);
     virtual void onTerminate() override;
 
     // Forbid copy

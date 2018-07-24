@@ -12,25 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _GENERIC_PUBSUBTYPES_H_
-#define _GENERIC_PUBSUBTYPES_H_
+#ifndef _ISBASECLASS_H_
+#define _ISBASECLASS_H_
 
+#include <string>
 #include <fastrtps/TopicDataType.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class GenericPubSubType : public TopicDataType {
+class ISBaseClass
+{
+protected:
+    std::string name;
+    virtual void setName(const std::string &name) { this->name = name; }
 public:
-	GenericPubSubType();
-	virtual ~GenericPubSubType();
-	bool serialize(void *data, SerializedPayload_t *payload);
-	bool deserialize(SerializedPayload_t *payload, void *data);
-    std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	void* createData() { return 0; }
-	void deleteData(void*){ }
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+
+    ISBaseClass(const std::string &name) : name(name) {};
+    virtual ~ISBaseClass() = default;
+
+    virtual const std::string& getName() const { return name; }
+
+    virtual void onTerminate() {};
 };
 
-#endif // _GENERIC_PUBSUBTYPE_H_
+#endif // _ISBASECLASS_H_

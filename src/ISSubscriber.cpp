@@ -12,22 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-#ifndef _ISBRIDGERTPS_H_
-#define _ISBRIDGERTPS_H_
-
-#include <string>
-
+#include "ISSubscriber.h"
 #include "ISBridge.h"
-#include "dynamicload/dynamicload.h"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-class RTPSBridge : public ISBridge
+void ISSubscriber::addBridge(ISBridge* bridge)
 {
-public:
-    RTPSBridge(const std::string &name);
-    virtual ~RTPSBridge();
-};
+    mv_bridges.push_back(bridge);
+}
 
-#endif // _Header__SUBSCRIBER_H_
+void ISSubscriber::on_received_data(types::DynamicData* pInputData)
+{
+    for (ISBridge* bridge : mv_bridges)
+    {
+        bridge->on_received_data(this, pInputData);
+    }
+}

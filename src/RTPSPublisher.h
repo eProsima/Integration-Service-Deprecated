@@ -27,7 +27,7 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/TopicDataType.h>
 
-#include "ISBridge.h"
+#include "ISPublisher.h"
 #include "dynamicload/dynamicload.h"
 
 using namespace eprosima::fastrtps;
@@ -41,7 +41,7 @@ private:
 public:
     TopicDataType *output_type;
     RTPSPublisher(const std::string &name);
-    virtual bool publish(SerializedPayload_t * data) override;
+    virtual bool publish(types::DynamicData* data) override;
     ~RTPSPublisher() override;
     void onPublicationMatched(Publisher* pub, MatchingInfo& info) override;
     void setParticipant(Participant* part);

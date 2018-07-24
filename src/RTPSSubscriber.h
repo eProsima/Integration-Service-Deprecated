@@ -27,11 +27,13 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/TopicDataType.h>
 
-#include "ISBridge.h"
+#include "ISSubscriber.h"
 #include "dynamicload/dynamicload.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+
+class DynamicPubSubType;
 
 class RTPSSubscriber : public SubscriberListener, public ISSubscriber
 {
@@ -40,7 +42,7 @@ private:
     Participant *ms_participant;
     Subscriber *ms_subscriber;
 public:
-    TopicDataType *input_type;
+    eprosima::fastrtps::types::DynamicPubSubType *input_type;
     RTPSSubscriber(const std::string &name);
     ~RTPSSubscriber() override;
     void onSubscriptionMatched(Subscriber* sub, MatchingInfo& info) override;

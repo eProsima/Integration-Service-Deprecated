@@ -125,15 +125,16 @@ configure_file(${PROJECT_SOURCE_DIR}/src/config.h.in
 include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
-set(${PROJECT_NAME}_source_files 
+set(${PROJECT_NAME}_source_files
         src/xmlUtils.h
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
         src/ISManager.cpp src/ISManager.h src/log/ISLog.h
-        src/ISBridge.cpp src/ISBridge.h
+        src/ISPublisher.cpp src/ISPublisher.h
+        src/ISSubscriber.cpp src/ISSubscriber.h
+        src/ISBridge.cpp src/ISBridge.h src/ISBaseClass.h
         src/RTPSBridge.cpp src/RTPSBridge.h
         src/RTPSPublisher.cpp src/RTPSPublisher.h
         src/RTPSSubscriber.cpp src/RTPSSubscriber.h
-        src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
         thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h
     )
 
@@ -212,15 +213,14 @@ endif()
 install(
     FILES
         src/xmlUtils.h
+        src/ISBaseClass.h
         src/ISBridge.h
-        src/ISManager.h
-        src/GenericPubSubTypes.h
-        src/ISManager.h
+        src/ISPublisher.h
         src/ISBridge.h
+        src/ISSubscriber.h
         src/RTPSBridge.h
         src/RTPSPublisher.h
         src/RTPSSubscriber.h
-        src/GenericPubSubTypes.h
     COMPONENT headers
     DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME})
 
@@ -235,15 +235,14 @@ if(EPROSIMA_INSTALLER)
     install(
         FILES
             src/xmlUtils.h
+            src/ISBaseClass.h
             src/ISBridge.h
+            src/ISPublisher.h
+            src/ISSubscriber.h
             src/ISManager.h
-            src/GenericPubSubTypes.h
-            src/ISManager.h
-            src/ISBridge.h
             src/RTPSBridge.h
             src/RTPSPublisher.h
             src/RTPSSubscriber.h
-            src/GenericPubSubTypes.h
         COMPONENT sources
         DESTINATION ${INCLUDE_SOURCE_DIR}/src)
 
@@ -270,10 +269,11 @@ if(EPROSIMA_INSTALLER)
             src/main.cpp
             src/ISManager.cpp
             src/ISBridge.cpp
+            src/ISPublisher.cpp
+            src/ISSubscriber.cpp
             src/RTPSBridge.cpp
             src/RTPSPublisher.cpp
             src/RTPSSubscriber.cpp
-            src/GenericPubSubTypes.cpp
         COMPONENT sources
         DESTINATION ${INCLUDE_SOURCE_DIR}/src)
 

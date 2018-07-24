@@ -39,7 +39,6 @@ static DynamicPubSubType* GetHelloWorldType()
 
     DynamicType_ptr dynType = struct_type_builder->Build();
     DynamicPubSubType *psType = new DynamicPubSubType(dynType);
-    //psType->SetDynamicType(dynType);
     return psType;
 }
 
@@ -58,7 +57,6 @@ static DynamicPubSubType* GetKeyType()
 
     DynamicType_ptr dynType = struct_type_builder->Build();
     DynamicPubSubType *psType = new DynamicPubSubType(dynType);
-    //psType->SetDynamicType(dynType);
     return psType;
 }
 
@@ -75,62 +73,32 @@ extern "C" USER_LIB_EXPORT TopicDataType* GetTopicType(const char *name)
     return nullptr;
 }
 
-extern "C" USER_LIB_EXPORT void KeyToHelloWorld(
-        SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output)
+extern "C" USER_LIB_EXPORT types::DynamicData* KeyToHelloWorld(types::DynamicData* inputData)
 {
     // DynamicTypes
-    DynamicPubSubType *keyType = GetKeyType();
     DynamicPubSubType *hwType = GetHelloWorldType();
-
-	// User types
-	DynamicData *key_data = DynamicDataFactory::GetInstance()->CreateData(keyType->GetDynamicType());
-	DynamicPubSubType key_pst;
 	DynamicData *helloworld_data = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
-	DynamicPubSubType helloworld_pst;
 
-	// Deserialization
-	key_pst.deserialize(serialized_input, key_data);
+    // Custom transformation
+	helloworld_data->SetUint32Value(inputData->GetByteValue(0), 0);
 
-	// Custom transformation
-	helloworld_data->SetByteValue(key_data->GetByteValue(0), 0);
     // Ignore key
-
-	// Serialization
-	serialized_output->reserve(helloworld_pst.m_typeSize);
-	helloworld_pst.serialize(helloworld_data, serialized_output);
-
-    DynamicDataFactory::GetInstance()->DeleteData(key_data);
-    DynamicDataFactory::GetInstance()->DeleteData(helloworld_data);
-    delete keyType;
     delete hwType;
+    return helloworld_data;
 }
 
-extern "C" USER_LIB_EXPORT void HelloWorldToKey(
-        SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output)
+extern "C" USER_LIB_EXPORT types::DynamicData* HelloWorldToKey(types::DynamicData* inputData)
 {
     // DynamicTypes
     DynamicPubSubType *keyType = GetKeyType();
-    DynamicPubSubType *hwType = GetHelloWorldType();
-
-	// User types
 	DynamicData *key_data = DynamicDataFactory::GetInstance()->CreateData(keyType->GetDynamicType());
-	DynamicPubSubType key_pst;
-	DynamicData *helloworld_data = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
-	DynamicPubSubType helloworld_pst;
-
-	// Deserialization
-	helloworld_pst.deserialize(serialized_input, helloworld_data);
 
 	// Custom transformation
-	key_data->SetByteValue(helloworld_data->GetUint32Value(0) % 256, 0);
-	key_data->SetByteValue(helloworld_data->GetUint32Value(0) % 256, 1);
+    uint32_t temp = inputData->GetUint32Value(0);
+    std::cout << "TRANSFORM: " << temp << std::endl;
+	key_data->SetByteValue(temp % 256, 0);
+	key_data->SetByteValue(temp % 256, 1);
 
-	// Serialization
-	serialized_output->reserve(key_pst.m_typeSize);
-	key_pst.serialize(key_data, serialized_output);
-
-    DynamicDataFactory::GetInstance()->DeleteData(key_data);
-    DynamicDataFactory::GetInstance()->DeleteData(helloworld_data);
     delete keyType;
-    delete hwType;
+    return key_data;
 }

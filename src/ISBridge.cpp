@@ -13,6 +13,9 @@
 // limitations under the License.
 
 #include "ISBridge.h"
+#include "ISSubscriber.h"
+#include "ISPublisher.h"
+#include <fastrtps/types/DynamicDataFactory.h>
 
 void ISBridge::onTerminate()
 {
@@ -73,44 +76,36 @@ ISPublisher* ISBridge::removePublisher(ISPublisher* pub)
     return pub;
 }
 
-void ISSubscriber::on_received_data(SerializedPayload_t* payload)
-{
-    for (ISBridge* bridge : mv_bridges)
-    {
-        bridge->on_received_data(this, payload);
-    }
-}
-
-void ISBridge::on_received_data(const ISSubscriber *sub, SerializedPayload_t *data)
+void ISBridge::on_received_data(const ISSubscriber *sub, types::DynamicData* pInputData)
 {
     std::vector<std::string> funcNames = mm_functions[sub->getName()];
     for (std::string fName : funcNames)
     {
         userf_t function = mm_functionsNames[fName];
-        SerializedPayload_t output;
+        types::DynamicData* pOutputData(nullptr);
+
+        // If there is a transformation function
         if (function)
         {
-            function(data, &output);
+            pOutputData = function(pInputData);
+            if (pOutputData != nullptr)
+            {
+                std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+                for (ISPublisher* pub : pubs)
+                {
+                    pub->publish(pOutputData);
+                }
+                types::DynamicDataFactory::GetInstance()->DeleteData(pOutputData);
+            }
         }
+        // If there isn't any transformation function, just send the same data.
         else
         {
-            output.copy(data, false);
-        }
-        std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
-        for (ISPublisher* pub : pubs)
-        {
-            pub->publish(&output);
+            std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+            for (ISPublisher* pub : pubs)
+            {
+                pub->publish(pInputData);
+            }
         }
     }
-}
-
-ISBridge* ISPublisher::setBridge(ISBridge *bridge)
-{
-    ISBridge *old = mb_bridge;
-    mb_bridge = bridge;
-    if (old && old != bridge)
-    {
-        old->removePublisher(this);
-    }
-    return old;
 }

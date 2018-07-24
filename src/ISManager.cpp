@@ -37,7 +37,6 @@ static const std::string s_sTopic("topic");
 static const std::string s_sType("type");
 static const std::string s_sPartition("partition");
 static const std::string s_sLibrary("library");
-static const std::string s_sIsDynamicType("dynamic_type");
 static const std::string s_sProperties("properties");
 static const std::string s_sProperty("property");
 static const std::string s_sFuncCreateBridge("create_bridge");
@@ -182,17 +181,7 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
         while (type)
         {
             const char* type_name = type->Attribute(s_sName.c_str());
-
-            tinyxml2::XMLElement *element = _assignOptionalElement(type, s_sIsDynamicType);
-            if (element != nullptr)
-            {
-                const char* dyn = element->GetText();
-                if (strncmp(dyn, "true", 4)== 0)
-                {
-                    dynamicType[type_name] = true;
-                }
-            }
-
+            tinyxml2::XMLElement *element = _assignOptionalElement(type, "dynamicType");
             element = _assignOptionalElement(type, s_sLibrary);
             if (element != nullptr)
             {
@@ -232,7 +221,7 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
 
         for(auto &pair : to_register_types)
         {
-            TopicDataType* type = getTopicDataType(pair.second);
+            types::DynamicPubSubType* type = getTopicDataType(pair.second);
             data_types[pair] = type;
         }
     }
@@ -242,33 +231,27 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
     }
 }
 
-TopicDataType* ISManager::getTopicDataType(const std::string &name)
+types::DynamicPubSubType* ISManager::getTopicDataType(const std::string &name)
 {
-    TopicDataType* type = nullptr;
+    types::DynamicPubSubType* type = nullptr;
     if (typesLibs.find(name) != typesLibs.end())
     {
         typef_t func = typesLibs[name];
         if (func)
         {
-            type = func(name.c_str());
+            type = (types::DynamicPubSubType*) func(name.c_str());
         }
         else
         {
             for (typef_t func : defaultTypesLibs)
             {
-                type = func(name.c_str());
+                type = (types::DynamicPubSubType*) func(name.c_str());
                 if (type != nullptr)
                 {
                     break;
                 }
             }
         }
-    }
-
-    if (type == nullptr)
-    {
-        type = new GenericPubSubType();
-        type->setName(name.c_str());
     }
     return type;
 }
@@ -291,7 +274,7 @@ void ISManager::createSubscriber(Participant* participant, const std::string &na
     const std::string &topic_name = listener->getRTPSSubscriber()->getAttributes().topic.topicName;
     std::pair<std::string, std::string> idx =
         std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
-    listener->input_type = data_types[idx];
+    listener->input_type = (types::DynamicPubSubType*) data_types[idx];
     listener->input_type->setName(typeName.c_str());
 
     // Create Subscriber
@@ -425,14 +408,9 @@ Participant* ISManager::getParticipant(const std::string &name)
                 if (pair.first == name)
                 {
                     TopicDataType* type = data_types[pair];
-                    if (dynamicType.find(type->getName()) != dynamicType.end()
-                        && dynamicType[type->getName()])
+                    if (type != nullptr)
                     {
                         Domain::registerDynamicType(participant, dynamic_cast<types::DynamicPubSubType*>(type));
-                    }
-                    else
-                    {
-                        Domain::registerType(participant, type);
                     }
                 }
             }
