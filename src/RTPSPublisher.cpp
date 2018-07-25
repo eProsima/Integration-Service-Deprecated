@@ -17,13 +17,17 @@
 #include "log/ISLog.h"
 
 
-RTPSPublisher::RTPSPublisher(const std::string &name) : ISPublisher(name)
+RTPSPublisher::RTPSPublisher(const std::string &name, bool bDynamicType)
+    : ISPublisher(name, bDynamicType)
 {
 }
 
 RTPSPublisher::~RTPSPublisher()
 {
-    if(mp_participant != nullptr) Domain::removeParticipant(mp_participant);
+    if (mp_participant != nullptr)
+    {
+        Domain::removeParticipant(mp_participant);
+    }
 }
 
 void RTPSPublisher::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
@@ -42,6 +46,11 @@ void RTPSPublisher::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 bool RTPSPublisher::publish(types::DynamicData* data)
 {
     return mp_publisher->write(data);
+}
+
+bool RTPSPublisher::publish(SerializedPayload_t* data)
+{
+    return mp_publisher->write(data); // Only when the type is the default
 }
 
 void RTPSPublisher::setParticipant(Participant* part)

@@ -38,11 +38,19 @@ class ISPublisher : public ISBaseClass
 {
 protected:
     ISBridge *mb_bridge;
+    std::string m_sTypeName;
+    bool m_bDynamicType;
 public:
-    ISPublisher(const std::string &name);
+    ISPublisher(const std::string &name, bool bDynamicType = false);
     virtual ~ISPublisher() = default;
-    virtual bool publish(types::DynamicData * data) { return false; };
+    virtual bool publish(types::DynamicData* data);
+    virtual bool publish(SerializedPayload_t* data);
     virtual ISBridge* setBridge(ISBridge *bridge);
+
+    inline bool getDynamicType() const { return m_bDynamicType; }
+    inline void setDynamicType(bool bDynamicType) { m_bDynamicType = bDynamicType; }
+    inline std::string getTypeName() const { return m_sTypeName; }
+    inline void setTypeName(const std::string& type) { m_sTypeName = type; }
 
     // Forbid copy
     ISPublisher(const ISPublisher&) = delete;

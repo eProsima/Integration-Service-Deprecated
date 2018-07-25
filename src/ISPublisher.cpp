@@ -14,18 +14,32 @@
 
 #include "ISPublisher.h"
 #include "ISBridge.h"
+#include "log/ISLog.h"
 
-ISPublisher::ISPublisher(const std::string &name)
+ISPublisher::ISPublisher(const std::string &name, bool bDynamicType)
     : ISBaseClass(name)
     , mb_bridge(nullptr)
+    , m_bDynamicType(bDynamicType)
 {
-};
+}
+
+bool ISPublisher::publish(types::DynamicData* data)
+{
+    LOG_ERROR("ISPublisher: Undefinded publish method");
+    return false;
+}
+
+bool ISPublisher::publish(SerializedPayload_t* data)
+{
+    LOG_ERROR("ISPublisher: Undefinded publish method");
+    return false;
+}
 
 ISBridge* ISPublisher::setBridge(ISBridge *bridge)
 {
     ISBridge *old = mb_bridge;
     mb_bridge = bridge;
-    if (old && old != bridge)
+    if (old != nullptr && old != bridge)
     {
         old->removePublisher(this);
     }

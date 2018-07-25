@@ -16,6 +16,7 @@
 #include "RTPSBridge.h"
 #include "RTPSPublisher.h"
 #include "RTPSSubscriber.h"
+#include "GenericPubSubType.h"
 #include "xmlUtils.h"
 #include <fastrtps/Domain.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -37,6 +38,7 @@ static const std::string s_sTopic("topic");
 static const std::string s_sType("type");
 static const std::string s_sPartition("partition");
 static const std::string s_sLibrary("library");
+static const std::string s_sIsDynamicType("dynamic_type");
 static const std::string s_sProperties("properties");
 static const std::string s_sProperty("property");
 static const std::string s_sFuncCreateBridge("create_bridge");
@@ -181,7 +183,16 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
         while (type)
         {
             const char* type_name = type->Attribute(s_sName.c_str());
-            tinyxml2::XMLElement *element = _assignOptionalElement(type, "dynamicType");
+            tinyxml2::XMLElement *element = _assignOptionalElement(type, s_sIsDynamicType);
+            if (element != nullptr)
+            {
+                const char* dyn = element->GetText();
+                if (strncmp(dyn, "true", 4) == 0)
+                {
+                    dynamicType[type_name] = true;
+                }
+            }
+
             element = _assignOptionalElement(type, s_sLibrary);
             if (element != nullptr)
             {
@@ -221,7 +232,7 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
 
         for(auto &pair : to_register_types)
         {
-            types::DynamicPubSubType* type = getTopicDataType(pair.second);
+            TopicDataType* type = getTopicDataType(pair.second);
             data_types[pair] = type;
         }
     }
@@ -231,21 +242,21 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
     }
 }
 
-types::DynamicPubSubType* ISManager::getTopicDataType(const std::string &name)
+TopicDataType* ISManager::getTopicDataType(const std::string &name)
 {
-    types::DynamicPubSubType* type = nullptr;
+    TopicDataType* type = nullptr;
     if (typesLibs.find(name) != typesLibs.end())
     {
         typef_t func = typesLibs[name];
         if (func)
         {
-            type = (types::DynamicPubSubType*) func(name.c_str());
+            type = func(name.c_str());
         }
         else
         {
             for (typef_t func : defaultTypesLibs)
             {
-                type = (types::DynamicPubSubType*) func(name.c_str());
+                type = func(name.c_str());
                 if (type != nullptr)
                 {
                     break;
@@ -253,6 +264,13 @@ types::DynamicPubSubType* ISManager::getTopicDataType(const std::string &name)
             }
         }
     }
+
+    if (type == nullptr)
+    {
+        type = new GenericPubSubType();
+        type->setName(name.c_str());
+    }
+
     return type;
 }
 
@@ -276,6 +294,7 @@ void ISManager::createSubscriber(Participant* participant, const std::string &na
         std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
     listener->input_type = (types::DynamicPubSubType*) data_types[idx];
     listener->input_type->setName(typeName.c_str());
+    listener->setDynamicType(isDynamicType(typeName));
 
     // Create Subscriber
     //listener->setRTPSSubscriber(Domain::createSubscriber(participant, name, (SubscriberListener*)listener));
@@ -314,6 +333,8 @@ void ISManager::createPublisher(Participant* participant, const std::string &nam
         std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
     publisher->output_type = data_types[idx];
     publisher->output_type->setName(typeName.c_str());
+    publisher->setDynamicType(isDynamicType(typeName));
+    publisher->setTypeName(typeName);
 
     //Create publisher
     //publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name,
@@ -410,7 +431,19 @@ Participant* ISManager::getParticipant(const std::string &name)
                     TopicDataType* type = data_types[pair];
                     if (type != nullptr)
                     {
-                        Domain::registerDynamicType(participant, dynamic_cast<types::DynamicPubSubType*>(type));
+                        types::DynamicPubSubType* pDynamicType = dynamic_cast<types::DynamicPubSubType*>(type);
+                        if (pDynamicType != nullptr)
+                        {
+                            Domain::registerDynamicType(participant, dynamic_cast<types::DynamicPubSubType*>(type));
+                        }
+                        else
+                        {
+                            LOG_ERROR("Configuration error. Invalid dynamic type: " << name);
+                        }
+                    }
+                    else
+                    {
+                        LOG_ERROR("Configuration error. Invalid type name: " << name);
                     }
                 }
             }
@@ -467,14 +500,15 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         ISPublisher* pub = itp->second;
 
         std::string function_name;
-        userf_t function = nullptr;
+        void* function = nullptr;
         if (trans_el)
         {
             const char* f_file = trans_el->Attribute(s_sFile.c_str());
             const char* f_name = trans_el->Attribute(s_sFunction.c_str());
             function_name = std::string(f_file) + "@" + f_name;
             void* handle = getLibraryHandle(f_file);
-            function = (userf_t)eProsimaGetProcAddress(handle, f_name);
+
+            function = eProsimaGetProcAddress(handle, f_name);
         }
 
         // Any participant is a bridge?
@@ -506,7 +540,11 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 
         bridge->addSubscriber(sub);
         bridge->addPublisher(sub->getName(), function_name, pub);
-        bridge->addFunction(sub->getName(), function_name, function);
+        
+        if (function_name.length() > 0)
+        {
+            bridge->addFunction(sub->getName(), function_name, function, sub->getDynamicType(), pub->getDynamicType());
+        }
 
         LOG_INFO("Set bridge between " << sub->getName() << " and " << pub->getName());
     }
@@ -557,6 +595,12 @@ void ISManager::onTerminate()
 bool ISManager::isActive()
 {
     return active;
+}
+
+bool ISManager::isDynamicType(const std::string& typeName)
+{
+    auto it = dynamicType.find(typeName);
+    return it != dynamicType.end() && it->second == true;
 }
 
 void* ISManager::getLibraryHandle(const std::string &libpath)

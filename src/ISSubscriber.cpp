@@ -15,15 +15,32 @@
 #include "ISSubscriber.h"
 #include "ISBridge.h"
 
+ISSubscriber::ISSubscriber(const std::string &name, bool bDynamicType)
+    : ISBaseClass(name)
+    , m_bDynamicType(bDynamicType)
+{
+}
+
 void ISSubscriber::addBridge(ISBridge* bridge)
 {
     mv_bridges.push_back(bridge);
 }
 
-void ISSubscriber::on_received_data(types::DynamicData* pInputData)
+bool ISSubscriber::on_received_data(types::DynamicData* pInputData)
 {
     for (ISBridge* bridge : mv_bridges)
     {
         bridge->on_received_data(this, pInputData);
     }
+    return true;
 }
+
+bool ISSubscriber::on_received_data(SerializedPayload_t* pData)
+{
+    for (ISBridge* bridge : mv_bridges)
+    {
+        bridge->on_received_data(this, pData);
+    }
+    return true;
+}
+

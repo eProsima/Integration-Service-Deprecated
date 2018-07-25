@@ -6,6 +6,7 @@
             <participants> <!-- Participants who will register it -->
                 <participant name="HelloWorldParticipant"/>
             </participants>
+            <dynamic_type>true</dynamic_type>
         </type>
         <type name="sample">
             <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll</library>
@@ -146,6 +147,13 @@
         <publisher participant_name="KeysParticipant" publisher_name="pubK"/>
         <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll" function="HelloWorldToKey"/>
     </connector>
+
+    <!-- TODO: DIRECT 
+    <connector name="HW_to_Key">
+        <subscriber participant_name="HelloWorldParticipant" subscriber_name="subHW"/>
+        <publisher participant_name="KeysParticipant" publisher_name="pubK"/>
+    </connector>
+    -->
 
 <!--    <connector name="Key_to_HW">
         <subscriber participant_name="KeysParticipant" subscriber_name="subK"/>

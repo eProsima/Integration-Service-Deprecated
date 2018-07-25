@@ -15,6 +15,7 @@
 #include "ISBridge.h"
 #include "ISSubscriber.h"
 #include "ISPublisher.h"
+#include "Log/ISLog.h"
 #include <fastrtps/types/DynamicDataFactory.h>
 
 void ISBridge::onTerminate()
@@ -40,12 +41,36 @@ void ISBridge::addSubscriber(ISSubscriber *sub)
     sub->addBridge(this);
 }
 
-void ISBridge::addFunction(const std::string &sub, const std::string &fname, userf_t func)
+void ISBridge::addFunction(const std::string &sub, const std::string &fname, void* func, bool dynamicInput,
+    bool dynamicOutput)
 {
-    mm_functionsNames[fname] = func;
-    std::vector<std::string> &fnames = mm_functions[sub];
-    fnames.push_back(fname);
-    //mm_functions.emplace(sub, fname);
+    if (fname.length() > 0)
+    {
+        if (dynamicInput)
+        {
+            if (dynamicOutput)
+            {
+                mm_dynamic_dynamicFunctionsNames[fname] = (userdyn_dynf_t)func;
+            }
+            else
+            {
+                mm_dynamic_rawFunctionsNames[fname] = (userdyn_rawf_t)func;
+            }
+        }
+        else
+        {
+            if (dynamicOutput)
+            {
+                mm_raw_dynamicFunctionsNames[fname] = (userraw_dynf_t)func;
+            }
+            else
+            {
+                mm_raw_rawFunctionsNames[fname] = (userraw_rawf_t)func;
+            }
+        }
+        std::vector<std::string> &fnames = mm_functions[sub];
+        fnames.push_back(fname);
+    }
 }
 
 void ISBridge::addPublisher(const std::string &sub, const std::string &funcName, ISPublisher* pub)
@@ -57,6 +82,20 @@ void ISBridge::addPublisher(const std::string &sub, const std::string &funcName,
     mm_inv_publisher[pub] = key;
     ms_subpubs.emplace(pub);
     pub->setBridge(this);
+}
+
+bool ISBridge::exists_transform_function(const std::string& name, bool bDynamicInput)
+{
+    if (bDynamicInput)
+    {
+        return mm_dynamic_dynamicFunctionsNames.find(name) != mm_dynamic_dynamicFunctionsNames.end() ||
+            mm_dynamic_rawFunctionsNames.find(name) != mm_dynamic_rawFunctionsNames.end();
+    }
+    else
+    {
+        return mm_raw_dynamicFunctionsNames.find(name) != mm_raw_dynamicFunctionsNames.end() ||
+            mm_raw_rawFunctionsNames.find(name) != mm_raw_rawFunctionsNames.end();
+    }
 }
 
 ISPublisher* ISBridge::removePublisher(ISPublisher* pub)
@@ -76,26 +115,43 @@ ISPublisher* ISBridge::removePublisher(ISPublisher* pub)
     return pub;
 }
 
-void ISBridge::on_received_data(const ISSubscriber *sub, types::DynamicData* pInputData)
+bool ISBridge::on_received_data(const ISSubscriber *sub, types::DynamicData* pInputData)
 {
     std::vector<std::string> funcNames = mm_functions[sub->getName()];
     for (std::string fName : funcNames)
     {
-        userf_t function = mm_functionsNames[fName];
-        types::DynamicData* pOutputData(nullptr);
-
         // If there is a transformation function
-        if (function)
+        bool bDynamicOutput = true;
+        if (exists_transform_function(fName, true))
         {
-            pOutputData = function(pInputData);
+            void* pOutputData = run_transform_function(fName, pInputData, true, bDynamicOutput);
             if (pOutputData != nullptr)
             {
                 std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
                 for (ISPublisher* pub : pubs)
                 {
-                    pub->publish(pOutputData);
+                    if (pub->getDynamicType() == bDynamicOutput)
+                    {
+                        if (bDynamicOutput)
+                        {
+                            pub->publish((types::DynamicData*)pOutputData);
+                            types::DynamicDataFactory::GetInstance()->DeleteData((types::DynamicData*)pOutputData);
+                        }
+                        else
+                        {
+                            pub->publish((SerializedPayload_t*)pOutputData);
+                            delete pOutputData;
+                        }
+                    }
+                    else
+                    {
+                        LOG_ERROR("Incompatible publisher. Check the configuration with the dynamic types");
+                    }
                 }
-                types::DynamicDataFactory::GetInstance()->DeleteData(pOutputData);
+            }
+            else
+            {
+                LOG_ERROR("Transformation function hasn't sent any data");
             }
         }
         // If there isn't any transformation function, just send the same data.
@@ -104,8 +160,128 @@ void ISBridge::on_received_data(const ISSubscriber *sub, types::DynamicData* pIn
             std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
             for (ISPublisher* pub : pubs)
             {
-                pub->publish(pInputData);
+                if (pub->getDynamicType())
+                {
+                    pub->publish(pInputData);
+                }
+                else
+                {
+                    types::DynamicPubSubType pubsubType;
+                    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(pInputData)());
+                    SerializedPayload_t payload(payloadSize);
+                    pubsubType.serialize(pInputData, &payload);
+                    pub->publish(&payload);
+                }
             }
         }
     }
+    return true;
+}
+
+bool ISBridge::on_received_data(const ISSubscriber *sub, SerializedPayload_t* pBuffer)
+{
+    std::vector<std::string> funcNames = mm_functions[sub->getName()];
+    for (std::string fName : funcNames)
+    {
+        // If there is a transformation function
+        bool bDynamicOutput = false;
+        if (exists_transform_function(fName, false))
+        {
+            void* pOutputData = run_transform_function(fName, pBuffer, false, bDynamicOutput);
+            if (pOutputData != nullptr)
+            {
+                std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+                for (ISPublisher* pub : pubs)
+                {
+                    if (pub->getDynamicType() == bDynamicOutput)
+                    {
+                        if (bDynamicOutput)
+                        {
+                            pub->publish((types::DynamicData*)pOutputData);
+                            types::DynamicDataFactory::GetInstance()->DeleteData((types::DynamicData*)pOutputData);
+                        }
+                        else
+                        {
+                            pub->publish((SerializedPayload_t*)pOutputData);
+                            delete pOutputData;
+                        }
+                    }
+                    else
+                    {
+                        LOG_ERROR("Incompatible publisher. Check the configuration with the dynamic types");
+                    }
+                }
+            }
+            else
+            {
+                LOG_ERROR("Transformation function hasn't sent any data");
+            }
+        }
+        // If there isn't any transformation function, just send the same data.
+        else
+        {
+            std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+            for (ISPublisher* pub : pubs)
+            {
+                if (pub->getDynamicType())
+                {
+                    LOG_ERROR("Configuration error. Check the configuration with dynamic types");
+                }
+                else
+                {
+                    pub->publish(pBuffer);
+                }
+            }
+        }
+    }
+    return true;
+}
+
+void* ISBridge::run_transform_function(const std::string& name, void* inputData, bool dynamicInput, bool& dynamicOutput)
+{
+    if (dynamicInput)
+    {
+        auto dyndynIt = mm_dynamic_dynamicFunctionsNames.find(name);
+        if (dyndynIt != mm_dynamic_dynamicFunctionsNames.end())
+        {
+            dynamicOutput = true;
+            void* outputData(nullptr);
+            dyndynIt->second((types::DynamicData*)inputData, (types::DynamicData**)&outputData);
+            return outputData;
+        }
+        else
+        {
+            auto dyndynIt = mm_dynamic_rawFunctionsNames.find(name);
+            if (dyndynIt != mm_dynamic_rawFunctionsNames.end())
+            {
+                dynamicOutput = false;
+                void* outputData(nullptr);
+                dyndynIt->second((types::DynamicData*)inputData, (SerializedPayload_t**)&outputData);
+                return outputData;
+            }
+        }
+    }
+    else
+    {
+        auto dyndynIt = mm_raw_dynamicFunctionsNames.find(name);
+        if (dyndynIt != mm_raw_dynamicFunctionsNames.end())
+        {
+            dynamicOutput = true;
+            void* outputData(nullptr);
+            dyndynIt->second((SerializedPayload_t*)inputData, (types::DynamicData**)&outputData);
+            return outputData;
+        }
+        else
+        {
+            auto dyndynIt = mm_raw_rawFunctionsNames.find(name);
+            if (dyndynIt != mm_raw_rawFunctionsNames.end())
+            {
+                dynamicOutput = false;
+                void* outputData(nullptr);
+                dyndynIt->second((SerializedPayload_t*)inputData, (SerializedPayload_t**)&outputData);
+                return outputData;
+            }
+        }
+    }
+    return nullptr;
 }

@@ -15,10 +15,7 @@
 #ifndef _ISSUBSCRIBER_H_
 #define _ISSUBSCRIBER_H_
 
-//#include <unordered_set>
 #include <vector>
-//#include <map>
-//#include <string>
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/types/DynamicData.h>
 #include "ISBaseClass.h"
@@ -37,11 +34,17 @@ class ISSubscriber : public ISBaseClass
 {
 protected:
     std::vector<ISBridge*> mv_bridges;
+    bool m_bDynamicType;
+
 public:
-    ISSubscriber(const std::string &name) : ISBaseClass(name) { };
+    ISSubscriber(const std::string &name, bool bDynamicType = false);
     virtual ~ISSubscriber() = default;
     virtual void addBridge(ISBridge* bridge);
-    virtual void on_received_data(types::DynamicData* pData);
+    virtual bool on_received_data(types::DynamicData* pData);
+    virtual bool on_received_data(SerializedPayload_t* pData);
+
+    inline bool getDynamicType() const { return m_bDynamicType; }
+    inline void setDynamicType(bool bDynamicType) { m_bDynamicType = bDynamicType; }
 
     // Forbid copy
     ISSubscriber(const ISSubscriber&) = delete;

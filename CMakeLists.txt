@@ -135,6 +135,7 @@ set(${PROJECT_NAME}_source_files
         src/RTPSBridge.cpp src/RTPSBridge.h
         src/RTPSPublisher.cpp src/RTPSPublisher.h
         src/RTPSSubscriber.cpp src/RTPSSubscriber.h
+        src/GenericPubSubType.cpp src/GenericPubSubType.h
         thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h
     )
 
@@ -214,9 +215,9 @@ install(
     FILES
         src/xmlUtils.h
         src/ISBaseClass.h
+        src/GenericPubSubType.h
         src/ISBridge.h
         src/ISPublisher.h
-        src/ISBridge.h
         src/ISSubscriber.h
         src/RTPSBridge.h
         src/RTPSPublisher.h
@@ -236,6 +237,7 @@ if(EPROSIMA_INSTALLER)
         FILES
             src/xmlUtils.h
             src/ISBaseClass.h
+            src/GenericPubSubType.h
             src/ISBridge.h
             src/ISPublisher.h
             src/ISSubscriber.h
@@ -268,6 +270,7 @@ if(EPROSIMA_INSTALLER)
         FILES
             src/main.cpp
             src/ISManager.cpp
+            src/GenericPubSubType.cpp
             src/ISBridge.cpp
             src/ISPublisher.cpp
             src/ISSubscriber.cpp

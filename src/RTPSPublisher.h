@@ -40,8 +40,9 @@ private:
     Participant *mp_participant;
 public:
     TopicDataType *output_type;
-    RTPSPublisher(const std::string &name);
+    RTPSPublisher(const std::string &name, bool bDynamicType = false);
     virtual bool publish(types::DynamicData* data) override;
+    virtual bool publish(SerializedPayload_t* data) override;
     ~RTPSPublisher() override;
     void onPublicationMatched(Publisher* pub, MatchingInfo& info) override;
     void setParticipant(Participant* part);

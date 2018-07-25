@@ -27,7 +27,10 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-typedef types::DynamicData* (*userf_t)(types::DynamicData *input_data);
+typedef void (*userdyn_dynf_t)(types::DynamicData* input_data, types::DynamicData** output_data);
+typedef void (*userraw_dynf_t)(SerializedPayload_t* input_data, types::DynamicData** output_data);
+typedef void (*userdyn_rawf_t)(types::DynamicData* input_data, SerializedPayload_t** output_data);
+typedef void (*userraw_rawf_t)(SerializedPayload_t* input_data, SerializedPayload_t** output_data);
 typedef TopicDataType* (*typef_t)(const char *name);
 
 class ISPublisher;
@@ -48,7 +51,10 @@ class ISBridge : public ISBaseClass
 protected:
     types::DynamicPubSubType m_pubSubType;
     std::vector<ISSubscriber*> mv_subscriber;
-    std::map<std::string, userf_t> mm_functionsNames;
+    std::map<std::string, userdyn_dynf_t> mm_dynamic_dynamicFunctionsNames;
+    std::map<std::string, userdyn_rawf_t> mm_dynamic_rawFunctionsNames;
+    std::map<std::string, userraw_dynf_t> mm_raw_dynamicFunctionsNames;
+    std::map<std::string, userraw_rawf_t> mm_raw_rawFunctionsNames;
     std::map<std::string, std::vector<std::string>> mm_functions;
     std::map<std::string, std::vector<ISPublisher*>> mm_publisher;
     std::map<ISPublisher*, std::string> mm_inv_publisher;
@@ -59,6 +65,9 @@ protected:
     {
         return sub + "@" + funct;
     }
+
+    bool exists_transform_function(const std::string& name, bool bDynamicInput);
+    void* run_transform_function(const std::string& name, void* inputData, bool dynamicInput, bool& dynamicOutput);
 public:
     ISBridge(const std::string &name) : ISBaseClass(name){ };
     /**
@@ -67,10 +76,11 @@ public:
      */
     virtual ~ISBridge();
     virtual void addSubscriber(ISSubscriber *sub);
-    virtual void addFunction(const std::string &sub, const std::string &fname, userf_t func);
+    virtual void addFunction(const std::string &sub, const std::string &fname, void* func, bool dynamicInput, bool dynamicOutput);
     virtual void addPublisher(const std::string &sub, const std::string &funcName, ISPublisher* pub);
     virtual ISPublisher* removePublisher(ISPublisher* pub);
-    virtual void on_received_data(const ISSubscriber *sub, types::DynamicData* pData);
+    virtual bool on_received_data(const ISSubscriber *sub, types::DynamicData* pData);
+    virtual bool on_received_data(const ISSubscriber *sub, SerializedPayload_t* pBuffer);
     virtual void onTerminate() override;
 
     // Forbid copy

@@ -19,8 +19,8 @@
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 
-RTPSSubscriber::RTPSSubscriber(const std::string &name)
-    : ISSubscriber(name)
+RTPSSubscriber::RTPSSubscriber(const std::string &name, bool bDynamicType)
+    : ISSubscriber(name, bDynamicType)
     , ms_participant(nullptr)
     , ms_subscriber(nullptr)
 {
@@ -53,7 +53,7 @@ void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
     {
         on_received_data(pData);
     }
- 
+
     DynamicDataFactory::GetInstance()->DeleteData(pData);
 }
 

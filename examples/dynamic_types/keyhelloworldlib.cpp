@@ -73,32 +73,30 @@ extern "C" USER_LIB_EXPORT TopicDataType* GetTopicType(const char *name)
     return nullptr;
 }
 
-extern "C" USER_LIB_EXPORT types::DynamicData* KeyToHelloWorld(types::DynamicData* inputData)
+extern "C" USER_LIB_EXPORT void KeyToHelloWorld(types::DynamicData* inputData, types::DynamicData** outputData)
 {
     // DynamicTypes
     DynamicPubSubType *hwType = GetHelloWorldType();
-	DynamicData *helloworld_data = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
+	*outputData = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
 
     // Custom transformation
-	helloworld_data->SetUint32Value(inputData->GetByteValue(0), 0);
+	(*outputData)->SetUint32Value(inputData->GetByteValue(0), 0);
 
     // Ignore key
     delete hwType;
-    return helloworld_data;
 }
 
-extern "C" USER_LIB_EXPORT types::DynamicData* HelloWorldToKey(types::DynamicData* inputData)
+extern "C" USER_LIB_EXPORT void HelloWorldToKey(types::DynamicData* inputData, types::DynamicData** outputData)
 {
     // DynamicTypes
     DynamicPubSubType *keyType = GetKeyType();
-	DynamicData *key_data = DynamicDataFactory::GetInstance()->CreateData(keyType->GetDynamicType());
+	*outputData = DynamicDataFactory::GetInstance()->CreateData(keyType->GetDynamicType());
 
 	// Custom transformation
     uint32_t temp = inputData->GetUint32Value(0);
-    std::cout << "TRANSFORM: " << temp << std::endl;
-	key_data->SetByteValue(temp % 256, 0);
-	key_data->SetByteValue(temp % 256, 1);
+    //std::cout << "TRANSFORM: " << temp << std::endl;
+	(*outputData)->SetByteValue(temp % 256, 0);
+	(*outputData)->SetByteValue(temp % 256, 1);
 
     delete keyType;
-    return key_data;
 }
