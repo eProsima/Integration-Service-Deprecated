@@ -20,12 +20,42 @@ add_definitions(-DEPROSIMA_SHAPES_DLL_EXPORT  -DBUILD_SHARED_LIBS)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS TRUE)
 
-file(GLOB USER_LIB_SOURCES_CXX "*.cxx")
-file(GLOB USER_LIB_SOURCES_CPP "*.cpp")
-
-add_library(keyhelloworldlib SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP})
+#----------------------------------------------------------------------------------------------------------------------------------
+# STATIC -> STATIC TRANSFORM
+file(GLOB USER_STATIC_STATIC_LIB_SOURCES_CXX "idl/*.cxx")
+file(GLOB USER_STATIC_STATIC_LIB_SOURCES_CPP "keyhelloworld_static_static_lib.cpp" "idl/*.cpp")
+add_library(keyhelloworld_static_static_lib SHARED ${USER_STATIC_STATIC_LIB_SOURCES_CXX} ${USER_STATIC_STATIC_LIB_SOURCES_CPP})
 if(WIN32)
-	target_include_directories(keyhelloworldlib PUBLIC ../../../../../install/include)
+	target_include_directories(keyhelloworld_static_static_lib PUBLIC ../../../../../install/include)
 endif()
+target_link_libraries(keyhelloworld_static_static_lib fastrtps fastcdr ${CMAKE_DL_LIBS})
 
-target_link_libraries(keyhelloworldlib fastrtps fastcdr ${CMAKE_DL_LIBS})
+#----------------------------------------------------------------------------------------------------------------------------------
+# STATIC -> DYNAMIC TRANSFORM
+file(GLOB USER_STATIC_DYN_LIB_SOURCES_CXX "idl/*.cxx")
+file(GLOB USER_STATIC_DYN_LIB_SOURCES_CPP "keyhelloworld_static_dyn_lib.cpp" "idl/*.cpp")
+add_library(keyhelloworld_static_dyn_lib SHARED ${USER_STATIC_DYN_LIB_SOURCES_CXX} ${USER_STATIC_DYN_LIB_SOURCES_CPP})
+if(WIN32)
+	target_include_directories(keyhelloworld_static_dyn_lib PUBLIC ../../../../../install/include)
+endif()
+target_link_libraries(keyhelloworld_static_dyn_lib fastrtps fastcdr ${CMAKE_DL_LIBS})
+
+#----------------------------------------------------------------------------------------------------------------------------------
+# DYNAMIC -> STATIC TRANSFORM
+file(GLOB USER_DYN_STATIC_LIB_SOURCES_CXX "idl/*.cxx")
+file(GLOB USER_DYN_STATIC_LIB_SOURCES_CPP "keyhelloworld_dyn_static_lib.cpp" "idl/*.cpp")
+add_library(keyhelloworld_dyn_static_lib SHARED ${USER_DYN_STATIC_LIB_SOURCES_CXX} ${USER_DYN_STATIC_LIB_SOURCES_CPP})
+if(WIN32)
+	target_include_directories(keyhelloworld_dyn_static_lib PUBLIC ../../../../../install/include)
+endif()
+target_link_libraries(keyhelloworld_dyn_static_lib fastrtps fastcdr ${CMAKE_DL_LIBS})
+
+#----------------------------------------------------------------------------------------------------------------------------------
+# DYNAMIC -> DYNAMIC TRANSFORM
+file(GLOB USER_DYN_DYN_LIB_SOURCES_CXX "idl/*.cxx")
+file(GLOB USER_DYN_DYN_LIB_SOURCES_CPP "keyhelloworld_dyn_dyn_lib.cpp" "idl/*.cpp")
+add_library(keyhelloworld_dyn_dyn_lib SHARED ${USER_DYN_DYN_LIB_SOURCES_CXX} ${USER_DYN_DYN_LIB_SOURCES_CPP})
+if(WIN32)
+	target_include_directories(keyhelloworld_dyn_dyn_lib PUBLIC ../../../../../install/include)
+endif()
+target_link_libraries(keyhelloworld_dyn_dyn_lib fastrtps fastcdr ${CMAKE_DL_LIBS})

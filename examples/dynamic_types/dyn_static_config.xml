@@ -2,17 +2,18 @@
 <is>
     <topic_types>
         <type name="HelloWorld">
-            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll</library>
+            <library>/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworldlib.so</library>
             <participants> <!-- Participants who will register it -->
                 <participant name="HelloWorldParticipant"/>
             </participants>
             <dynamic_type>true</dynamic_type>
         </type>
         <type name="sample">
-            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll</library>
-            <participants>
+            <library>/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworldlib.so</library>
+            <participants> <!-- Participants who will register it -->
                 <participant name="KeysParticipant"/>
             </participants>
+            <dynamic_type>true</dynamic_type>
         </type>
     </topic_types>
 
@@ -43,12 +44,8 @@
             <topic>
                 <name>HelloWorldTopic</name>
                 <dataType>HelloWorld</dataType>
-                <kind>NO_KEY</kind>
-                <historyQos>
-                    <kind>KEEP_ALL</kind>
-                </historyQos>
             </topic>
-<!--            <qos>
+            <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -63,10 +60,9 @@
                     <kind>SHARED</kind>
                 </ownership>
             </qos>
--->            
-
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
+
         <subscriber profile_name="subK">
             <topic>
                 <name>samplePubSubTopic</name>
@@ -115,6 +111,7 @@
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>
+
         <publisher profile_name="pubK">
             <topic>
                 <name>samplePubSubTopic</name>
@@ -145,21 +142,12 @@
     <connector name="HW_to_Key">
         <subscriber participant_name="HelloWorldParticipant" subscriber_name="subHW"/>
         <publisher participant_name="KeysParticipant" publisher_name="pubK"/>
-        <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll" function="HelloWorldToKey"/>
+        <transformation file="/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworldlib.so" function="HelloWorldToKey"/>
     </connector>
 
-    <!-- TODO: DIRECT 
-    <connector name="HW_to_Key">
-        <subscriber participant_name="HelloWorldParticipant" subscriber_name="subHW"/>
-        <publisher participant_name="KeysParticipant" publisher_name="pubK"/>
-    </connector>
-    -->
-
-<!--    <connector name="Key_to_HW">
+    <connector name="Key_to_HW">
         <subscriber participant_name="KeysParticipant" subscriber_name="subK"/>
         <publisher participant_name="HelloWorldParticipant" publisher_name="pubHW"/>
-    <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll" function="KeyToHelloWorld"/>
+    <transformation file="/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworldlib.so" function="KeyToHelloWorld"/>
     </connector>
--->
 </is>
-

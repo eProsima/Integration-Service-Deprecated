@@ -20,9 +20,9 @@
 #endif
 
 #if defined _DEBUG || defined DEBUG
-#ifndef LOG_LEVEL_DEBUG
-    #define LOG_LEVEL_DEBUG
-#endif
+    #ifndef LOG_LEVEL_DEBUG
+        #define LOG_LEVEL_DEBUG
+    #endif
 #endif
 
 #ifdef LOG_LEVEL_DEBUG
