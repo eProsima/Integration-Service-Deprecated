@@ -50,7 +50,7 @@ bool RTPSPublisher::publish(types::DynamicData* data)
 
 bool RTPSPublisher::publish(SerializedPayload_t* data)
 {
-    return mp_publisher->write(data); // Only when the type is the default
+    return mp_publisher->write(data->data);
 }
 
 void RTPSPublisher::setParticipant(Participant* part)
