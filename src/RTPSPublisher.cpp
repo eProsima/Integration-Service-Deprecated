@@ -43,7 +43,8 @@ bool RTPSPublisher::publish(SerializedPayload_t * data)
 {
     if (dynamic_cast<GenericPubSubType*>(output_type) == nullptr) // Only if our type isn't the default
     {
-        return mp_publisher->write(data->data);
+        //return mp_publisher->write(data->data);
+        return mp_publisher->write(data);
     }
     else
     {

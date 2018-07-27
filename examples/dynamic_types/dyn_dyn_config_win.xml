@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<is>
+    <topic_types>
+        <type name="HelloWorld">
+            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_dyn_dyn_lib.dll</library>
+            <participants> <!-- Participants who will register it -->
+                <participant name="HelloWorldParticipant"/>
+            </participants>
+            <dynamic_type>true</dynamic_type>
+        </type>
+        <type name="sample">
+            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_dyn_dyn_lib.dll</library>
+            <participants> <!-- Participants who will register it -->
+                <participant name="KeysParticipant"/>
+            </participants>
+            <dynamic_type>true</dynamic_type>
+        </type>
+    </topic_types>
+
+    <profiles>
+        <participant profile_name="HelloWorldParticipant">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="KeysParticipant">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subHW">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <ownership>
+                    <kind>SHARED</kind>
+                </ownership>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <subscriber profile_name="subK">
+            <topic>
+                <name>samplePubSubTopic</name>
+                <dataType>sample</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>100</max_samples>
+                    <allocated_samples>100</allocated_samples>
+                    <max_instances>5</max_instances>
+                    <max_samples_per_instance>20</max_samples_per_instance>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <publisher profile_name="pubHW">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <ownership>
+                    <kind>SHARED</kind>
+                </ownership>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+
+        <publisher profile_name="pubK">
+            <topic>
+                <name>samplePubSubTopic</name>
+                <dataType>sample</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>100</max_samples>
+                    <allocated_samples>100</allocated_samples>
+                    <max_instances>5</max_instances>
+                    <max_samples_per_instance>20</max_samples_per_instance>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+    </profiles>
+
+    <connector name="HW_to_Key">
+        <subscriber participant_name="HelloWorldParticipant" subscriber_name="subHW"/>
+        <publisher participant_name="KeysParticipant" publisher_name="pubK"/>
+        <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_dyn_dyn_lib.dll" function="HelloWorldToKey"/>
+    </connector>
+
+    <connector name="Key_to_HW">
+        <subscriber participant_name="KeysParticipant" subscriber_name="subK"/>
+        <publisher participant_name="HelloWorldParticipant" publisher_name="pubHW"/>
+    <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_dyn_dyn_lib.dll" function="KeyToHelloWorld"/>
+    </connector>
+</is>
