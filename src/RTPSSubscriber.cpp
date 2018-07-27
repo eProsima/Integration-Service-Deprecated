@@ -57,7 +57,7 @@ void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
     }
     else
     {
-        taken = sub->takeNextData(&serialized_input, &m_info); // Only when the type is the default
+        taken = sub->takeNextSerializedPayload(&serialized_input, &m_info); // Only when the type is the default
     }
 
     if(taken && m_info.sampleKind == ALIVE)
