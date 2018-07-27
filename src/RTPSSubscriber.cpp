@@ -46,15 +46,30 @@ void RTPSSubscriber::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& in
 
 void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
 {
-    DynamicData* pData = DynamicDataFactory::GetInstance()->CreateData(input_type->GetDynamicType());
-    bool taken = taken = sub->takeNextData(pData, &m_info);
-
-    if(taken && m_info.sampleKind == ALIVE)
+    bool taken(false);
+    if (getDynamicType())
     {
-        on_received_data(pData);
+        DynamicData* pData = DynamicDataFactory::GetInstance()->CreateData(((types::DynamicPubSubType*)input_type)->GetDynamicType());
+        taken = sub->takeNextData(pData, &m_info);
+        if (taken && m_info.sampleKind == ALIVE)
+        {
+            on_received_data(pData);
+        }
+        DynamicDataFactory::GetInstance()->DeleteData(pData);
     }
+    else
+    {
+        SerializedPayload_t serialized_input(input_type->m_typeSize);
+        taken = sub->takeNextData(serialized_input.data, &m_info);
+        if (taken && m_info.sampleKind == ALIVE)
+        {
+            using eprosima::fastcdr::Cdr;
+            serialized_input.length = input_type->m_typeSize;
+            serialized_input.encapsulation = Cdr::DEFAULT_ENDIAN == Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-    DynamicDataFactory::GetInstance()->DeleteData(pData);
+            on_received_data(&serialized_input);
+        }
+    }
 }
 
 void RTPSSubscriber::setParticipant(Participant* part)

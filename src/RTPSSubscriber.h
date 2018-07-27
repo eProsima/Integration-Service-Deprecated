@@ -42,7 +42,7 @@ private:
     Participant *ms_participant;
     Subscriber *ms_subscriber;
 public:
-    eprosima::fastrtps::types::DynamicPubSubType *input_type;
+    TopicDataType *input_type;
     RTPSSubscriber(const std::string &name, bool bDynamicType = false);
     ~RTPSSubscriber() override;
     void onSubscriptionMatched(Subscriber* sub, MatchingInfo& info) override;

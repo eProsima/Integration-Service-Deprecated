@@ -7,6 +7,8 @@
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
+#include "idl/HelloWorldPubSubTypes.h"
+#include "idl/samplePubSubTypes.h"
 
 #if defined(_WIN32) && defined (BUILD_SHARED_LIBS)
 #if defined (_MSC_VER)
@@ -25,39 +27,14 @@ using eprosima::fastrtps::TopicDataType;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
 
-static DynamicPubSubType* GetHelloWorldType()
+static TopicDataType* GetHelloWorldType()
 {
-    // Create basic types
-    DynamicTypeBuilder_ptr created_type_ulong = DynamicTypeBuilderFactory::GetInstance()->CreateUint32Builder();
-    DynamicTypeBuilder_ptr created_type_string = DynamicTypeBuilderFactory::GetInstance()->CreateStringBuilder();
-    DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder();
-
-    // Add members to the struct.
-    struct_type_builder->AddMember(0, "index", created_type_ulong.get());
-    struct_type_builder->AddMember(1, "message", created_type_string.get());
-    struct_type_builder->SetName("HelloWorld");
-
-    DynamicType_ptr dynType = struct_type_builder->Build();
-    DynamicPubSubType *psType = new DynamicPubSubType(dynType);
-    return psType;
+    return new HelloWorldPubSubType();
 }
 
-static DynamicPubSubType* GetKeyType()
+static TopicDataType* GetKeyType()
 {
-    // Create basic types
-    DynamicTypeBuilder_ptr created_type_octet = DynamicTypeBuilderFactory::GetInstance()->CreateByteBuilder();
-    DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder();
-
-    // Add members to the struct.
-    struct_type_builder->AddMember(0, "index", created_type_octet.get());
-    created_type_octet->ApplyAnnotation("@Key", "true");
-    struct_type_builder->AddMember(1, "key_value", created_type_octet.get());
-    struct_type_builder->SetName("sample");
-    struct_type_builder->ApplyAnnotation("@Key", "true");
-
-    DynamicType_ptr dynType = struct_type_builder->Build();
-    DynamicPubSubType *psType = new DynamicPubSubType(dynType);
-    return psType;
+    return new samplePubSubType();
 }
 
 extern "C" USER_LIB_EXPORT TopicDataType* GetTopicType(const char *name)
@@ -73,30 +50,46 @@ extern "C" USER_LIB_EXPORT TopicDataType* GetTopicType(const char *name)
     return nullptr;
 }
 
-extern "C" USER_LIB_EXPORT void KeyToHelloWorld(types::DynamicData* inputData, types::DynamicData** outputData)
+extern "C" USER_LIB_EXPORT void KeyToHelloWorld(SerializedPayload_t* inputBuffer, SerializedPayload_t* outputBuffer)
 {
-    // DynamicTypes
-    DynamicPubSubType *hwType = GetHelloWorldType();
-	*outputData = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
+    // Input key Data
+    samplePubSubType keyPubSub;
+    sample keyData;
+    keyPubSub.deserialize(inputBuffer, &keyData);
+
+    // Output HelloWorld Data
+    HelloWorldPubSubType hwPubSub;
+    HelloWorld hwData;
 
     // Custom transformation
-	(*outputData)->SetUint32Value(inputData->GetByteValue(0), 0);
+    hwData.index() = keyData.index();
+    hwData.message() = "Transform";
 
-    // Ignore key
-    delete hwType;
+    std::cout << "HELLOWORLD INDEX: " << hwData.index() << std::endl;
+
+    // Serialize helloworld
+    *outputBuffer = SerializedPayload_t(static_cast<uint32_t>(hwPubSub.getSerializedSizeProvider(&hwData)()));
+    hwPubSub.serialize(&hwData, outputBuffer);
 }
 
-extern "C" USER_LIB_EXPORT void HelloWorldToKey(types::DynamicData* inputData, types::DynamicData** outputData)
+extern "C" USER_LIB_EXPORT void HelloWorldToKey(SerializedPayload_t* inputBuffer, SerializedPayload_t* outputBuffer)
 {
-    // DynamicTypes
-    DynamicPubSubType *keyType = GetKeyType();
-	*outputData = DynamicDataFactory::GetInstance()->CreateData(keyType->GetDynamicType());
+    // Input HelloWorld Data
+    HelloWorldPubSubType hwPubSub;
+    HelloWorld hwData;
+    hwPubSub.deserialize(inputBuffer, &hwData);
 
-	// Custom transformation
-    uint32_t temp = inputData->GetUint32Value(0);
-    //std::cout << "TRANSFORM: " << temp << std::endl;
-	(*outputData)->SetByteValue(temp % 256, 0);
-	(*outputData)->SetByteValue(temp % 256, 1);
+    // Input key Data
+    samplePubSubType keyPubSub;
+    sample keyData;
 
-    delete keyType;
+    // Custom transformation
+    keyData.index() = hwData.index() % 256;
+    keyData.key_value() = hwData.index() % 256;
+
+    std::cout << "KEY INDEX: " << (int) keyData.index() << std::endl;
+
+    // Serialize helloworld
+    *outputBuffer = SerializedPayload_t(static_cast<uint32_t>(keyPubSub.getSerializedSizeProvider(&keyData)()));
+    keyPubSub.serialize(&keyData, outputBuffer);
 }

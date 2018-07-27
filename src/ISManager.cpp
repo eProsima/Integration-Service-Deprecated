@@ -292,7 +292,7 @@ void ISManager::createSubscriber(Participant* participant, const std::string &na
     const std::string &topic_name = listener->getRTPSSubscriber()->getAttributes().topic.topicName;
     std::pair<std::string, std::string> idx =
         std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
-    listener->input_type = (types::DynamicPubSubType*) data_types[idx];
+    listener->input_type = data_types[idx];
     listener->input_type->setName(typeName.c_str());
     listener->setDynamicType(isDynamicType(typeName));
 
@@ -431,14 +431,21 @@ Participant* ISManager::getParticipant(const std::string &name)
                     TopicDataType* type = data_types[pair];
                     if (type != nullptr)
                     {
-                        types::DynamicPubSubType* pDynamicType = dynamic_cast<types::DynamicPubSubType*>(type);
-                        if (pDynamicType != nullptr)
+                        if (dynamicType.find(type->getName()) != dynamicType.end() && dynamicType[type->getName()])
                         {
-                            Domain::registerDynamicType(participant, dynamic_cast<types::DynamicPubSubType*>(type));
+                            types::DynamicPubSubType* pDynamicType = dynamic_cast<types::DynamicPubSubType*>(type);
+                            if (pDynamicType != nullptr)
+                            {
+                                Domain::registerDynamicType(participant, dynamic_cast<types::DynamicPubSubType*>(type));
+                            }
+                            else
+                            {
+                                LOG_ERROR("Configuration error. Invalid dynamic type: " << name);
+                            }
                         }
                         else
                         {
-                            LOG_ERROR("Configuration error. Invalid dynamic type: " << name);
+                            Domain::registerType(participant, type);
                         }
                     }
                     else
@@ -540,7 +547,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 
         bridge->addSubscriber(sub);
         bridge->addPublisher(sub->getName(), function_name, pub);
-        
+
         if (function_name.length() > 0)
         {
             bridge->addFunction(sub->getName(), function_name, function, sub->getDynamicType(), pub->getDynamicType());

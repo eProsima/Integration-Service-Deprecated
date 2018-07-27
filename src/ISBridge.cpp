@@ -251,34 +251,34 @@ void* ISBridge::run_transform_function(const std::string& name, void* inputData,
         }
         else
         {
-            auto dyndynIt = mm_dynamic_rawFunctionsNames.find(name);
-            if (dyndynIt != mm_dynamic_rawFunctionsNames.end())
+            auto dynrawIt = mm_dynamic_rawFunctionsNames.find(name);
+            if (dynrawIt != mm_dynamic_rawFunctionsNames.end())
             {
                 dynamicOutput = false;
-                void* outputData(nullptr);
-                dyndynIt->second((types::DynamicData*)inputData, (SerializedPayload_t**)&outputData);
+                SerializedPayload_t* outputData = new SerializedPayload_t();
+                dynrawIt->second((types::DynamicData*)inputData, outputData);
                 return outputData;
             }
         }
     }
     else
     {
-        auto dyndynIt = mm_raw_dynamicFunctionsNames.find(name);
-        if (dyndynIt != mm_raw_dynamicFunctionsNames.end())
+        auto rawdynIt = mm_raw_dynamicFunctionsNames.find(name);
+        if (rawdynIt != mm_raw_dynamicFunctionsNames.end())
         {
             dynamicOutput = true;
             void* outputData(nullptr);
-            dyndynIt->second((SerializedPayload_t*)inputData, (types::DynamicData**)&outputData);
+            rawdynIt->second((SerializedPayload_t*)inputData, (types::DynamicData**)&outputData);
             return outputData;
         }
         else
         {
-            auto dyndynIt = mm_raw_rawFunctionsNames.find(name);
-            if (dyndynIt != mm_raw_rawFunctionsNames.end())
+            auto rawrawIt = mm_raw_rawFunctionsNames.find(name);
+            if (rawrawIt != mm_raw_rawFunctionsNames.end())
             {
                 dynamicOutput = false;
-                void* outputData(nullptr);
-                dyndynIt->second((SerializedPayload_t*)inputData, (SerializedPayload_t**)&outputData);
+                SerializedPayload_t* outputData = new SerializedPayload_t();
+                rawrawIt->second((SerializedPayload_t*)inputData, outputData);
                 return outputData;
             }
         }

@@ -2,14 +2,13 @@
 <is>
     <topic_types>
         <type name="HelloWorld">
-            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll</library>
+            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_static_dyn_lib.dll</library>
             <participants> <!-- Participants who will register it -->
                 <participant name="HelloWorldParticipant"/>
             </participants>
-            <dynamic_type>true</dynamic_type>
         </type>
         <type name="sample">
-            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll</library>
+            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_static_dyn_lib.dll</library>
             <participants> <!-- Participants who will register it -->
                 <participant name="KeysParticipant"/>
             </participants>
@@ -142,12 +141,12 @@
     <connector name="HW_to_Key">
         <subscriber participant_name="HelloWorldParticipant" subscriber_name="subHW"/>
         <publisher participant_name="KeysParticipant" publisher_name="pubK"/>
-        <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll" function="HelloWorldToKey"/>
+        <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_static_dyn_lib.dll" function="HelloWorldToKey"/>
     </connector>
 
     <connector name="Key_to_HW">
         <subscriber participant_name="KeysParticipant" subscriber_name="subK"/>
         <publisher participant_name="HelloWorldParticipant" publisher_name="pubHW"/>
-    <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworldlib.dll" function="KeyToHelloWorld"/>
+    <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_static_dyn_lib.dll" function="KeyToHelloWorld"/>
     </connector>
 </is>

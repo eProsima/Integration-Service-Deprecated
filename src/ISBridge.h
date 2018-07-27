@@ -29,8 +29,8 @@ using namespace eprosima::fastrtps::rtps;
 
 typedef void (*userdyn_dynf_t)(types::DynamicData* input_data, types::DynamicData** output_data);
 typedef void (*userraw_dynf_t)(SerializedPayload_t* input_data, types::DynamicData** output_data);
-typedef void (*userdyn_rawf_t)(types::DynamicData* input_data, SerializedPayload_t** output_data);
-typedef void (*userraw_rawf_t)(SerializedPayload_t* input_data, SerializedPayload_t** output_data);
+typedef void (*userdyn_rawf_t)(types::DynamicData* input_data, SerializedPayload_t* output_data);
+typedef void (*userraw_rawf_t)(SerializedPayload_t* input_data, SerializedPayload_t* output_data);
 typedef TopicDataType* (*typef_t)(const char *name);
 
 class ISPublisher;

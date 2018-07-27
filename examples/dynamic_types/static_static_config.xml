@@ -2,18 +2,16 @@
 <is>
     <topic_types>
         <type name="HelloWorld">
-            <library>/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworldlib.so</library>
+            <library>/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworld_static_static_lib.so</library>
             <participants> <!-- Participants who will register it -->
                 <participant name="HelloWorldParticipant"/>
             </participants>
-            <dynamic_type>true</dynamic_type>
         </type>
         <type name="sample">
-            <library>/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworldlib.so</library>
+            <library>/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworld_static_static_lib.so</library>
             <participants> <!-- Participants who will register it -->
                 <participant name="KeysParticipant"/>
             </participants>
-            <dynamic_type>true</dynamic_type>
         </type>
     </topic_types>
 
@@ -142,12 +140,12 @@
     <connector name="HW_to_Key">
         <subscriber participant_name="HelloWorldParticipant" subscriber_name="subHW"/>
         <publisher participant_name="KeysParticipant" publisher_name="pubK"/>
-        <transformation file="/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworldlib.so" function="HelloWorldToKey"/>
+        <transformation file="/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworld_static_static_lib.so" function="HelloWorldToKey"/>
     </connector>
 
     <connector name="Key_to_HW">
         <subscriber participant_name="KeysParticipant" subscriber_name="subK"/>
         <publisher participant_name="HelloWorldParticipant" publisher_name="pubHW"/>
-    <transformation file="/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworldlib.so" function="KeyToHelloWorld"/>
+    <transformation file="/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworld_static_static_lib.so" function="KeyToHelloWorld"/>
     </connector>
 </is>
