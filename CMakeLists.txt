@@ -125,11 +125,11 @@ configure_file(${PROJECT_SOURCE_DIR}/src/config.h.in
 include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
-set(${PROJECT_NAME}_source_files 
+set(${PROJECT_NAME}_source_files
         src/xmlUtils.h
         src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
         src/ISManager.cpp src/ISManager.h src/log/ISLog.h
-        src/ISBridge.cpp src/ISBridge.h
+        src/ISBridge.h
         src/RTPSBridge.cpp src/RTPSBridge.h
         src/RTPSPublisher.cpp src/RTPSPublisher.h
         src/RTPSSubscriber.cpp src/RTPSSubscriber.h
@@ -269,7 +269,6 @@ if(EPROSIMA_INSTALLER)
         FILES
             src/main.cpp
             src/ISManager.cpp
-            src/ISBridge.cpp
             src/RTPSBridge.cpp
             src/RTPSPublisher.cpp
             src/RTPSSubscriber.cpp

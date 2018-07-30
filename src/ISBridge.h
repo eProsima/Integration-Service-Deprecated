@@ -47,6 +47,41 @@ public:
     virtual ~ISBaseClass() = default;
 };
 
+/**
+ * Base class for Bridges. All implementation must inherit from it.
+ */
+class ISBridge : public ISBaseClass
+{
+protected:
+    std::vector<ISSubscriber*> mv_subscriber;
+    std::map<std::string, userf_t> mm_functionsNames;
+    std::map<std::string, std::vector<std::string>> mm_functions;
+    std::map<std::string, std::vector<ISPublisher*>> mm_publisher;
+    std::map<ISPublisher*, std::string> mm_inv_publisher;
+    std::unordered_set<ISBaseClass*> ms_subpubs;
+
+    static std::string generateKeyPublisher(const std::string &sub, const std::string &funct)
+    {
+        return sub + "@" + funct;
+    }
+public:
+    ISBridge(const std::string &name) : ISBaseClass(name) { };
+    /**
+     * This method will be called by ISManager when terminating the execution of the bridge.
+     * Any handle, subscription, and resources that the bridge needed to work must be closed.
+     */
+    virtual ~ISBridge() {};
+    virtual void addSubscriber(ISSubscriber *sub) = 0;
+    virtual void addFunction(const std::string &sub, const std::string &fname, userf_t func) = 0;
+    virtual void addPublisher(const std::string &sub, const std::string &funcName, ISPublisher* pub) = 0;
+    virtual ISPublisher* removePublisher(ISPublisher* pub) = 0;
+    virtual void on_received_data(const ISSubscriber *sub, SerializedPayload_t *data) = 0;
+
+    // Forbid copy
+    ISBridge(const ISBridge&) = delete;
+    ISBridge& operator=(const ISBridge&) = delete;
+};
+
 /** Base class for publishers. Must know how to write into the destination protocol */
 class ISPublisher : public ISBaseClass
 {
@@ -56,7 +91,17 @@ public:
     ISPublisher(const std::string &name) : ISBaseClass(name), mb_bridge(nullptr) { };
     virtual ~ISPublisher() = default;
     virtual bool publish(SerializedPayload_t* /*data*/) { return false; };
-    virtual ISBridge* setBridge(ISBridge *bridge);
+
+    virtual ISBridge* setBridge(ISBridge *bridge)
+    {
+        ISBridge *old = mb_bridge;
+        mb_bridge = bridge;
+        if (old && old != bridge)
+        {
+            old->removePublisher(this);
+        }
+        return old;
+    }
 
     // Forbid copy
     ISPublisher(const ISPublisher&) = delete;
@@ -74,48 +119,11 @@ public:
     virtual void addBridge(ISBridge* bridge){
         mv_bridges.push_back(bridge);
     }
-    virtual void on_received_data(SerializedPayload_t* payload);
+    virtual void on_received_data(SerializedPayload_t* payload) = 0;
 
     // Forbid copy
     ISSubscriber(const ISSubscriber&) = delete;
     ISSubscriber& operator=(const ISSubscriber&) = delete;
-};
-
-/**
- * Base class for Bridges. All implementation must inherit from it.
- */
-class ISBridge : public ISBaseClass
-{
-protected:
-    std::vector<ISSubscriber*> mv_subscriber;
-    std::map<std::string, userf_t> mm_functionsNames;
-    std::map<std::string, std::vector<std::string>> mm_functions;
-    std::map<std::string, std::vector<ISPublisher*>> mm_publisher;
-    std::map<ISPublisher*, std::string> mm_inv_publisher;
-    std::unordered_set<ISBaseClass*> ms_subpubs;
-
-    //userf_t *transformation;
-    std::string generateKeyPublisher(const std::string &sub, const std::string &funct)
-    {
-        return sub + "@" + funct;
-    }
-public:
-    ISBridge(const std::string &name) : ISBaseClass(name) { };
-    /**
-     * This method will be called by ISManager when terminating the execution of the bridge.
-     * Any handle, subscription, and resources that the bridge needed to work must be closed.
-     */
-    virtual ~ISBridge();
-    virtual void addSubscriber(ISSubscriber *sub);
-    virtual void addFunction(const std::string &sub, const std::string &fname, userf_t func);
-    virtual void addPublisher(const std::string &sub, const std::string &funcName, ISPublisher* pub);
-    virtual ISPublisher* removePublisher(ISPublisher* pub);
-    virtual void on_received_data(const ISSubscriber *sub, SerializedPayload_t *data);
-    virtual void onTerminate() override;
-
-    // Forbid copy
-    ISBridge(const ISBridge&) = delete;
-    ISBridge& operator=(const ISBridge&) = delete;
 };
 
 #endif // _Header__SUBSCRIBER_H_

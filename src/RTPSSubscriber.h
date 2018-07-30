@@ -51,6 +51,7 @@ public:
     bool hasRTPSSubscriber();
     Participant* getParticipant();
     Subscriber* getRTPSSubscriber() { return ms_subscriber; }
+    void on_received_data(SerializedPayload_t* payload) override;
 };
 
 #endif // _Header__SUBSCRIBER_H_

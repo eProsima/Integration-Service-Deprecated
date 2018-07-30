@@ -1,6 +1,5 @@
 #include <iostream>
 #include "FilePublisher.h"
-#include "../../src/ISBridge.h"
 #include "../../src/log/ISLog.h"
 
 #if defined(_WIN32) && defined (BUILD_SHARED_LIBS)
@@ -21,7 +20,7 @@ FilePublisher* loadFilePublisher(const char* name, const std::vector<std::pair<s
 extern "C" USER_LIB_EXPORT ISBridge* create_bridge(const char* name,
     const std::vector<std::pair<std::string, std::string>> *config)
 {
-    return new ISBridge(name);
+    return nullptr; // Not implemented
 }
 
 extern "C" USER_LIB_EXPORT ISSubscriber* create_subscriber(ISBridge *bridge, const char* name,

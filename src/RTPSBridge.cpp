@@ -15,4 +15,85 @@
 #include "RTPSBridge.h"
 
 RTPSBridge::RTPSBridge(const std::string &name) : ISBridge(name) {}
-RTPSBridge::~RTPSBridge() {}
+
+void RTPSBridge::onTerminate()
+{
+    for (ISBaseClass* bc : ms_subpubs)
+    {
+        bc->onTerminate();
+    }
+}
+
+RTPSBridge::~RTPSBridge()
+{
+    for (ISBaseClass* bc : ms_subpubs)
+    {
+        delete bc;
+    }
+}
+
+void RTPSBridge::addSubscriber(ISSubscriber *sub)
+{
+    mv_subscriber.emplace_back(sub);
+    ms_subpubs.emplace(sub);
+    sub->addBridge(this);
+}
+
+void RTPSBridge::addFunction(const std::string &sub, const std::string &fname, userf_t func)
+{
+    mm_functionsNames[fname] = func;
+    std::vector<std::string> &fnames = mm_functions[sub];
+    fnames.push_back(fname);
+    //mm_functions.emplace(sub, fname);
+}
+
+void RTPSBridge::addPublisher(const std::string &sub, const std::string &funcName, ISPublisher* pub)
+{
+    std::string key = generateKeyPublisher(sub, funcName);
+    std::vector<ISPublisher*> &pubs = mm_publisher[key];
+    pubs.emplace_back(pub);
+    //mm_publisher.emplace(key, pub);
+    mm_inv_publisher[pub] = key;
+    ms_subpubs.emplace(pub);
+    pub->setBridge(this);
+}
+
+ISPublisher* RTPSBridge::removePublisher(ISPublisher* pub)
+{
+    std::string key = mm_inv_publisher[pub];
+    mm_inv_publisher.erase(pub);
+    std::vector<ISPublisher*> pubs = mm_publisher[key];
+    for (auto it = pubs.begin(); it != pubs.end(); it++)
+    {
+        if (*it == pub)
+        {
+            pubs.erase(it);
+            break;
+        }
+    }
+    ms_subpubs.erase(pub);
+    return pub;
+}
+
+void RTPSBridge::on_received_data(const ISSubscriber *sub, SerializedPayload_t *data)
+{
+    std::vector<std::string> funcNames = mm_functions[sub->getName()];
+    for (std::string fName : funcNames)
+    {
+        userf_t function = mm_functionsNames[fName];
+        SerializedPayload_t output;
+        if (function)
+        {
+            function(data, &output);
+        }
+        else
+        {
+            output.copy(data, false);
+        }
+        std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+        for (ISPublisher* pub : pubs)
+        {
+            pub->publish(&output);
+        }
+    }
+}

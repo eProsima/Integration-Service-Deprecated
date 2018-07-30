@@ -28,6 +28,12 @@ class RTPSBridge : public ISBridge
 {
 public:
     RTPSBridge(const std::string &name);
+    virtual void addSubscriber(ISSubscriber *sub) override;
+    virtual void addFunction(const std::string &sub, const std::string &fname, userf_t func) override;
+    virtual void addPublisher(const std::string &sub, const std::string &funcName, ISPublisher* pub) override;
+    virtual ISPublisher* removePublisher(ISPublisher* pub) override;
+    virtual void on_received_data(const ISSubscriber *sub, SerializedPayload_t *data) override;
+    virtual void onTerminate() override;
     virtual ~RTPSBridge();
 };
 

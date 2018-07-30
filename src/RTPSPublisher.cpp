@@ -68,3 +68,4 @@ void RTPSPublisher::setRTPSPublisher(Publisher* pub)
 {
     mp_publisher = pub;
 }
+

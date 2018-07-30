@@ -349,17 +349,24 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
         createPubf_t create_publisher = (createPubf_t)eProsimaGetProcAddress(handle, s_sFuncCreatePublisher.c_str());
 
         ISBridge *bridge = nullptr;
-        if (properties)
+        if (create_bridge != nullptr)
         {
-            std::vector<std::pair<std::string, std::string>> configuration;
+            if (properties)
+            {
+                std::vector<std::pair<std::string, std::string>> configuration;
 
-            parseProperties(properties, configuration);
+                parseProperties(properties, configuration);
 
-            bridge = create_bridge(bridge_name, &configuration);
+                bridge = create_bridge(bridge_name, &configuration);
+            }
+            else
+            {
+                bridge = create_bridge(bridge_name, nullptr);
+            }
         }
-        else
+        if (bridge == nullptr) // Use the default bridge
         {
-            bridge = create_bridge(bridge_name, nullptr);
+            bridge = new RTPSBridge(bridge_name);
         }
 
         addBridge(bridge);
@@ -486,7 +493,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         if (itsb == bridges.end() && itpb == bridges.end())
         {
             // Create the RTPS bridge
-            bridge = (ISBridge*)new RTPSBridge(connector_name);
+            bridge = new RTPSBridge(connector_name);
             addBridge(bridge);
         }
         else if (itsb != bridges.end() && itpb != bridges.end())
