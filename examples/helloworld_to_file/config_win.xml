@@ -38,6 +38,10 @@
                 <name>format</name>
                 <value>txt</value>
             </property>
+            <property>
+                <name>append</name>
+                <value>true</value>
+            </property>
         </publisher>
     </bridge>
 

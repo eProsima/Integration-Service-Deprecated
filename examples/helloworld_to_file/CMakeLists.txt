@@ -14,14 +14,14 @@ endif()
 
 find_package(fastcdr)
 find_package(fastrtps)
-
 add_definitions(-DEPROSIMA_USER_DLL_EXPORT  -DBUILD_SHARED_LIBS)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS TRUE)
 
 if(WIN32)
-    set(liblist libcurl)
+    find_library(IS_LIB islibd-0.1 C:/git/integration-services/build/Debug)
+    set(liblist ${IS_LIB})
 else()
 	set(liblist -L/usr/lib/x86_64-linux-gnu)
 endif()
@@ -32,4 +32,4 @@ add_library(isfile SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP}
     FilePublisher.cpp
     isfile.cpp)
 
-target_link_libraries(isfile fastrtps fastcdr ${CMAKE_DL_LIBS})
+target_link_libraries(isfile fastrtps fastcdr ${liblist} ${CMAKE_DL_LIBS})

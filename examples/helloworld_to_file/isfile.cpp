@@ -1,12 +1,13 @@
 #include <iostream>
 #include "FilePublisher.h"
+#include "../../src/ISBridge.h"
 #include "../../src/log/ISLog.h"
 
 #if defined(_WIN32) && defined (BUILD_SHARED_LIBS)
 	#if defined (_MSC_VER)
 		#pragma warning(disable: 4251)
 	#endif
-  #if defined(isbridgengsiv2lib_EXPORTS)
+  #if defined(EPROSIMA_USER_DLL_EXPORT)
   	#define  USER_LIB_EXPORT __declspec(dllexport)
   #else
     #define  USER_LIB_EXPORT __declspec(dllimport)
