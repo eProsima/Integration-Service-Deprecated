@@ -28,7 +28,9 @@ RTPSSubscriber::RTPSSubscriber(const std::string &name)
 RTPSSubscriber::~RTPSSubscriber()
 {
     //if(handle) eProsimaCloseLibrary(handle);
-    if(ms_participant != nullptr) Domain::removeParticipant(ms_participant);
+
+    // Participants are deleted from the ISManager.
+    ms_participant = nullptr;
 }
 
 void RTPSSubscriber::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)

@@ -75,7 +75,7 @@ ISManager::ISManager(const std::string &xml_file_path)
         return;
     }
 
-    for (auto child = doc.FirstChildElement(s_sIS.c_str()); 
+    for (auto child = doc.FirstChildElement(s_sIS.c_str());
         child != nullptr; child = child->NextSiblingElement(s_sIS.c_str()))
     {
         tinyxml2::XMLElement *topic_types = child->FirstChildElement(s_sTopicTypes.c_str());
@@ -217,7 +217,7 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
                 typesLib = typesLib->NextSiblingElement(s_sTypesLibrary.c_str());
             }
         }
-        
+
         for(auto &pair : to_register_types)
         {
             TopicDataType* type = getTopicDataType(pair.second);
@@ -270,14 +270,14 @@ void ISManager::createSubscriber(Participant* participant, const std::string &na
         LOG_ERROR("Error creating subscriber");
         return;
     }
-    
+
     // Create Subscriber
     listener->setRTPSSubscriber(Domain::createSubscriber(participant, name, (SubscriberListener*)listener));
 
     //Associate types
     const std::string &typeName = listener->getRTPSSubscriber()->getAttributes().topic.topicDataType;
     const std::string &topic_name = listener->getRTPSSubscriber()->getAttributes().topic.topicName;
-    std::pair<std::string, std::string> idx = 
+    std::pair<std::string, std::string> idx =
         std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
     listener->input_type = data_types[idx];
     listener->input_type->setName(typeName.c_str());
@@ -309,19 +309,19 @@ void ISManager::createPublisher(Participant* participant, const std::string &nam
     }
 
     //Create publisher
-    publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name, 
+    publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name,
                                 (PublisherListener*)publisher));
 
     //Associate types
     const std::string &typeName = publisher->getRTPSPublisher()->getAttributes().topic.topicDataType;
     const std::string &topic_name = publisher->getRTPSPublisher()->getAttributes().topic.topicName;
-    std::pair<std::string, std::string> idx = 
+    std::pair<std::string, std::string> idx =
         std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
     publisher->output_type = data_types[idx];
     publisher->output_type->setName(typeName.c_str());
 
     //Create publisher
-    //publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name, 
+    //publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name,
     //                            (PublisherListener*)publisher));
     if(!publisher->hasRTPSPublisher())
     {
@@ -437,7 +437,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 
         Participant* participant_subscriber = getParticipant(sub_part);
         Participant* participant_publisher = getParticipant(pub_part);
-        
+
         if (participant_subscriber != nullptr)
         {
             createSubscriber(participant_subscriber, sub_name);
@@ -584,6 +584,12 @@ void* ISManager::getLibraryHandle(const std::string &libpath)
 ISManager::~ISManager()
 {
     onTerminate();
+
+    for (auto it = rtps_participants.rbegin(); it != rtps_participants.rend(); ++it)
+    {
+        Domain::removeParticipant(it->second);
+    }
+
     for (const auto &p : bridges)
     {
         ISBridge *b = p.second;
@@ -593,4 +599,5 @@ ISManager::~ISManager()
     subscribers.clear();
     publishers.clear();
     handles.clear();
+    data_types.clear();
 }

@@ -23,7 +23,8 @@ RTPSPublisher::RTPSPublisher(const std::string &name) : ISPublisher(name)
 
 RTPSPublisher::~RTPSPublisher()
 {
-    if(mp_participant != nullptr) Domain::removeParticipant(mp_participant);
+    // Participants are deleted from the ISManager.
+    mp_participant = nullptr;
 }
 
 void RTPSPublisher::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
