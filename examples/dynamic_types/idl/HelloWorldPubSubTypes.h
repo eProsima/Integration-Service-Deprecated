@@ -25,15 +25,13 @@
 
 #include <fastrtps/TopicDataType.h>
 
-
-
 #include "HelloWorld.h"
 
 /*!
  * @brief This class represents the TopicDataType of the type HelloWorld defined by the user in the IDL file.
  * @ingroup HELLOWORLD
  */
-class HelloWorldPubSubType : public  eprosima::fastrtps::TopicDataType {
+class HelloWorldPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef HelloWorld type;
 
@@ -49,4 +47,4 @@ public:
 	unsigned char* m_keyBuffer;
 };
 
-#endif // _HelloWorld_PUBSUBTYPE_H_
+#endif // _HELLOWORLD_PUBSUBTYPES_H_

@@ -59,3 +59,13 @@ if(WIN32)
 	target_include_directories(keyhelloworld_dyn_dyn_lib PUBLIC ../../../../../install/include)
 endif()
 target_link_libraries(keyhelloworld_dyn_dyn_lib fastrtps fastcdr ${CMAKE_DL_LIBS})
+
+#----------------------------------------------------------------------------------------------------------------------------------
+# DYNAMIC -> DYNAMIC TRANSFORM
+file(GLOB USER_DYN_DYN_LIB_SOURCES_CXX "idl/*.cxx")
+file(GLOB USER_DYN_DYN_LIB_SOURCES_CPP "keyhelloworld_dynidl_static_lib.cpp" "idl/*.cpp")
+add_library(keyhelloworld_dynidl_static_lib SHARED ${USER_DYN_DYN_LIB_SOURCES_CXX} ${USER_DYN_DYN_LIB_SOURCES_CPP})
+if(WIN32)
+	target_include_directories(keyhelloworld_dynidl_static_lib PUBLIC ../../../../../install/include)
+endif()
+target_link_libraries(keyhelloworld_dynidl_static_lib fastrtps fastcdr ${CMAKE_DL_LIBS})

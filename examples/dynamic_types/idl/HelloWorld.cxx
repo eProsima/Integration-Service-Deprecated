@@ -25,9 +25,11 @@ namespace { char dummy; }
 #endif
 
 #include "HelloWorld.h"
+#include "HelloWorldTypeObject.h"
 
 #include <fastcdr/Cdr.h>
 
+#include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
 
 #include <utility>
@@ -36,6 +38,10 @@ HelloWorld::HelloWorld()
 {
     m_index = 0;
 
+
+
+    // Just to register all known types
+    HelloWorldTypeFactory factory;
 }
 
 HelloWorld::~HelloWorld()
@@ -58,7 +64,7 @@ HelloWorld& HelloWorld::operator=(const HelloWorld &x)
 {
     m_index = x.m_index;
     m_message = x.m_message;
-    
+
     return *this;
 }
 
@@ -66,16 +72,19 @@ HelloWorld& HelloWorld::operator=(HelloWorld &&x)
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-    
+
     return *this;
 }
 
 size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
+    /* uint32_t */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
+    /* std::string */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
 
@@ -84,10 +93,14 @@ size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 
 size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
-            
+
+    /* uint32_t index */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+
+    /* std::string message */
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
 
@@ -97,7 +110,6 @@ size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_a
 void HelloWorld::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_index;
-
     scdr << m_message;
 }
 
@@ -122,8 +134,9 @@ bool HelloWorld::isKeyDefined()
     return false;
 }
 
-void HelloWorld::serializeKey(eprosima::fastcdr::Cdr&) const
+void HelloWorld::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
+	(void) scdr;
 	 
 	 
 }
