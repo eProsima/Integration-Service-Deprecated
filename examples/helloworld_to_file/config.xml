@@ -27,7 +27,7 @@
     </profiles>
 
     <bridge name="file">
-        <library>build/libisfile.so</library> <!-- Path to the NGSIv2 library -->
+        <library>build/libisfile.so</library>
 
         <publisher name="file_publisher">
             <property>

@@ -27,7 +27,7 @@
     </profiles>
 
     <bridge name="file">
-        <library>isfile.dll</library> <!-- Path to the NGSIv2 library -->
+        <library>C:/git/integration-services/examples/helloworld_to_file/build/debug/isfile.dll</library>
 
         <publisher name="file_publisher">
             <property>
