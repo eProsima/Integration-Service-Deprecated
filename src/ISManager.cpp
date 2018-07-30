@@ -599,20 +599,12 @@ ISManager::~ISManager()
     bridges.clear();
     subscribers.clear();
     publishers.clear();
-    data_types.clear();
 
-    //for (auto it = data_types.begin(); it != data_types.end(); ++it)
-    //{
-    //    auto deleteIt = deleteTypesLibs.find(it->first.second);
-    //    if (deleteIt != deleteTypesLibs.end())
-    //    {
-    //        deleteIt(it->second);
-    //    }
-    //    else
-    //    {
-    //        delete it->second;
-    //    }
-    //}
+    for (auto it = data_types.begin(); it != data_types.end(); ++it)
+    {
+        delete it->second;
+    }
+    data_types.clear();
 
     for (const auto &p : handles)
     {
