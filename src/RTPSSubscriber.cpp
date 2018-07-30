@@ -47,18 +47,7 @@ void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
 {
     SerializedPayload_t serialized_input(input_type->m_typeSize);
 
-    bool taken = false;
-    if (dynamic_cast<GenericPubSubType*>(input_type) == nullptr) // Only if our type isn't the default
-    {
-        taken = sub->takeNextSerializedPayload(&serialized_input, &m_info);
-        using eprosima::fastcdr::Cdr;
-        serialized_input.length = input_type->m_typeSize + 4;
-        serialized_input.encapsulation = Cdr::DEFAULT_ENDIAN == Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    }
-    else
-    {
-        taken = sub->takeNextSerializedPayload(&serialized_input, &m_info); // Only when the type is the default
-    }
+    bool taken = sub->takeNextSerializedPayload(&serialized_input, &m_info);
 
     if(taken && m_info.sampleKind == ALIVE)
     {
