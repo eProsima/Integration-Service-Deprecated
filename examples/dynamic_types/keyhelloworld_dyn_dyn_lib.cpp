@@ -88,7 +88,7 @@ extern "C" USER_LIB_EXPORT void KeyToHelloWorld(SerializedPayload_t* inputBuffer
     hwData->SetUint32Value(keysData->GetByteValue(0), 0);
 
     // Serialize HelloWorld
-    outputBuffer->reserve(static_cast<uint32_t>(hwType->getSerializedSizeProvider(&hwData)()));
+    outputBuffer->reserve(static_cast<uint32_t>(hwType->getSerializedSizeProvider(hwData.get())()));
     hwType->serialize(hwData.get(), outputBuffer);
 
     delete hwType;
@@ -112,7 +112,7 @@ extern "C" USER_LIB_EXPORT void HelloWorldToKey(SerializedPayload_t* inputBuffer
     keysData->SetByteValue(temp % 256, 1);
 
     // Serialize keys
-    outputBuffer->reserve(static_cast<uint32_t>(keysType->getSerializedSizeProvider(&keysData)()));
+    outputBuffer->reserve(static_cast<uint32_t>(keysType->getSerializedSizeProvider(keysData.get())()));
     keysType->serialize(keysData.get(), outputBuffer);
 
     delete hwType;

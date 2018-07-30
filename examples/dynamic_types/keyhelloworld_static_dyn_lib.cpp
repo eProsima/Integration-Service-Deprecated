@@ -102,7 +102,7 @@ extern "C" USER_LIB_EXPORT void HelloWorldToKey(SerializedPayload_t* inputBuffer
     keysData->SetByteValue(temp % 256, 1);
 
     // Serialize keys
-    outputBuffer->reserve(static_cast<uint32_t>(keysType->getSerializedSizeProvider(&keysData)()));
+    outputBuffer->reserve(static_cast<uint32_t>(keysType->getSerializedSizeProvider(keysData.get())()));
     keysType->serialize(keysData.get(), outputBuffer);
     delete keysType;
 }
