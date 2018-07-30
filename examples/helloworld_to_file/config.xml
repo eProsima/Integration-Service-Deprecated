@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<is>
+    <topic_types>
+        <type name="HelloWorld">
+            <participants>
+                <participant name="rtps"/>
+            </participants>
+        </type>
+    </topic_types>
+
+    <profiles>
+        <participant profile_name="rtps">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="fastrtps_subscriber">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+    </profiles>
+
+    <bridge name="file">
+        <library>build/libisfile.so</library> <!-- Path to the NGSIv2 library -->
+
+        <publisher name="file_publisher">
+            <property>
+                <name>filename</name>
+                <value>output</value>
+            </property>
+            <property>
+                <name>format</name>
+                <value>txt</value>
+            </property>
+            <property>
+                <name>append</name>
+                <value>true</value>
+            </property>
+        </publisher>
+    </bridge>
+
+    <connector name="dump_to_file">
+        <subscriber participant_name="rtps" subscriber_name="fastrtps_subscriber"/>
+        <publisher participant_name="file" publisher_name="file_publisher"/>
+    </connector>
+</is>
