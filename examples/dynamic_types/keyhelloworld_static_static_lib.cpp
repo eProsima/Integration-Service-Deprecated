@@ -68,7 +68,7 @@ extern "C" USER_LIB_EXPORT void KeyToHelloWorld(SerializedPayload_t* inputBuffer
     std::cout << "HELLOWORLD INDEX: " << hwData.index() << std::endl;
 
     // Serialize helloworld
-    *outputBuffer = SerializedPayload_t(static_cast<uint32_t>(hwPubSub.getSerializedSizeProvider(&hwData)()));
+    outputBuffer->reserve(static_cast<uint32_t>(hwPubSub.getSerializedSizeProvider(&hwData)()));
     hwPubSub.serialize(&hwData, outputBuffer);
 }
 
@@ -89,7 +89,7 @@ extern "C" USER_LIB_EXPORT void HelloWorldToKey(SerializedPayload_t* inputBuffer
 
     std::cout << "KEY INDEX: " << (int) keyData.index() << std::endl;
 
-    // Serialize helloworld
-    *outputBuffer = SerializedPayload_t(static_cast<uint32_t>(keyPubSub.getSerializedSizeProvider(&keyData)()));
+    // Serialize keys
+    outputBuffer->reserve(static_cast<uint32_t>(keyPubSub.getSerializedSizeProvider(&keyData)()));
     keyPubSub.serialize(&keyData, outputBuffer);
 }

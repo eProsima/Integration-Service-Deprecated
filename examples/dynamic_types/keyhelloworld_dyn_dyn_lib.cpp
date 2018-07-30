@@ -7,6 +7,7 @@
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataPtr.h>
 
 #if defined(_WIN32) && defined (BUILD_SHARED_LIBS)
 #if defined (_MSC_VER)
@@ -73,30 +74,47 @@ extern "C" USER_LIB_EXPORT TopicDataType* GetTopicType(const char *name)
     return nullptr;
 }
 
-extern "C" USER_LIB_EXPORT void KeyToHelloWorld(types::DynamicData* inputData, types::DynamicData** outputData)
+extern "C" USER_LIB_EXPORT void KeyToHelloWorld(SerializedPayload_t* inputBuffer, SerializedPayload_t* outputBuffer)
+{
+    // DynamicTypes
+    DynamicPubSubType *keysType = GetKeyType();
+    DynamicData_ptr keysData = DynamicDataFactory::GetInstance()->CreateData(keysType->GetDynamicType());
+    keysType->deserialize(inputBuffer, keysData.get());
+
+    DynamicPubSubType *hwType = GetHelloWorldType();
+    DynamicData_ptr hwData = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
+
+    // Custom transformation
+    hwData->SetUint32Value(keysData->GetByteValue(0), 0);
+
+    // Serialize HelloWorld
+    outputBuffer->reserve(static_cast<uint32_t>(hwType->getSerializedSizeProvider(&hwData)()));
+    hwType->serialize(hwData.get(), outputBuffer);
+
+    delete hwType;
+    delete keysType;
+}
+
+extern "C" USER_LIB_EXPORT void HelloWorldToKey(SerializedPayload_t* inputBuffer, SerializedPayload_t* outputBuffer)
 {
     // DynamicTypes
     DynamicPubSubType *hwType = GetHelloWorldType();
-	*outputData = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
+    DynamicData_ptr hwData = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
+    hwType->deserialize(inputBuffer, hwData.get());
+
+    DynamicPubSubType *keysType = GetKeyType();
+    DynamicData_ptr keysData = DynamicDataFactory::GetInstance()->CreateData(keysType->GetDynamicType());
 
     // Custom transformation
-	(*outputData)->SetUint32Value(inputData->GetByteValue(0), 0);
-
-    // Ignore key
-    delete hwType;
-}
-
-extern "C" USER_LIB_EXPORT void HelloWorldToKey(types::DynamicData* inputData, types::DynamicData** outputData)
-{
-    // DynamicTypes
-    DynamicPubSubType *keyType = GetKeyType();
-	*outputData = DynamicDataFactory::GetInstance()->CreateData(keyType->GetDynamicType());
-
-	// Custom transformation
-    uint32_t temp = inputData->GetUint32Value(0);
+    uint32_t temp = hwData->GetUint32Value(0);
     //std::cout << "TRANSFORM: " << temp << std::endl;
-	(*outputData)->SetByteValue(temp % 256, 0);
-	(*outputData)->SetByteValue(temp % 256, 1);
+    keysData->SetByteValue(temp % 256, 0);
+    keysData->SetByteValue(temp % 256, 1);
 
-    delete keyType;
+    // Serialize keys
+    outputBuffer->reserve(static_cast<uint32_t>(keysType->getSerializedSizeProvider(&keysData)()));
+    keysType->serialize(keysData.get(), outputBuffer);
+
+    delete hwType;
+    delete keysType;
 }
