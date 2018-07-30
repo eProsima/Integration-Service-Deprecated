@@ -548,12 +548,6 @@ void ISManager::onTerminate()
             b->onTerminate();
         }
     }
-
-    for (const auto &p : handles)
-    {
-        void *h = p.second;
-        if(h) eProsimaCloseLibrary(h);
-    }
 }
 
 bool ISManager::isActive()
@@ -587,6 +581,13 @@ ISManager::~ISManager()
 
     for (auto it = rtps_participants.rbegin(); it != rtps_participants.rend(); ++it)
     {
+        for (auto dataIt = data_types.begin(); dataIt != data_types.end(); ++dataIt)
+        {
+            if (it->first == dataIt->first.first)
+            {
+                Domain::unregisterType(it->second, dataIt->first.second.c_str());
+            }
+        }
         Domain::removeParticipant(it->second);
     }
 
@@ -598,6 +599,25 @@ ISManager::~ISManager()
     bridges.clear();
     subscribers.clear();
     publishers.clear();
-    handles.clear();
     data_types.clear();
+
+    //for (auto it = data_types.begin(); it != data_types.end(); ++it)
+    //{
+    //    auto deleteIt = deleteTypesLibs.find(it->first.second);
+    //    if (deleteIt != deleteTypesLibs.end())
+    //    {
+    //        deleteIt(it->second);
+    //    }
+    //    else
+    //    {
+    //        delete it->second;
+    //    }
+    //}
+
+    for (const auto &p : handles)
+    {
+        void *h = p.second;
+        if (h) eProsimaCloseLibrary(h);
+    }
+    handles.clear();
 }
