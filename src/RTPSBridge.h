@@ -24,11 +24,14 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+
+/**
+ * This class uses the default behaviour of ISBridge.
+ * */
 class RTPSBridge : public ISBridge
 {
 public:
     RTPSBridge(const std::string &name);
-    virtual void on_received_data(const ISSubscriber *sub, SerializedPayload_t *data) override;
 };
 
 #endif // _Header__SUBSCRIBER_H_

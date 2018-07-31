@@ -15,26 +15,3 @@
 #include "RTPSBridge.h"
 
 RTPSBridge::RTPSBridge(const std::string &name) : ISBridge(name) {}
-
-void RTPSBridge::on_received_data(const ISSubscriber *sub, SerializedPayload_t *data)
-{
-    std::vector<std::string> funcNames = mm_functions[sub->getName()];
-    for (std::string fName : funcNames)
-    {
-        userf_t function = mm_functionsNames[fName];
-        SerializedPayload_t output;
-        if (function)
-        {
-            function(data, &output);
-        }
-        else
-        {
-            output.copy(data, false);
-        }
-        std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
-        for (ISPublisher* pub : pubs)
-        {
-            pub->publish(&output);
-        }
-    }
-}

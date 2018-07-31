@@ -104,7 +104,28 @@ public:
         return pub;
     }
 
-    virtual void on_received_data(const ISSubscriber *sub, SerializedPayload_t *data) = 0;
+    virtual void on_received_data(const ISSubscriber *sub, SerializedPayload_t *data)
+    {
+        std::vector<std::string> funcNames = mm_functions[sub->getName()];
+        for (std::string fName : funcNames)
+        {
+            userf_t function = mm_functionsNames[fName];
+            SerializedPayload_t output;
+            if (function)
+            {
+                function(data, &output);
+            }
+            else
+            {
+                output.copy(data, false);
+            }
+            std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+            for (ISPublisher* pub : pubs)
+            {
+                pub->publish(&output);
+            }
+        }
+    }
 
     // Forbid copy
     ISBridge(const ISBridge&) = delete;
