@@ -16,7 +16,7 @@ public:
 
     virtual bool publish(SerializedPayload_t* /*data*/) = 0;
 
-    virtual ISBridge* setBridge(ISBridge *) { return nullptr; }; // Typical publisher doesn't need the bridge
+    virtual ISBridge* setBridge(ISBridge *);
 
     // Forbid copy
     ISPublisher(const ISPublisher&) = delete;

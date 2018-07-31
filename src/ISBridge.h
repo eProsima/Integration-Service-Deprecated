@@ -147,4 +147,15 @@ inline void ISSubscriber::on_received_data(SerializedPayload_t* payload)
     }
 }
 
+inline ISBridge* ISPublisher::setBridge(ISBridge *bridge)
+{
+    ISBridge *old = mb_bridge;
+    mb_bridge = bridge;
+    if (old && old != bridge)
+    {
+        old->removePublisher(this);
+    }
+    return old;
+}
+
 #endif // _IS_BRIDGE_H_

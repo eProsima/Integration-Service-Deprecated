@@ -42,7 +42,6 @@ public:
     TopicDataType *output_type;
     RTPSPublisher(const std::string &name);
     virtual bool publish(SerializedPayload_t * data) override;
-    virtual ISBridge* setBridge(ISBridge *bridge) override;
     ~RTPSPublisher() override;
     void onPublicationMatched(Publisher* pub, MatchingInfo& info) override;
     void setParticipant(Participant* part);
