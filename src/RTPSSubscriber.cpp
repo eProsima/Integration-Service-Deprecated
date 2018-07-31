@@ -81,11 +81,3 @@ Participant* RTPSSubscriber::getParticipant()
 {
     return ms_participant;
 }
-
-void RTPSSubscriber::on_received_data(SerializedPayload_t* payload)
-{
-    for (ISBridge* bridge : mv_bridges)
-    {
-        bridge->on_received_data(this, payload);
-    }
-}

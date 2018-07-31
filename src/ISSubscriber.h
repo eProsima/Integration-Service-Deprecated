@@ -13,10 +13,8 @@ protected:
 public:
     ISSubscriber(const std::string &name) : ISBaseClass(name) { };
     virtual ~ISSubscriber() = default;
-    virtual void addBridge(ISBridge* bridge){
-        mv_bridges.push_back(bridge);
-    }
-    virtual void on_received_data(SerializedPayload_t* payload) = 0;
+    virtual void addBridge(ISBridge* bridge);
+    virtual void on_received_data(SerializedPayload_t* payload);
 
     // Forbid copy
     ISSubscriber(const ISSubscriber&) = delete;

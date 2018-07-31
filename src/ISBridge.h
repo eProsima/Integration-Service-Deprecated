@@ -134,4 +134,17 @@ public:
 
 typedef ISBridge* (*createBridgef_t)(const char* name, const std::vector<std::pair<std::string, std::string>> *config);
 
+
+inline void ISSubscriber::addBridge(ISBridge* bridge){
+    mv_bridges.push_back(bridge);
+}
+
+inline void ISSubscriber::on_received_data(SerializedPayload_t* payload)
+{
+    for (ISBridge* bridge : mv_bridges)
+    {
+        bridge->on_received_data(this, payload);
+    }
+}
+
 #endif // _IS_BRIDGE_H_
