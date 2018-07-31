@@ -69,3 +69,13 @@ void RTPSPublisher::setRTPSPublisher(Publisher* pub)
     mp_publisher = pub;
 }
 
+ISBridge* RTPSPublisher::setBridge(ISBridge *bridge)
+{
+    ISBridge *old = mb_bridge;
+    mb_bridge = bridge;
+    if (old && old != bridge)
+    {
+        old->removePublisher(this);
+    }
+    return old;
+}
