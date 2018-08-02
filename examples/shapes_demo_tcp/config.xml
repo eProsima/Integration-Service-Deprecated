@@ -4,8 +4,10 @@
         <type name="ShapeType">
             <library>libshapelib.so</library>
             <participants> <!-- Participants who will register it -->
-                <participant name="LocalShapes"/>
-                <participant name="TCPShapes"/>
+                <participant name="TCPClient"/>
+                <participant name="TCPServer"/>
+                <participant name="UDPParticipant0"/>
+                <participant name="UDPParticipant1"/>
             </participants>
         </type>
         <types_library>libshapelib.so</types_library> <!-- Only one needed in this case. Kept for testing. -->
@@ -20,27 +22,61 @@
                 <listening_ports>
                     <port>5100</port>
                 </listening_ports>
-                <metadata_logical_port>7401</metadata_logical_port>
+                <metadata_logical_port>0</metadata_logical_port>
             </transport>
             <transport>
                 <transport_id>TCPv4_Client</transport_id>
                 <type>TCPv4</type>
-                <metadata_logical_port>7403</metadata_logical_port>
+                <metadata_logical_port>0</metadata_logical_port>
             </transport>
         </transports>
 
-        <participant profile_name="LocalShapes">
+        <participant profile_name="UDPParticipant1">
+            <rtps>
+                <builtin>
+                    <domainId>1</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>0</seconds>
+                            <fraction>333</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="UDPParticipant0">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>0</seconds>
+                            <fraction>333</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="TCPClient">
             <rtps>
                 <userTransports>
                     <transport_id>TCPv4_Client</transport_id>
-                </userTransports>   
+                </userTransports>
                 <defaultUnicastLocatorList>
                     <locator>
                         <kind>TCPv4</kind>
                         <address>127.0.0.1</address>
                         <ports_>
                             <physical_port>5100</physical_port>
-                            <logical_port>7411</logical_port>
+                            <logical_port>0</logical_port>
                         </ports_>
                     </locator>
                 </defaultUnicastLocatorList>
@@ -61,7 +97,7 @@
                             <address>127.0.0.1</address>
                             <ports_>
                                 <physical_port>5100</physical_port>
-                                <logical_port>7403</logical_port>
+                                <logical_port>0</logical_port>
                             </ports_>
                         </locator>
                     </metatrafficUnicastLocatorList>
@@ -71,7 +107,7 @@
                             <address>127.0.0.1</address>
                             <ports_>
                                 <physical_port>5100</physical_port>
-                                <logical_port>7401</logical_port>
+                                <logical_port>0</logical_port>
                             </ports_>
                         </locator>
                         <locator>
@@ -79,7 +115,7 @@
                             <address>127.0.0.1</address>
                             <ports_>
                                 <physical_port>5100</physical_port>
-                                <logical_port>7410</logical_port>
+                                <logical_port>0</logical_port>
                             </ports_>
                         </locator>
                     </initialPeersList>
@@ -90,18 +126,18 @@
             </rtps>
         </participant>
 
-        <participant profile_name="TCPShapes">
+        <participant profile_name="TCPServer">
             <rtps>
                 <userTransports>
                     <transport_id>TCPv4_Server</transport_id>
-                </userTransports>   
+                </userTransports>
                 <defaultUnicastLocatorList>
                     <locator>
                         <kind>TCPv4</kind>
                         <address>127.0.0.1</address>
                         <ports_>
                             <physical_port>5100</physical_port>
-                            <logical_port>7410</logical_port>
+                            <logical_port>0</logical_port>
                         </ports_>
                     </locator>
                 </defaultUnicastLocatorList>
@@ -122,7 +158,7 @@
                             <address>127.0.0.1</address>
                             <ports_>
                                 <physical_port>5100</physical_port>
-                                <logical_port>7401</logical_port>
+                                <logical_port>0</logical_port>
                             </ports_>
                         </locator>
                     </metatrafficUnicastLocatorList>
@@ -302,34 +338,66 @@
         </publisher>
     </profiles>
 
-    <connector name="Local_TCP_SQUARES"> 
-        <subscriber participant_name="LocalShapes" subscriber_name="subscriberSquare"/>
-        <publisher participant_name="TCPShapes" publisher_name="publisherSquare"/>
+    <connector name="UDP_TCP_SQUARES">
+        <subscriber participant_name="UDPParticipant1" subscriber_name="subscriberSquare"/>
+        <publisher participant_name="TCPServer" publisher_name="publisherSquare"/>
     </connector>
 
-    <connector name="Local_TCP_TRIANGLES"> 
-        <subscriber participant_name="LocalShapes" subscriber_name="subscriberTriangle"/>
-        <publisher participant_name="TCPShapes" publisher_name="publisherTriangle"/>
+    <connector name="TCP_UDP_SQUARES">
+        <subscriber participant_name="TCPClient" subscriber_name="subscriberSquare"/>
+        <publisher participant_name="UDPParticipant0" publisher_name="publisherSquare"/>
     </connector>
 
-    <connector name="Local_TCP_CIRCLES"> 
-        <subscriber participant_name="LocalShapes" subscriber_name="subscriberCircle"/>
-        <publisher participant_name="TCPShapes" publisher_name="publisherCircle"/>
+    <connector name="UDP_TCP_TRIANGLES">
+        <subscriber participant_name="UDPParticipant1" subscriber_name="subscriberTriangle"/>
+        <publisher participant_name="TCPServer" publisher_name="publisherTriangle"/>
     </connector>
+
+    <connector name="TCP_UDP_TRIANGLES">
+        <subscriber participant_name="TCPClient" subscriber_name="subscriberTriangle"/>
+        <publisher participant_name="UDPParticipant0" publisher_name="publisherTriangle"/>
+    </connector>
+
+    <connector name="UDP_TCP_CIRCLES">
+        <subscriber participant_name="UDPParticipant1" subscriber_name="subscriberCircle"/>
+        <publisher participant_name="TCPServer" publisher_name="publisherCircle"/>
+    </connector>
+
+    <connector name="TCP_UDP_CIRCLES">
+        <subscriber participant_name="TCPClient" subscriber_name="subscriberCircle"/>
+        <publisher participant_name="UDPParticipant0" publisher_name="publisherCircle"/>
+    </connector>
+
 <!--
-    <connector name="TCP_Local_SQUARES"> 
-        <subscriber participant_name="TCPShapes" subscriber_name="subscriberSquare"/>
-        <publisher participant_name="LocalShapes" publisher_name="publisherSquare"/>
+    <connector name="Local_TCP_SQUARES">
+        <subscriber participant_name="TCPClient" subscriber_name="subscriberSquare"/>
+        <publisher participant_name="TCPServer" publisher_name="publisherSquare"/>
     </connector>
 
-    <connector name="TCP_Local_TRIANGLES"> 
-        <subscriber participant_name="TCPShapes" subscriber_name="subscriberTriangle"/>
-        <publisher participant_name="LocalShapes" publisher_name="publisherTriangle"/>
+    <connector name="Local_TCP_TRIANGLES">
+        <subscriber participant_name="TCPClient" subscriber_name="subscriberTriangle"/>
+        <publisher participant_name="TCPServer" publisher_name="publisherTriangle"/>
     </connector>
 
-    <connector name="TCP_Local_CIRCLES"> 
-        <subscriber participant_name="TCPShapes" subscriber_name="subscriberCircle"/>
-        <publisher participant_name="LocalShapes" publisher_name="publisherCircle"/>
+    <connector name="Local_TCP_CIRCLES">
+        <subscriber participant_name="TCPClient" subscriber_name="subscriberCircle"/>
+        <publisher participant_name="TCPServer" publisher_name="publisherCircle"/>
+    </connector>
+-->
+<!--
+    <connector name="TCP_Local_SQUARES">
+        <subscriber participant_name="TCPServer" subscriber_name="subscriberSquare"/>
+        <publisher participant_name="TCPClient" publisher_name="publisherSquare"/>
+    </connector>
+
+    <connector name="TCP_Local_TRIANGLES">
+        <subscriber participant_name="TCPServer" subscriber_name="subscriberTriangle"/>
+        <publisher participant_name="TCPClient" publisher_name="publisherTriangle"/>
+    </connector>
+
+    <connector name="TCP_Local_CIRCLES">
+        <subscriber participant_name="TCPServer" subscriber_name="subscriberCircle"/>
+        <publisher participant_name="TCPClient" publisher_name="publisherCircle"/>
     </connector>
 -->
 </is>
