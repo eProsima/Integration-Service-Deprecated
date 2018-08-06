@@ -33,7 +33,8 @@ public:
     FilePublisher(const std::string &name, const std::vector<std::pair<std::string, std::string>> *config);
     ~FilePublisher() override;
 
-    bool publish(SerializedPayload_t* payload) override;
+    bool publish(SerializedPayload_t*) override;
+    bool publish(eprosima::fastrtps::types::DynamicData*) override { return false; };
 };
 
 #endif // _FILE_PUBLISHER_H_

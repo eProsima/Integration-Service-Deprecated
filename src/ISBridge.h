@@ -211,7 +211,7 @@ inline ISBridge* ISPublisher::setBridge(ISBridge *bridge)
 {
     ISBridge *old = mb_bridge;
     mb_bridge = bridge;
-    if (old && old != bridge)
+    if (old != nullptr && old != bridge)
     {
         old->removePublisher(this);
     }
