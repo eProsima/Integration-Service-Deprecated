@@ -14,7 +14,7 @@ protected:
     ISBridge *mb_bridge;
 public:
     eprosima::fastrtps::TopicDataType *output_type;
-    ISPublisher(const std::string &name) : ISBaseClass(name), mb_bridge(nullptr) { };
+    ISPublisher(const std::string &name) : ISBaseClass(name), mb_bridge(nullptr), output_type(nullptr) { };
     virtual ~ISPublisher() = default;
 
     virtual bool publish(eprosima::fastrtps::rtps::SerializedPayload_t* /*data*/) = 0;

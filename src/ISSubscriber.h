@@ -14,7 +14,7 @@ protected:
     std::vector<ISBridge*> mv_bridges;
 public:
     eprosima::fastrtps::TopicDataType *input_type;
-    ISSubscriber(const std::string &name) : ISBaseClass(name) { };
+    ISSubscriber(const std::string &name) : ISBaseClass(name), input_type(nullptr) { };
     virtual ~ISSubscriber() = default;
     virtual void addBridge(ISBridge* bridge);
     virtual void on_received_data(eprosima::fastrtps::rtps::SerializedPayload_t* payload);

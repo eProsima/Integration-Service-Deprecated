@@ -486,7 +486,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
             function_name = std::string(f_file) + "@" + f_name;
             void* handle = getLibraryHandle(f_file);
 
-            if (dynamic_cast<DynamicPubSubType*>(pub->output_type) == nullptr)
+            if (pub->output_type == nullptr || dynamic_cast<DynamicPubSubType*>(pub->output_type) == nullptr)
             {
                 function = (userf_t)eProsimaGetProcAddress(handle, f_name);
             }
