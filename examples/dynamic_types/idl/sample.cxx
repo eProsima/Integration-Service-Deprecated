@@ -25,7 +25,6 @@ namespace { char dummy; }
 #endif
 
 #include "sample.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -36,7 +35,10 @@ using namespace eprosima::fastcdr::exception;
 sample::sample()
 {
     m_index = 0;
+
     m_key_value = 0;
+
+
 }
 
 sample::~sample()
@@ -59,7 +61,7 @@ sample& sample::operator=(const sample &x)
 {
     m_index = x.m_index;
     m_key_value = x.m_key_value;
-    
+
     return *this;
 }
 
@@ -67,29 +69,38 @@ sample& sample::operator=(sample &&x)
 {
     m_index = x.m_index;
     m_key_value = x.m_key_value;
-    
+
     return *this;
 }
 
 size_t sample::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
+    /* uint8_t */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
+    /* uint8_t */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
 
     return current_alignment - initial_alignment;
 }
 
-size_t sample::getCdrSerializedSize(const sample&, size_t current_alignment)
+size_t sample::getCdrSerializedSize(const sample& data, size_t current_alignment)
 {
+    (void)data;
     size_t initial_alignment = current_alignment;
-            
+
+    /* uint8_t index */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
+    /* uint8_t key_value */
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
 
 
     return current_alignment - initial_alignment;
@@ -98,9 +109,7 @@ size_t sample::getCdrSerializedSize(const sample&, size_t current_alignment)
 void sample::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_index;
-
     scdr << m_key_value;
-
 }
 
 void sample::deserialize(eprosima::fastcdr::Cdr &dcdr)
@@ -114,7 +123,9 @@ size_t sample::getKeyMaxCdrSerializedSize(size_t current_alignment)
 	size_t current_align = current_alignment;
             
 
-     current_align += 1 + eprosima::fastcdr::Cdr::alignment(current_align, 1);
+     /* uint8_t */
+    current_align += 1 + eprosima::fastcdr::Cdr::alignment(current_align, 1);
+
      
 
     return current_align;
@@ -127,7 +138,7 @@ bool sample::isKeyDefined()
 
 void sample::serializeKey(eprosima::fastcdr::Cdr &scdr) const
 {
+	(void) scdr;
 	 
-	 scdr << m_key_value;
-	  
+	 scdr << m_key_value;  
 }

@@ -52,24 +52,12 @@
 
 using namespace eprosima::fastrtps::types;
 
-class HelloWorldTypeFactory
-{
-public:
-    HelloWorldTypeFactory();
-    ~HelloWorldTypeFactory();
+eProsima_user_DllExport void registerHelloWorldTypes();
 
-    eProsima_user_DllExport void registerTypes();
+eProsima_user_DllExport const TypeIdentifier* GetHelloWorldIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetHelloWorldObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalHelloWorldObject();
+eProsima_user_DllExport const TypeObject* GetCompleteHelloWorldObject();
 
-    eProsima_user_DllExport const TypeIdentifier* GetTypeIdentifier(const std::string &basic_type_name, bool complete = false);
-    eProsima_user_DllExport const TypeObject* GetTypeObject(const std::string &basic_type_name, bool complete = false);
-
-    eProsima_user_DllExport const TypeIdentifier* GetHelloWorldIdentifier(bool complete = false);
-    eProsima_user_DllExport const TypeObject* GetHelloWorldObject(bool complete = false);
-    eProsima_user_DllExport const TypeObject* GetMinimalHelloWorldObject();
-    eProsima_user_DllExport const TypeObject* GetCompleteHelloWorldObject();
-
-
-private:
-};
 
 #endif // _HELLOWORLD_TYPE_OBJECT_H_

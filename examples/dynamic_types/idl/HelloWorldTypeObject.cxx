@@ -37,70 +37,26 @@ namespace { char dummy; }
 
 using namespace eprosima::fastrtps::rtps;
 
-HelloWorldTypeFactory::HelloWorldTypeFactory()
-{
-    registerTypes();
-}
-
-HelloWorldTypeFactory::~HelloWorldTypeFactory()
-{
-}
-
-void HelloWorldTypeFactory::registerTypes()
+void registerHelloWorldTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::GetInstance();
     factory->AddTypeObject("HelloWorld", GetHelloWorldIdentifier(true), GetHelloWorldObject(true));
     factory->AddTypeObject("HelloWorld", GetHelloWorldIdentifier(false), GetHelloWorldObject(false));
 }
 
-const TypeIdentifier* HelloWorldTypeFactory::GetTypeIdentifier(const std::string &type_name, bool complete)
+const TypeIdentifier* GetHelloWorldIdentifier(bool complete)
 {
-    // Try general factory
-    const TypeIdentifier *type_id = (complete)
-            ? TypeObjectFactory::GetInstance()->GetTypeIdentifierTryingComplete(type_name)
-            : TypeObjectFactory::GetInstance()->GetTypeIdentifier(type_name, false);
-    if (type_id == nullptr) // For basic types, it's ok to accept non-complete
-    {
-        // Try users types.
-        if (type_name == "HelloWorld") return GetHelloWorldIdentifier(complete);
-    }
-    else
-    {
-        return type_id;
-    }
-    return nullptr;
-}
-
-const TypeObject* HelloWorldTypeFactory::GetTypeObject(const std::string &type_name, bool complete)
-{
-    // Try general factory
-    const TypeObject *type_id = TypeObjectFactory::GetInstance()->GetTypeObject(type_name, complete);
-    if (type_id == nullptr || (complete && type_id->_d() == EK_MINIMAL))
-    {
-        // Try users types.
-        if (type_name == "HelloWorld")
-        {
-            GetHelloWorldIdentifier(complete);
-            return GetTypeObject("HelloWorld", complete);
-        }
-    }
-
-    return type_id;
-}
-
-const TypeIdentifier* HelloWorldTypeFactory::GetHelloWorldIdentifier(bool complete)
-{
-    const TypeIdentifier * c_identifier = GetTypeIdentifier("HelloWorld", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("HelloWorld", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetHelloWorldObject(complete); // Generated inside
-    return GetTypeIdentifier("HelloWorld", complete);
+    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("HelloWorld", complete);
 }
 
-const TypeObject* HelloWorldTypeFactory::GetHelloWorldObject(bool complete)
+const TypeObject* GetHelloWorldObject(bool complete)
 {
     const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld", complete);
     if (c_type_object != nullptr)
@@ -115,7 +71,7 @@ const TypeObject* HelloWorldTypeFactory::GetHelloWorldObject(bool complete)
     return GetMinimalHelloWorldObject();
 }
 
-const TypeObject* HelloWorldTypeFactory::GetMinimalHelloWorldObject()
+const TypeObject* GetMinimalHelloWorldObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld", false);
     if (c_type_object != nullptr)
@@ -149,7 +105,7 @@ const TypeObject* HelloWorldTypeFactory::GetMinimalHelloWorldObject()
         {
             cppType = "longdouble";
         }
-        mst_index.common().member_type_id(*GetTypeIdentifier(cppType, false));
+        mst_index.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
     }
 
     MD5 index_hash("index");
@@ -208,10 +164,10 @@ const TypeObject* HelloWorldTypeFactory::GetMinimalHelloWorldObject()
 
     TypeObjectFactory::GetInstance()->AddTypeObject("HelloWorld", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("HelloWorld", false);
+    return TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld", false);
 }
 
-const TypeObject* HelloWorldTypeFactory::GetCompleteHelloWorldObject()
+const TypeObject* GetCompleteHelloWorldObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
@@ -245,7 +201,7 @@ const TypeObject* HelloWorldTypeFactory::GetCompleteHelloWorldObject()
         {
             cppType = "longdouble";
         }
-        cst_index.common().member_type_id(*GetTypeIdentifier(cppType, false));
+        cst_index.common().member_type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
     }
 
     cst_index.detail().name("index");
@@ -303,5 +259,5 @@ const TypeObject* HelloWorldTypeFactory::GetCompleteHelloWorldObject()
 
     TypeObjectFactory::GetInstance()->AddTypeObject("HelloWorld", &identifier, type_object);
     delete type_object;
-    return GetTypeObject("HelloWorld", true);
+    return TypeObjectFactory::GetInstance()->GetTypeObject("HelloWorld", true);
 }

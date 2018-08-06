@@ -25,7 +25,6 @@
 #include "fastrtps/attributes/PublisherAttributes.h"
 #include "fastrtps/subscriber/SampleInfo.h"
 #include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/TopicDataType.h>
 
 #include "ISBridge.h"
 #include "dynamicload/dynamicload.h"
@@ -39,9 +38,9 @@ private:
     Publisher *mp_publisher;
     Participant *mp_participant;
 public:
-    TopicDataType *output_type;
     RTPSPublisher(const std::string &name);
     virtual bool publish(SerializedPayload_t * data) override;
+    virtual bool publish(DynamicData * data) override;
     ~RTPSPublisher() override;
     void onPublicationMatched(Publisher* pub, MatchingInfo& info) override;
     void setParticipant(Participant* part);

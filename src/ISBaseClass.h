@@ -1,9 +1,14 @@
 #ifndef _IS_BASE_CLASS_H_
 #define _IS_BASE_CLASS_H_
 
+#include <fastrtps/types/DynamicData.h>
 #include "GenericPubSubTypes.h"
 #include <string>
 
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::rtps;
+
+typedef void (*userdynf_t)(DynamicData *input, DynamicData *output);
 typedef void (*userf_t)(SerializedPayload_t *serialized_input, SerializedPayload_t *serialized_output);
 typedef TopicDataType* (*typef_t)(const char *name);
 

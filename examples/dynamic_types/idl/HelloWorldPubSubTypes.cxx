@@ -33,7 +33,9 @@ HelloWorldPubSubType::HelloWorldPubSubType()
     setName("HelloWorld");
     m_typeSize = (uint32_t)HelloWorld::getMaxCdrSerializedSize() + 4 /*encapsulation*/;
     m_isGetKeyDefined = HelloWorld::isKeyDefined();
-    m_keyBuffer = (unsigned char*)malloc(HelloWorld::getKeyMaxCdrSerializedSize()>16 ? HelloWorld::getKeyMaxCdrSerializedSize() : 16);
+    size_t keyLength = HelloWorld::getKeyMaxCdrSerializedSize()>16 ? HelloWorld::getKeyMaxCdrSerializedSize() : 16;
+    m_keyBuffer = (unsigned char*)malloc(keyLength);
+    memset(m_keyBuffer, 0, keyLength);
 }
 
 HelloWorldPubSubType::~HelloWorldPubSubType()

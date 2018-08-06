@@ -25,7 +25,6 @@
 #include "fastrtps/subscriber/SampleInfo.h"
 #include "fastrtps/attributes/SubscriberAttributes.h"
 #include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/TopicDataType.h>
 
 #include "ISBridge.h"
 #include "dynamicload/dynamicload.h"
@@ -40,7 +39,6 @@ private:
     Participant *ms_participant;
     Subscriber *ms_subscriber;
 public:
-    TopicDataType *input_type;
     RTPSSubscriber(const std::string &name);
     ~RTPSSubscriber() override;
     void onSubscriptionMatched(Subscriber* sub, MatchingInfo& info) override;

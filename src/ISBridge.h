@@ -23,6 +23,11 @@
 #include "ISPublisher.h"
 #include "ISSubscriber.h"
 
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+
+using namespace eprosima::fastrtps::types;
+
 /**
  * Base class for Bridges. All implementation must inherit from it.
  */
@@ -31,7 +36,9 @@ class ISBridge : public ISBaseClass
 protected:
     std::vector<ISSubscriber*> mv_subscriber;
     std::map<std::string, userf_t> mm_functionsNames;
+    std::map<std::string, userdynf_t> mm_dynFunctionsNames;
     std::map<std::string, std::vector<std::string>> mm_functions;
+    std::map<std::string, std::vector<std::string>> mm_dynFunctions;
     std::map<std::string, std::vector<ISPublisher*>> mm_publisher;
     std::map<ISPublisher*, std::string> mm_inv_publisher;
     std::unordered_set<ISBaseClass*> ms_subpubs;
@@ -74,6 +81,13 @@ public:
     {
         mm_functionsNames[fname] = func;
         std::vector<std::string> &fnames = mm_functions[sub];
+        fnames.push_back(fname);
+    }
+
+    virtual void addFunction(const std::string &sub, const std::string &fname, userdynf_t func)
+    {
+        mm_dynFunctionsNames[fname] = func;
+        std::vector<std::string> &fnames = mm_dynFunctions[sub];
         fnames.push_back(fname);
     }
 
@@ -127,6 +141,44 @@ public:
         }
     }
 
+    virtual void on_received_data(const ISSubscriber *sub, DynamicData *data)
+    {
+        std::vector<std::string> funcNames = mm_dynFunctions[sub->getName()];
+        for (std::string fName : funcNames)
+        {
+            std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+            for (ISPublisher* pub : pubs)
+            {
+                userdynf_t function = mm_dynFunctionsNames[fName];
+
+                DynamicData* output;
+                //DynamicData output; // TODO nueva instancia desde el tipo del publisher (añadir mapeo función)
+                if (function)
+                {
+                    TopicDataType *output_type = pub->output_type;
+                    DynamicPubSubType *pst = dynamic_cast<DynamicPubSubType*>(output_type);
+                    if (pst == nullptr)
+                    {
+                        //LOG_ERROR("Trying to call dynamic function with static data type: " << fName.c_str() << ", " << output_type->getName());
+                        continue;
+                    }
+                    else
+                    {
+                        output = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
+                        function(data, output);
+                    }
+                }
+                else
+                {
+                    output = DynamicDataFactory::GetInstance()->CreateCopy(data);
+                    //output->copy(data, false);
+                }
+
+                pub->publish(output);
+            }
+        }
+    }
+
     // Forbid copy
     ISBridge(const ISBridge&) = delete;
     ISBridge& operator=(const ISBridge&) = delete;
@@ -144,6 +196,14 @@ inline void ISSubscriber::on_received_data(SerializedPayload_t* payload)
     for (ISBridge* bridge : mv_bridges)
     {
         bridge->on_received_data(this, payload);
+    }
+}
+
+inline void ISSubscriber::on_received_data(DynamicData* data)
+{
+    for (ISBridge* bridge : mv_bridges)
+    {
+        bridge->on_received_data(this, data);
     }
 }
 

@@ -39,7 +39,23 @@ void RTPSPublisher::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
     }
 }
 
-bool RTPSPublisher::publish(SerializedPayload_t * data)
+bool RTPSPublisher::publish(SerializedPayload_t *data)
+{
+    if (dynamic_cast<GenericPubSubType*>(output_type) != nullptr)
+    {
+        return mp_publisher->write(data);
+    }
+    else
+    {
+        void *buffer = output_type->createData();
+        output_type->deserialize(data, buffer);
+        bool result = mp_publisher->write(buffer);
+        output_type->deleteData(buffer);
+        return result;
+    }
+}
+
+bool RTPSPublisher::publish(DynamicData *data)
 {
     return mp_publisher->write(data);
 }

@@ -14,9 +14,13 @@
 
 #include <fastrtps/Domain.h>
 #include <fastcdr/Cdr.h>
+
+#include <fastrtps/types/DynamicPubSubType.h>
 #include "RTPSSubscriber.h"
 #include "GenericPubSubTypes.h"
 #include "log/ISLog.h"
+
+using eprosima::fastcdr::Cdr;
 
 RTPSSubscriber::RTPSSubscriber(const std::string &name)
     : ISSubscriber(name)
@@ -47,13 +51,45 @@ void RTPSSubscriber::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& in
 
 void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
 {
-    SerializedPayload_t serialized_input(input_type->m_typeSize);
-
-    bool taken = sub->takeNextSerializedPayload(&serialized_input, &m_info);
-
-    if(taken && m_info.sampleKind == ALIVE)
+    if (dynamic_cast<GenericPubSubType*>(input_type) != nullptr)
     {
-        on_received_data(&serialized_input);
+        SerializedPayload_t payload;
+        bool taken = sub->takeNextData(&payload, &m_info);
+
+        if (taken && m_info.sampleKind == ALIVE)
+        {
+            on_received_data(&payload);
+        }
+    }
+    else if (dynamic_cast<DynamicPubSubType*>(input_type) != nullptr)
+    {
+        DynamicPubSubType *pst = dynamic_cast<DynamicPubSubType*>(input_type);
+
+        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
+        bool taken = sub->takeNextData(data, &m_info);
+
+        if (taken && m_info.sampleKind == ALIVE)
+        {
+            on_received_data(data);
+        }
+    }
+    else
+    {
+        // Provided type
+        //octet *buffer = new octet[input_type->m_typeSize];
+        void *buffer = input_type->createData();
+        bool taken = sub->takeNextData(buffer, &m_info);
+
+        SerializedPayload_t payload(input_type->m_typeSize);
+        input_type->serialize(buffer, &payload);
+        //payload.length += 4;
+        // payload.encapsulation = Cdr::DEFAULT_ENDIAN == Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        if (taken && m_info.sampleKind == ALIVE)
+        {
+            on_received_data(&payload);
+        }
+        input_type->deleteData(buffer);
     }
 }
 

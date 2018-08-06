@@ -477,13 +477,23 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 
         std::string function_name;
         userf_t function = nullptr;
+        userdynf_t dynFunction = nullptr;
+
         if (trans_el)
         {
             const char* f_file = trans_el->Attribute(s_sFile.c_str());
             const char* f_name = trans_el->Attribute(s_sFunction.c_str());
             function_name = std::string(f_file) + "@" + f_name;
             void* handle = getLibraryHandle(f_file);
-            function = (userf_t)eProsimaGetProcAddress(handle, f_name);
+
+            if (dynamic_cast<DynamicPubSubType*>(pub->output_type) == nullptr)
+            {
+                function = (userf_t)eProsimaGetProcAddress(handle, f_name);
+            }
+            else
+            {
+                dynFunction = (userdynf_t)eProsimaGetProcAddress(handle, f_name);
+            }
         }
 
         // Any participant is a bridge?
@@ -515,7 +525,14 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 
         bridge->addSubscriber(sub);
         bridge->addPublisher(sub->getName(), function_name, pub);
-        bridge->addFunction(sub->getName(), function_name, function);
+        if (dynFunction == nullptr)
+        {
+            bridge->addFunction(sub->getName(), function_name, function);
+        }
+        else
+        {
+            bridge->addFunction(sub->getName(), function_name, dynFunction);
+        }
 
         LOG_INFO("Set bridge between " << sub->getName() << " and " << pub->getName());
     }

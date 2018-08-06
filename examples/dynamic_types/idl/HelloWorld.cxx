@@ -26,7 +26,6 @@ namespace { char dummy; }
 
 #include "HelloWorld.h"
 #include "HelloWorldTypeObject.h"
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -41,7 +40,7 @@ HelloWorld::HelloWorld()
 
 
     // Just to register all known types
-    HelloWorldTypeFactory factory;
+    registerHelloWorldTypes();
 }
 
 HelloWorld::~HelloWorld()
