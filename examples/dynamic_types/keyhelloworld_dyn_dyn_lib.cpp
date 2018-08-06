@@ -74,47 +74,17 @@ extern "C" USER_LIB_EXPORT TopicDataType* GetTopicType(const char *name)
     return nullptr;
 }
 
-extern "C" USER_LIB_EXPORT void KeyToHelloWorld(SerializedPayload_t* inputBuffer, SerializedPayload_t* outputBuffer)
+extern "C" USER_LIB_EXPORT void KeyToHelloWorld(DynamicData* keysData, DynamicData* hwData)
 {
-    // DynamicTypes
-    DynamicPubSubType *keysType = GetKeyType();
-    DynamicData_ptr keysData = DynamicDataFactory::GetInstance()->CreateData(keysType->GetDynamicType());
-    keysType->deserialize(inputBuffer, keysData.get());
-
-    DynamicPubSubType *hwType = GetHelloWorldType();
-    DynamicData_ptr hwData = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
-
     // Custom transformation
     hwData->SetUint32Value(keysData->GetByteValue(0), 0);
-
-    // Serialize HelloWorld
-    outputBuffer->reserve(static_cast<uint32_t>(hwType->getSerializedSizeProvider(hwData.get())()));
-    hwType->serialize(hwData.get(), outputBuffer);
-
-    delete hwType;
-    delete keysType;
 }
 
-extern "C" USER_LIB_EXPORT void HelloWorldToKey(SerializedPayload_t* inputBuffer, SerializedPayload_t* outputBuffer)
+extern "C" USER_LIB_EXPORT void HelloWorldToKey(DynamicData* hwData, DynamicData* keysData)
 {
-    // DynamicTypes
-    DynamicPubSubType *hwType = GetHelloWorldType();
-    DynamicData_ptr hwData = DynamicDataFactory::GetInstance()->CreateData(hwType->GetDynamicType());
-    hwType->deserialize(inputBuffer, hwData.get());
-
-    DynamicPubSubType *keysType = GetKeyType();
-    DynamicData_ptr keysData = DynamicDataFactory::GetInstance()->CreateData(keysType->GetDynamicType());
-
     // Custom transformation
     uint32_t temp = hwData->GetUint32Value(0);
     //std::cout << "TRANSFORM: " << temp << std::endl;
     keysData->SetByteValue(temp % 256, 0);
     keysData->SetByteValue(temp % 256, 1);
-
-    // Serialize keys
-    outputBuffer->reserve(static_cast<uint32_t>(keysType->getSerializedSizeProvider(keysData.get())()));
-    keysType->serialize(keysData.get(), outputBuffer);
-
-    delete hwType;
-    delete keysType;
 }

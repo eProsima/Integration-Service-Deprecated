@@ -144,10 +144,11 @@
         <publisher participant_name="KeysParticipant" publisher_name="pubK"/>
         <transformation file="/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworld_dyn_dyn_lib.so" function="HelloWorldToKey"/>
     </connector>
-
+<!--
     <connector name="Key_to_HW">
         <subscriber participant_name="KeysParticipant" subscriber_name="subK"/>
         <publisher participant_name="HelloWorldParticipant" publisher_name="pubHW"/>
     <transformation file="/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworld_dyn_dyn_lib.so" function="KeyToHelloWorld"/>
     </connector>
+-->
 </is>
