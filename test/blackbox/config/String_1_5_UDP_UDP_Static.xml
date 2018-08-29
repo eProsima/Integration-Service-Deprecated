@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<is>
+    <topic_types>
+        <type name="StringType">
+            <participants>
+                <participant name="ParticipantA"/>
+                <participant name="ParticipantB1"/>
+                <participant name="ParticipantB2"/>
+                <participant name="ParticipantB3"/>
+                <participant name="ParticipantB4"/>
+                <participant name="ParticipantB5"/>
+            </participants>
+        </type>
+    </topic_types>
+
+    <profiles>
+        <participant profile_name="ParticipantA">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB1">
+            <rtps>
+                <builtin>
+                    <domainId>5</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB2">
+            <rtps>
+                <builtin>
+                    <domainId>6</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB3">
+            <rtps>
+                <builtin>
+                    <domainId>7</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB4">
+            <rtps>
+                <builtin>
+                    <domainId>8</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB5">
+            <rtps>
+                <builtin>
+                    <domainId>9</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriber">
+            <topic>
+                <name>StringType</name>
+                <dataType>StringType</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <publisher profile_name="publisher">
+            <topic>
+                <name>StringType</name>
+                <dataType>StringType</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+    </profiles>
+
+    <connector name="String_1_1_UDP_UDP_Static">
+        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB1" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="String_1_2_UDP_UDP_Static">
+        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB2" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="String_1_3_UDP_UDP_Static">
+        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB3" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="String_1_4_UDP_UDP_Static">
+        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB4" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="String_1_5_UDP_UDP_Static">
+        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB5" publisher_name="publisher"/>
+    </connector>
+</is>

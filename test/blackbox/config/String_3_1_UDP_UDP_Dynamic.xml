@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<is>
+    <topic_types>
+        <type name="StringType">
+            <library>libTypes.so</library>
+            <participants>
+                <participant name="ParticipantA1"/>
+                <participant name="ParticipantA2"/>
+                <participant name="ParticipantA3"/>
+                <participant name="ParticipantB"/>
+            </participants>
+            <!--<dynamic_type>true</dynamic_type>-->
+        </type>
+    </topic_types>
+
+    <profiles>
+        <participant profile_name="ParticipantA1">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA2">
+            <rtps>
+                <builtin>
+                    <domainId>1</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA3">
+            <rtps>
+                <builtin>
+                    <domainId>2</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB">
+            <rtps>
+                <builtin>
+                    <domainId>5</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriber">
+            <topic>
+                <name>StringType</name>
+                <dataType>StringType</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <publisher profile_name="publisher">
+            <topic>
+                <name>StringType</name>
+                <dataType>StringType</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+    </profiles>
+
+    <connector name="String_1_1_UDP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA1" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="String_2_1_UDP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA2" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="String_3_1_UDP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA3" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+    </connector>
+</is>

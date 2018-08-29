@@ -144,37 +144,50 @@ public:
     virtual void on_received_data(const ISSubscriber *sub, DynamicData *data)
     {
         std::vector<std::string> funcNames = mm_dynFunctions[sub->getName()];
-        for (std::string fName : funcNames)
+        if (funcNames.empty())
         {
-            std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+            std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), "")];
             for (ISPublisher* pub : pubs)
             {
-                userdynf_t function = mm_dynFunctionsNames[fName];
-
                 DynamicData* output;
-                //DynamicData output; // TODO nueva instancia desde el tipo del publisher (añadir mapeo función)
-                if (function)
+                output = DynamicDataFactory::GetInstance()->CreateCopy(data);
+                pub->publish(output);
+            }
+        }
+        else
+        {
+            for (std::string fName : funcNames)
+            {
+                std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+                for (ISPublisher* pub : pubs)
                 {
-                    TopicDataType *output_type = pub->output_type;
-                    DynamicPubSubType *pst = dynamic_cast<DynamicPubSubType*>(output_type);
-                    if (pst == nullptr)
+                    userdynf_t function = mm_dynFunctionsNames[fName];
+
+                    DynamicData* output;
+                    //DynamicData output; // TODO nueva instancia desde el tipo del publisher (añadir mapeo función)
+                    if (function)
                     {
-                        //LOG_ERROR("Trying to call dynamic function with static data type: " << fName.c_str() << ", " << output_type->getName());
-                        continue;
+                        TopicDataType *output_type = pub->output_type;
+                        DynamicPubSubType *pst = dynamic_cast<DynamicPubSubType*>(output_type);
+                        if (pst == nullptr)
+                        {
+                            //LOG_ERROR("Trying to call dynamic function with static data type: " << fName.c_str() << ", " << output_type->getName());
+                            continue;
+                        }
+                        else
+                        {
+                            output = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
+                            function(data, output);
+                        }
                     }
                     else
                     {
-                        output = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
-                        function(data, output);
+                        output = DynamicDataFactory::GetInstance()->CreateCopy(data);
+                        //output->copy(data, false);
                     }
-                }
-                else
-                {
-                    output = DynamicDataFactory::GetInstance()->CreateCopy(data);
-                    //output->copy(data, false);
-                }
 
-                pub->publish(output);
+                    pub->publish(output);
+                }
             }
         }
     }

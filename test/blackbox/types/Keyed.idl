@@ -1,0 +1,5 @@
+struct Keyed
+{
+	@Key short index;
+	string message;
+};

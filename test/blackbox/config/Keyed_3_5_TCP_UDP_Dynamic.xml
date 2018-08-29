@@ -1,0 +1,343 @@
+<?xml version="1.0"?>
+<is>
+    <topic_types>
+        <type name="Keyed">
+            <library>libTypes.so</library>
+            <participants>
+                <participant name="ParticipantA1"/>
+                <participant name="ParticipantA2"/>
+                <participant name="ParticipantA3"/>
+                <participant name="ParticipantB1"/>
+                <participant name="ParticipantB2"/>
+                <participant name="ParticipantB3"/>
+                <participant name="ParticipantB4"/>
+                <participant name="ParticipantB5"/>
+            </participants>
+        </type>
+    </topic_types>
+
+    <profiles>
+        <transports>
+            <transport>
+                <transport_id>TCPClient</transport_id>
+                <type>TCPv4</type>
+            </transport>
+        </transports>
+
+        <participant profile_name="ParticipantA1">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPClient</transport_id>
+                </userTransports>
+                <defaultUnicastLocatorList>
+                    <locator>
+                        <kind>TCPv4</kind>
+                        <address>127.0.0.1</address>
+                        <ports_>
+                            <physical_port>6200</physical_port>
+                        </ports_>
+                    </locator>
+                </defaultUnicastLocatorList>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                    <metatrafficUnicastLocatorList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>6200</physical_port>
+                            </ports_>
+                        </locator>
+                    </metatrafficUnicastLocatorList>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>6200</physical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <use_IP4_to_send>true</use_IP4_to_send>
+                <use_IP6_to_send>false</use_IP6_to_send>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA2">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPClient</transport_id>
+                </userTransports>
+                <defaultUnicastLocatorList>
+                    <locator>
+                        <kind>TCPv4</kind>
+                        <address>127.0.0.1</address>
+                        <ports_>
+                            <physical_port>6201</physical_port>
+                        </ports_>
+                    </locator>
+                </defaultUnicastLocatorList>
+                <builtin>
+                    <domainId>1</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                    <metatrafficUnicastLocatorList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>6201</physical_port>
+                            </ports_>
+                        </locator>
+                    </metatrafficUnicastLocatorList>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>6201</physical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <use_IP4_to_send>true</use_IP4_to_send>
+                <use_IP6_to_send>false</use_IP6_to_send>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA3">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPClient</transport_id>
+                </userTransports>
+                <defaultUnicastLocatorList>
+                    <locator>
+                        <kind>TCPv4</kind>
+                        <address>127.0.0.1</address>
+                        <ports_>
+                            <physical_port>6202</physical_port>
+                        </ports_>
+                    </locator>
+                </defaultUnicastLocatorList>
+                <builtin>
+                    <domainId>2</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                    <metatrafficUnicastLocatorList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>6202</physical_port>
+                            </ports_>
+                        </locator>
+                    </metatrafficUnicastLocatorList>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>6202</physical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <use_IP4_to_send>true</use_IP4_to_send>
+                <use_IP6_to_send>false</use_IP6_to_send>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB1">
+            <rtps>
+                <builtin>
+                    <domainId>5</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB2">
+            <rtps>
+                <builtin>
+                    <domainId>6</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB3">
+            <rtps>
+                <builtin>
+                    <domainId>7</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB4">
+            <rtps>
+                <builtin>
+                    <domainId>8</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB5">
+            <rtps>
+                <builtin>
+                    <domainId>9</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriber">
+            <topic>
+                <name>KeyedTopic</name>
+                <dataType>Keyed</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>6</depth>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <publisher profile_name="publisher">
+            <topic>
+                <name>KeyedTopic</name>
+                <dataType>Keyed</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>6</depth>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </publisher>
+    </profiles>
+
+    <connector name="Keyed_1_1_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA1" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB1" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_1_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA2" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB1" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_1_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA3" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB1" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_1_2_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA1" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB2" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_2_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA2" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB2" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_2_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA3" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB2" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_1_3_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA1" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB3" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_3_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA2" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB3" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_3_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA3" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB3" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_1_4_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA1" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB4" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_4_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA2" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB4" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_4_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA3" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB4" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_1_5_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA1" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB5" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_5_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA2" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB5" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_5_TCP_UDP_Dynamic">
+        <subscriber participant_name="ParticipantA3" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB5" publisher_name="publisher"/>
+    </connector>
+</is>
