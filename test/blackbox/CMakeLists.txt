@@ -97,9 +97,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ###############################################################################
         # Unit tests
         ###############################################################################
-        set(BLACKBOXTESTS_SOURCE BlackboxTests.cpp
-            types/Keyed.cxx
-            types/KeyedPubSubTypes.cxx
+        set(BLACKBOX_TCP_TESTS_SOURCE BlackboxTCPTests.cpp
             types/String.cpp
             types/StringType.cpp
             types/Data1mb.cpp
@@ -108,11 +106,35 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             TestSubscriber.cpp
             TestIS.cpp
             )
+        set(BLACKBOX_UDP_TESTS_SOURCE BlackboxUDPTests.cpp
+            types/String.cpp
+            types/StringType.cpp
+            types/Data1mb.cpp
+            types/Data1mbType.cpp
+            TestPublisher.cpp
+            TestSubscriber.cpp
+            TestIS.cpp
+            )
+        set(BLACKBOX_KEYED_TESTS_SOURCE BlackboxKeyedTests.cpp
+            types/Keyed.cxx
+            types/KeyedPubSubTypes.cxx
+            TestPublisher.cpp
+            TestSubscriber.cpp
+            TestIS.cpp
+            )
 
-        add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
-        target_include_directories(BlackboxTests PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests fastrtps fastcdr islib ${GTEST_LIBRARIES})
-        add_blackbox_gtest(BlackboxTests SOURCES ${BLACKBOXTESTS_SOURCE})
+        add_executable(BlackboxTCPTests ${BLACKBOX_TCP_TESTS_SOURCE})
+        add_executable(BlackboxUDPTests ${BLACKBOX_UDP_TESTS_SOURCE})
+        add_executable(BlackboxKeyedTests ${BLACKBOX_KEYED_TESTS_SOURCE})
+        target_include_directories(BlackboxTCPTests PRIVATE ${GTEST_INCLUDE_DIRS})
+        target_include_directories(BlackboxUDPTests PRIVATE ${GTEST_INCLUDE_DIRS})
+        target_include_directories(BlackboxKeyedTests PRIVATE ${GTEST_INCLUDE_DIRS})
+        target_link_libraries(BlackboxTCPTests fastrtps fastcdr islib ${GTEST_LIBRARIES})
+        target_link_libraries(BlackboxUDPTests fastrtps fastcdr islib ${GTEST_LIBRARIES})
+        target_link_libraries(BlackboxKeyedTests fastrtps fastcdr islib ${GTEST_LIBRARIES})
+        add_blackbox_gtest(BlackboxTCPTests SOURCES ${BLACKBOX_TCP_TESTS_SOURCE})
+        add_blackbox_gtest(BlackboxUDPTests SOURCES ${BLACKBOX_UDP_TESTS_SOURCE})
+        add_blackbox_gtest(BlackboxKeyedTests SOURCES ${BLACKBOX_KEYED_TESTS_SOURCE})
     endif()
 endif()
 

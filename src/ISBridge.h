@@ -64,6 +64,19 @@ public:
      */
     virtual void onTerminate()
     {
+        for (ISSubscriber* sub : mv_subscriber)
+        {
+            sub->onTerminate();
+        }
+
+        for (auto pub_pair : mm_publisher)
+        {
+            for (ISPublisher* pub : pub_pair.second)
+            {
+                pub->onTerminate();
+            }
+        }
+
         for (ISBaseClass* bc : ms_subpubs)
         {
             bc->onTerminate();
@@ -136,7 +149,10 @@ public:
             std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
             for (ISPublisher* pub : pubs)
             {
-                pub->publish(&output);
+                if (!pub->isTerminating())
+                {
+                    pub->publish(&output);
+                }
             }
         }
     }
@@ -149,9 +165,12 @@ public:
             std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), "")];
             for (ISPublisher* pub : pubs)
             {
-                DynamicData* output;
-                output = DynamicDataFactory::GetInstance()->CreateCopy(data);
-                pub->publish(output);
+                if (!pub->isTerminating())
+                {
+                    DynamicData* output;
+                    output = DynamicDataFactory::GetInstance()->CreateCopy(data);
+                    pub->publish(output);
+                }
             }
         }
         else
@@ -161,6 +180,8 @@ public:
                 std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
                 for (ISPublisher* pub : pubs)
                 {
+                    if (pub->isTerminating()) continue;
+
                     userdynf_t function = mm_dynFunctionsNames[fName];
 
                     DynamicData* output;
@@ -208,7 +229,10 @@ inline void ISSubscriber::on_received_data(SerializedPayload_t* payload)
 {
     for (ISBridge* bridge : mv_bridges)
     {
-        bridge->on_received_data(this, payload);
+        if (!bridge->isTerminating())
+        {
+            bridge->on_received_data(this, payload);
+        }
     }
 }
 
@@ -216,7 +240,10 @@ inline void ISSubscriber::on_received_data(DynamicData* data)
 {
     for (ISBridge* bridge : mv_bridges)
     {
-        bridge->on_received_data(this, data);
+        if (!bridge->isTerminating())
+        {
+            bridge->on_received_data(this, data);
+        }
     }
 }
 
