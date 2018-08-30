@@ -13,3 +13,4 @@
 # limitations under the License.
 
 add_subdirectory(blackbox)
+add_subdirectory(benchmark)

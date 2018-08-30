@@ -170,6 +170,7 @@ public:
                     DynamicData* output;
                     output = DynamicDataFactory::GetInstance()->CreateCopy(data);
                     pub->publish(output);
+                    DynamicDataFactory::GetInstance()->DeleteData(output);
                 }
             }
         }
@@ -208,6 +209,7 @@ public:
                     }
 
                     pub->publish(output);
+                    DynamicDataFactory::GetInstance()->DeleteData(output);
                 }
             }
         }

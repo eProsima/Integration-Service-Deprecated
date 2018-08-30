@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<is>
+    <topic_types>
+        <type name="Data1mb">
+            <library>libTypesBench.so</library>
+            <participants>
+                <participant name="ParticipantA1"/>
+                <participant name="ParticipantA2"/>
+                <participant name="ParticipantA3"/>
+                <participant name="ParticipantB"/>
+            </participants>
+        </type>
+    </topic_types>
+
+    <profiles>
+        <participant profile_name="ParticipantA1">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA2">
+            <rtps>
+                <builtin>
+                    <domainId>1</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA3">
+            <rtps>
+                <builtin>
+                    <domainId>2</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB">
+            <rtps>
+                <builtin>
+                    <domainId>5</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriber">
+            <topic>
+                <name>Data1mbTopic</name>
+                <dataType>Data1mb</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <publisher profile_name="publisher">
+            <topic>
+                <name>Data1mbTopic</name>
+                <dataType>Data1mb</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+    </profiles>
+
+    <connector name="Data1mb_1_1_Dynamic">
+        <subscriber participant_name="ParticipantA1" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Data1mb_2_1_Dynamic">
+        <subscriber participant_name="ParticipantA2" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+    </connector>
+
+    <connector name="Data1mb_3_1_Dynamic">
+        <subscriber participant_name="ParticipantA3" subscriber_name="subscriber"/>
+        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+    </connector>
+</is>

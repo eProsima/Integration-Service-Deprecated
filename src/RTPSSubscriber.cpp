@@ -72,6 +72,7 @@ void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
         {
             on_received_data(data);
         }
+        DynamicDataFactory::GetInstance()->DeleteData(data);
     }
     else
     {
