@@ -38,6 +38,9 @@ private:
     SampleInfo_t m_info;
     Participant *ms_participant;
     Subscriber *ms_subscriber;
+    DynamicData* m_dynData;
+    void* m_buffer;
+    SerializedPayload_t* m_payload;
 public:
     RTPSSubscriber(const std::string &name);
     ~RTPSSubscriber() override;

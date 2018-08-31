@@ -17,6 +17,7 @@
 #define _ISBRIDGERTPS_PUBLISHER_H_
 
 #include <string>
+#include <mutex>
 
 #include "fastrtps/participant/Participant.h"
 #include "fastrtps/attributes/ParticipantAttributes.h"
@@ -37,6 +38,8 @@ class RTPSPublisher : public PublisherListener, public ISPublisher
 private:
     Publisher *mp_publisher;
     Participant *mp_participant;
+    void* m_buffer;
+    std::mutex m_bufferMutex;
 public:
     RTPSPublisher(const std::string &name);
     virtual bool publish(SerializedPayload_t * data) override;

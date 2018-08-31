@@ -26,6 +26,9 @@ RTPSSubscriber::RTPSSubscriber(const std::string &name)
     : ISSubscriber(name)
     , ms_participant(nullptr)
     , ms_subscriber(nullptr)
+    , m_dynData(nullptr)
+    , m_buffer(nullptr)
+    , m_payload(nullptr)
 {
 }
 
@@ -34,6 +37,15 @@ RTPSSubscriber::~RTPSSubscriber()
     //if(handle) eProsimaCloseLibrary(handle);
 
     // Participants are deleted from the ISManager.
+    if (m_dynData != nullptr)
+    {
+        DynamicDataFactory::GetInstance()->DeleteData(m_dynData);
+    }
+    if (m_buffer != nullptr)
+    {
+        input_type->deleteData(m_buffer);
+    }
+    delete m_payload;
     ms_participant = nullptr;
 }
 
@@ -53,44 +65,58 @@ void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
 {
     if (dynamic_cast<GenericPubSubType*>(input_type) != nullptr)
     {
-        SerializedPayload_t payload;
-        bool taken = sub->takeNextData(&payload, &m_info);
+        if (m_payload == nullptr)
+        {
+            m_payload = new SerializedPayload_t();
+        }
+
+        bool taken = sub->takeNextData(m_payload, &m_info);
 
         if (taken && m_info.sampleKind == ALIVE)
         {
-            on_received_data(&payload);
+            on_received_data(m_payload);
         }
     }
     else if (dynamic_cast<DynamicPubSubType*>(input_type) != nullptr)
     {
         DynamicPubSubType *pst = dynamic_cast<DynamicPubSubType*>(input_type);
 
-        DynamicData* data = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
-        bool taken = sub->takeNextData(data, &m_info);
+        if (m_dynData == nullptr)
+        {
+            m_dynData = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
+        }
+        else
+        {
+            m_dynData->ClearAllValues();
+        }
+        bool taken = sub->takeNextData(m_dynData, &m_info);
 
         if (taken && m_info.sampleKind == ALIVE)
         {
-            on_received_data(data);
+            on_received_data(m_dynData);
         }
-        DynamicDataFactory::GetInstance()->DeleteData(data);
     }
     else
     {
         // Provided type
-        //octet *buffer = new octet[input_type->m_typeSize];
-        void *buffer = input_type->createData();
-        bool taken = sub->takeNextData(buffer, &m_info);
+        if (m_buffer == nullptr)
+        {
+            m_buffer = input_type->createData();
+        }
 
-        SerializedPayload_t payload(input_type->m_typeSize);
-        input_type->serialize(buffer, &payload);
-        //payload.length += 4;
-        // payload.encapsulation = Cdr::DEFAULT_ENDIAN == Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        bool taken = sub->takeNextData(m_buffer, &m_info);
+
+        if (m_payload == nullptr)
+        {
+            m_payload = new SerializedPayload_t(input_type->m_typeSize);
+        }
+
+        input_type->serialize(m_buffer, m_payload);
 
         if (taken && m_info.sampleKind == ALIVE)
         {
-            on_received_data(&payload);
+            on_received_data(m_payload);
         }
-        input_type->deleteData(buffer);
     }
 }
 

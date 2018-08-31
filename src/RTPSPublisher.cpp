@@ -17,13 +17,19 @@
 #include "log/ISLog.h"
 
 
-RTPSPublisher::RTPSPublisher(const std::string &name) : ISPublisher(name)
+RTPSPublisher::RTPSPublisher(const std::string &name)
+    : ISPublisher(name)
+    , m_buffer(nullptr)
 {
 }
 
 RTPSPublisher::~RTPSPublisher()
 {
     // Participants are deleted from the ISManager.
+    if (m_buffer != nullptr)
+    {
+        output_type->deleteData(m_buffer);
+    }
     mp_participant = nullptr;
 }
 
@@ -47,10 +53,13 @@ bool RTPSPublisher::publish(SerializedPayload_t *data)
     }
     else
     {
-        void *buffer = output_type->createData();
-        output_type->deserialize(data, buffer);
-        bool result = mp_publisher->write(buffer);
-        output_type->deleteData(buffer);
+        std::unique_lock<std::mutex> scopeLock(m_bufferMutex);
+        if (m_buffer == nullptr)
+        {
+            m_buffer = output_type->createData();
+        }
+        output_type->deserialize(data, m_buffer);
+        bool result = mp_publisher->write(m_buffer);
         return result;
     }
 }

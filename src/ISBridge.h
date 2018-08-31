@@ -42,6 +42,9 @@ protected:
     std::map<std::string, std::vector<ISPublisher*>> mm_publisher;
     std::map<ISPublisher*, std::string> mm_inv_publisher;
     std::unordered_set<ISBaseClass*> ms_subpubs;
+    std::map<std::string, SerializedPayload_t*> mm_staticPayload; // Key is the publisher
+    std::map<std::string, DynamicData*> mm_dynamicData; // Key is the publisher
+    std::map<std::string, std::mutex*> mm_mutex; // Key is the publisher
 
     static std::string generateKeyPublisher(const std::string &sub, const std::string &funct)
     {
@@ -52,6 +55,18 @@ public:
 
     virtual ~ISBridge()
     {
+        for (auto it : mm_staticPayload)
+        {
+            delete it.second;
+        }
+        for (auto it : mm_dynamicData)
+        {
+            DynamicDataFactory::GetInstance()->DeleteData(it.second);
+        }
+        for (auto it : mm_mutex)
+        {
+            delete it.second;
+        }
         for (ISBaseClass* bc : ms_subpubs)
         {
             delete bc;
@@ -136,22 +151,45 @@ public:
         std::vector<std::string> funcNames = mm_functions[sub->getName()];
         for (std::string fName : funcNames)
         {
+            std::string keyPub = generateKeyPublisher(sub->getName(), fName);
             userf_t function = mm_functionsNames[fName];
-            SerializedPayload_t output;
+
             if (function)
             {
-                function(data, &output);
+                std::mutex* mutex = mm_mutex[keyPub];
+                if (mutex == nullptr)
+                {
+                    mutex = new std::mutex();
+                    mm_mutex[keyPub] = mutex;
+                }
+                std::unique_lock<std::mutex> scopedLock(*mutex);
+                SerializedPayload_t* output = mm_staticPayload[keyPub];
+                if (output == nullptr)
+                {
+                    output = new SerializedPayload_t();
+                    mm_staticPayload[keyPub] = output;
+                }
+
+                function(data, output);
+                std::vector<ISPublisher*> pubs = mm_publisher[keyPub];
+                for (ISPublisher* pub : pubs)
+                {
+                    if (!pub->isTerminating())
+                    {
+                        pub->publish(output);
+                    }
+                }
             }
             else
             {
-                output.copy(data, false);
-            }
-            std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
-            for (ISPublisher* pub : pubs)
-            {
-                if (!pub->isTerminating())
+                //output.copy(data, false);
+                std::vector<ISPublisher*> pubs = mm_publisher[keyPub];
+                for (ISPublisher* pub : pubs)
                 {
-                    pub->publish(&output);
+                    if (!pub->isTerminating())
+                    {
+                        pub->publish(data);
+                    }
                 }
             }
         }
@@ -162,15 +200,23 @@ public:
         std::vector<std::string> funcNames = mm_dynFunctions[sub->getName()];
         if (funcNames.empty())
         {
-            std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), "")];
+            std::string keyPub = generateKeyPublisher(sub->getName(), "");
+            std::vector<ISPublisher*> pubs = mm_publisher[keyPub];
             for (ISPublisher* pub : pubs)
             {
                 if (!pub->isTerminating())
                 {
-                    DynamicData* output;
-                    output = DynamicDataFactory::GetInstance()->CreateCopy(data);
+                    pub->publish(data);
+                    /*
+                    DynamicData* output = mm_dynamicData[keyPub];
+                    if (output == nullptr)
+                    {
+                        output = DynamicDataFactory::GetInstance()->CreateCopy(data);
+                        mm_dynamicData[keyPub] = output;
+                    }
                     pub->publish(output);
-                    DynamicDataFactory::GetInstance()->DeleteData(output);
+                    //DynamicDataFactory::GetInstance()->DeleteData(output);
+                    */
                 }
             }
         }
@@ -178,14 +224,14 @@ public:
         {
             for (std::string fName : funcNames)
             {
-                std::vector<ISPublisher*> pubs = mm_publisher[generateKeyPublisher(sub->getName(), fName)];
+                std::string keyPub = generateKeyPublisher(sub->getName(), fName);
+                std::vector<ISPublisher*> pubs = mm_publisher[keyPub];
                 for (ISPublisher* pub : pubs)
                 {
                     if (pub->isTerminating()) continue;
 
                     userdynf_t function = mm_dynFunctionsNames[fName];
 
-                    DynamicData* output;
                     //DynamicData output; // TODO nueva instancia desde el tipo del publisher (añadir mapeo función)
                     if (function)
                     {
@@ -198,18 +244,30 @@ public:
                         }
                         else
                         {
-                            output = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
+                            std::mutex* mutex = mm_mutex[keyPub];
+                            if (mutex == nullptr)
+                            {
+                                mutex = new std::mutex();
+                                mm_mutex[keyPub] = mutex;
+                            }
+                            std::unique_lock<std::mutex> scopedLock(*mutex);
+                            DynamicData* output = mm_dynamicData[keyPub];
+                            if (output == nullptr)
+                            {
+                                output = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
+                                mm_dynamicData[keyPub] = output;
+                            }
                             function(data, output);
+                            pub->publish(output);
+                            //DynamicDataFactory::GetInstance()->DeleteData(output);
                         }
                     }
                     else
                     {
-                        output = DynamicDataFactory::GetInstance()->CreateCopy(data);
+                        //output = DynamicDataFactory::GetInstance()->CreateCopy(data);
                         //output->copy(data, false);
+                        pub->publish(data);
                     }
-
-                    pub->publish(output);
-                    DynamicDataFactory::GetInstance()->DeleteData(output);
                 }
             }
         }
