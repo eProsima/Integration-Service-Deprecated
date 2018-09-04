@@ -78,6 +78,7 @@ public:
     void addSubscriber(const std::string &part_name, ISSubscriber* s);
     void loadTopicTypes(tinyxml2::XMLElement *topic_types_element);
     void loadProfiles(tinyxml2::XMLElement *profiles);
+    void loadDynamicTypes(tinyxml2::XMLElement *types);
     //void loadParticipant(tinyxml2::XMLElement *participant_element);
     Participant* getParticipant(const std::string &name);
     void createSubscriber(Participant* participant, const std::string &name);

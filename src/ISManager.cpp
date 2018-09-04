@@ -34,6 +34,7 @@ static const std::string s_sSubscriber("subscriber");
 static const std::string s_sPublisher("publisher");
 static const std::string s_sTopic("topic");
 static const std::string s_sType("type");
+static const std::string s_sTypes("types");
 static const std::string s_sPartition("partition");
 static const std::string s_sLibrary("library");
 static const std::string s_sProperties("properties");
@@ -78,6 +79,14 @@ ISManager::ISManager(const std::string &xml_file_path)
     for (auto child = doc.FirstChildElement(s_sIS.c_str());
         child != nullptr; child = child->NextSiblingElement(s_sIS.c_str()))
     {
+
+        tinyxml2::XMLElement *types = child->FirstChildElement(s_sTypes.c_str());
+        if(types)
+        {
+            //loadDynamicTypes(types);
+            loadDynamicTypes(child);
+        }
+
         tinyxml2::XMLElement *topic_types = child->FirstChildElement(s_sTopicTypes.c_str());
         if(topic_types)
         {
@@ -166,6 +175,20 @@ void ISManager::loadProfiles(tinyxml2::XMLElement *profiles)
     }
 }
 
+void ISManager::loadDynamicTypes(tinyxml2::XMLElement *types)
+{
+    xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLDynamicTypes(*types);
+
+    if (ret == xmlparser::XMLP_ret::XML_OK)
+    {
+        LOG_INFO("Dynamic Types parsed successfully.");
+    }
+    else
+    {
+        LOG_ERROR("Error parsing dynamic types!");
+    }
+}
+
 void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
 {
     try
@@ -233,21 +256,50 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
 TopicDataType* ISManager::getTopicDataType(const std::string &name)
 {
     TopicDataType* type = nullptr;
-    if (typesLibs.find(name) != typesLibs.end())
+
+    // Try to load it from xml defined types first
+    type = xmlparser::XMLProfileManager::CreateDynamicPubSubType(name);
+    if (type == nullptr)
     {
-        typef_t func = typesLibs[name];
-        if (func)
+        if (typesLibs.find(name) != typesLibs.end()) // Has its own library?
         {
-            type = func(name.c_str());
-        }
-        else
-        {
-            for (typef_t func : defaultTypesLibs)
+            typef_t func = typesLibs[name];
+            if (func)
             {
                 type = func(name.c_str());
-                if (type != nullptr)
+            }
+            else
+            {
+                for (typef_t func : defaultTypesLibs) // A default library defines it?
                 {
-                    break;
+                    type = func(name.c_str());
+                    if (type != nullptr)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        // Show warning if defined in several ways.
+        if (typesLibs.find(name) != typesLibs.end()) // Has its own library?
+        {
+            typef_t func = typesLibs[name];
+            if (func)
+            {
+                LOG_WARN("Type " << name << " already defined by xml, but found in library.");
+            }
+            else
+            {
+                for (typef_t func : defaultTypesLibs) // A default library defines it?
+                {
+                    if (func(name.c_str()))
+                    {
+                        LOG_WARN("Type " << name << " already defined by xml, but found in default library.");
+                        break;
+                    }
                 }
             }
         }
@@ -255,6 +307,7 @@ TopicDataType* ISManager::getTopicDataType(const std::string &name)
 
     if (type == nullptr)
     {
+        // Finally use the Generic
         type = new GenericPubSubType();
         type->setName(name.c_str());
     }

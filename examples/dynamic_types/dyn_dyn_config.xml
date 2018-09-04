@@ -9,13 +9,30 @@
             <dynamic_type>true</dynamic_type>
         </type>
         <type name="sample">
+            <!--
             <library>/home/luisgp/git/eProsima/integration-services/examples/dynamic_types/build/libkeyhelloworld_dyn_dyn_lib.so</library>
+            -->
             <participants> <!-- Participants who will register it -->
                 <participant name="KeysParticipant"/>
             </participants>
             <dynamic_type>true</dynamic_type>
         </type>
     </topic_types>
+
+    <types>
+        <!--
+        struct sample{
+            octet index;
+            @Key octet key_value;
+        };
+        -->
+        <type>
+            <struct name="sample">
+                <octet name="index"/>
+                <octet name="key_value" key="true"/>
+            </struct>
+        </type>
+    </types>
 
     <profiles>
         <participant profile_name="HelloWorldParticipant">
