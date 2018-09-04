@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <is>
     <topic_types>
-        <type name="StringType">
+        <type name="Data1mb">
             <participants>
                 <participant name="ParticipantA"/>
                 <participant name="ParticipantB1"/>
@@ -17,7 +17,7 @@
         <participant profile_name="ParticipantA">
             <rtps>
                 <builtin>
-                    <domainId>0</domainId>
+                    <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -28,7 +28,7 @@
         <participant profile_name="ParticipantB1">
             <rtps>
                 <builtin>
-                    <domainId>5</domainId>
+                    <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -39,7 +39,7 @@
         <participant profile_name="ParticipantB2">
             <rtps>
                 <builtin>
-                    <domainId>6</domainId>
+                    <domainId>@DOMAIN6_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -50,7 +50,7 @@
         <participant profile_name="ParticipantB3">
             <rtps>
                 <builtin>
-                    <domainId>7</domainId>
+                    <domainId>@DOMAIN7_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -61,7 +61,7 @@
         <participant profile_name="ParticipantB4">
             <rtps>
                 <builtin>
-                    <domainId>8</domainId>
+                    <domainId>@DOMAIN8_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -72,7 +72,7 @@
         <participant profile_name="ParticipantB5">
             <rtps>
                 <builtin>
-                    <domainId>9</domainId>
+                    <domainId>@DOMAIN9_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -82,8 +82,8 @@
 
         <subscriber profile_name="subscriber">
             <topic>
-                <name>StringType</name>
-                <dataType>StringType</dataType>
+                <name>Data1mbTopic</name>
+                <dataType>Data1mb</dataType>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
@@ -98,42 +98,42 @@
 
         <publisher profile_name="publisher">
             <topic>
-                <name>StringType</name>
-                <dataType>StringType</dataType>
+                <name>Data1mbTopic</name>
+                <dataType>Data1mb</dataType>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
             </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
             </qos>
-            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>
     </profiles>
 
-    <connector name="String_1_1_UDP_UDP_Static">
+    <connector name="Data1mb_1_1_Static">
         <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
         <publisher participant_name="ParticipantB1" publisher_name="publisher"/>
     </connector>
 
-    <connector name="String_1_2_UDP_UDP_Static">
+    <connector name="Data1mb_1_2_Static">
         <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
         <publisher participant_name="ParticipantB2" publisher_name="publisher"/>
     </connector>
 
-    <connector name="String_1_3_UDP_UDP_Static">
+    <connector name="Data1mb_1_3_Static">
         <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
         <publisher participant_name="ParticipantB3" publisher_name="publisher"/>
     </connector>
 
-    <connector name="String_1_4_UDP_UDP_Static">
+    <connector name="Data1mb_1_4_Static">
         <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
         <publisher participant_name="ParticipantB4" publisher_name="publisher"/>
     </connector>
 
-    <connector name="String_1_5_UDP_UDP_Static">
+    <connector name="Data1mb_1_5_Static">
         <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
         <publisher participant_name="ParticipantB5" publisher_name="publisher"/>
     </connector>

@@ -15,7 +15,7 @@
         <participant profile_name="ParticipantA1">
             <rtps>
                 <builtin>
-                    <domainId>0</domainId>
+                    <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -26,7 +26,7 @@
         <participant profile_name="ParticipantA2">
             <rtps>
                 <builtin>
-                    <domainId>1</domainId>
+                    <domainId>@DOMAIN1_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -37,7 +37,7 @@
         <participant profile_name="ParticipantA3">
             <rtps>
                 <builtin>
-                    <domainId>2</domainId>
+                    <domainId>@DOMAIN2_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -48,7 +48,7 @@
         <participant profile_name="ParticipantB">
             <rtps>
                 <builtin>
-                    <domainId>5</domainId>
+                    <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>

@@ -107,10 +107,47 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             TestIS.cpp
             )
 
+        # Prepare static discovery xml file for blackbox tests.
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 DOMAIN0_RANDOM_NUMBER)
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 DOMAIN1_RANDOM_NUMBER)
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 DOMAIN2_RANDOM_NUMBER)
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 DOMAIN5_RANDOM_NUMBER)
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 DOMAIN6_RANDOM_NUMBER)
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 DOMAIN7_RANDOM_NUMBER)
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 DOMAIN8_RANDOM_NUMBER)
+        string(RANDOM LENGTH 4 ALPHABET 0123456789 DOMAIN9_RANDOM_NUMBER)
+        math(EXPR DOMAIN0_RANDOM_NUMBER "${DOMAIN0_RANDOM_NUMBER} + 0") # Remove extra leading 0s.
+        math(EXPR DOMAIN1_RANDOM_NUMBER "${DOMAIN1_RANDOM_NUMBER} + 0")
+        math(EXPR DOMAIN2_RANDOM_NUMBER "${DOMAIN2_RANDOM_NUMBER} + 0")
+        math(EXPR DOMAIN5_RANDOM_NUMBER "${DOMAIN5_RANDOM_NUMBER} + 0")
+        math(EXPR DOMAIN6_RANDOM_NUMBER "${DOMAIN6_RANDOM_NUMBER} + 0")
+        math(EXPR DOMAIN7_RANDOM_NUMBER "${DOMAIN7_RANDOM_NUMBER} + 0")
+        math(EXPR DOMAIN8_RANDOM_NUMBER "${DOMAIN8_RANDOM_NUMBER} + 0")
+        math(EXPR DOMAIN9_RANDOM_NUMBER "${DOMAIN9_RANDOM_NUMBER} + 0")
+        configure_file("config/String_1_1_Static.xml.in" "config/String_1_1_Static.xml")
+        configure_file("config/String_1_5_Static.xml.in" "config/String_1_5_Static.xml")
+        configure_file("config/String_3_1_Static.xml.in" "config/String_3_1_Static.xml")
+        configure_file("config/String_3_5_Static.xml.in" "config/String_3_5_Static.xml")
+        configure_file("config/String_3_5_Dynamic.xml.in" "config/String_3_5_Dynamic.xml")
+        configure_file("config/Data1mb_1_5_Static.xml.in" "config/Data1mb_1_5_Static.xml")
+        configure_file("config/Data1mb_1_5_Dynamic.xml.in" "config/Data1mb_1_5_Dynamic.xml")
+        configure_file("config/Data1mb_3_1_Static.xml.in" "config/Data1mb_3_1_Static.xml")
+        configure_file("config/Data1mb_3_1_Dynamic.xml.in" "config/Data1mb_3_1_Dynamic.xml")
+        configure_file("Benchmark.cpp.in" ${PROJECT_SOURCE_DIR}/test/benchmark/Benchmark.cpp)
+
         add_executable(Benchmark ${BENCHMARK_SOURCE})
         target_include_directories(Benchmark PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(Benchmark fastrtps fastcdr islib ${GTEST_LIBRARIES})
-        add_benchmark_gtest(Benchmark SOURCES ${BENCHMARK_SOURCE})
+        add_benchmark_gtest(Benchmark SOURCES ${BENCHMARK_SOURCE}
+            "DOMAIN0_RANDOM_NUMBER=${DOMAIN0_RANDOM_NUMBER}"
+            "DOMAIN1_RANDOM_NUMBER=${DOMAIN1_RANDOM_NUMBER}"
+            "DOMAIN2_RANDOM_NUMBER=${DOMAIN2_RANDOM_NUMBER}"
+            "DOMAIN5_RANDOM_NUMBER=${DOMAIN5_RANDOM_NUMBER}"
+            "DOMAIN6_RANDOM_NUMBER=${DOMAIN6_RANDOM_NUMBER}"
+            "DOMAIN7_RANDOM_NUMBER=${DOMAIN7_RANDOM_NUMBER}"
+            "DOMAIN8_RANDOM_NUMBER=${DOMAIN8_RANDOM_NUMBER}"
+            "DOMAIN9_RANDOM_NUMBER=${DOMAIN9_RANDOM_NUMBER}"
+        )
     endif()
 endif()
 
@@ -118,13 +155,3 @@ endif()
 file(GLOB TYPES_LIB_SOURCE "typeslib.cpp")
 add_library(TypesBench SHARED ${TYPES_LIB_SOURCE})
 target_link_libraries(TypesBench fastrtps fastcdr ${CMAKE_DL_LIBS})
-
-configure_file("config/String_1_1_Static.xml" "config/String_1_1_Static.xml" COPYONLY)
-configure_file("config/String_1_5_Static.xml" "config/String_1_5_Static.xml" COPYONLY)
-configure_file("config/String_3_1_Static.xml" "config/String_3_1_Static.xml" COPYONLY)
-configure_file("config/String_3_5_Static.xml" "config/String_3_5_Static.xml" COPYONLY)
-configure_file("config/String_3_5_Dynamic.xml" "config/String_3_5_Dynamic.xml" COPYONLY)
-configure_file("config/Data1mb_1_5_Static.xml" "config/Data1mb_1_5_Static.xml" COPYONLY)
-configure_file("config/Data1mb_1_5_Dynamic.xml" "config/Data1mb_1_5_Dynamic.xml" COPYONLY)
-configure_file("config/Data1mb_3_1_Static.xml" "config/Data1mb_3_1_Static.xml" COPYONLY)
-configure_file("config/Data1mb_3_1_Dynamic.xml" "config/Data1mb_3_1_Dynamic.xml" COPYONLY)

@@ -92,11 +92,11 @@ TEST_F(Benchmark, String_1_1_Static)
         TestPublisher pub;
         TestSubscriber sub;
 
-        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub_String");
+        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_String");
 
         ASSERT_TRUE(pub.isInitialized());
 
-        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub_String");
+        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub_String");
 
         ASSERT_TRUE(sub.isInitialized());
 
@@ -132,11 +132,11 @@ TEST_F(Benchmark, String_1_1_Static)
         // Launch IS, they will discover each other
         is.run();
 
-        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub_String");
+        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_String");
 
         ASSERT_TRUE(pub.isInitialized());
 
-        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 5, &type, "Sub_String");
+        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_String");
 
         ASSERT_TRUE(sub.isInitialized());
 
@@ -191,15 +191,15 @@ TEST_F(Benchmark, String_1_5_Static)
         TestSubscriber sub4;
         TestSubscriber sub5;
 
-        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub_String");
+        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_String");
 
         ASSERT_TRUE(pub.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub1_String");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub2_String");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub3_String");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub4_String");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub5_String");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub1_String");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub2_String");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub3_String");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub4_String");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub5_String");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -277,15 +277,15 @@ TEST_F(Benchmark, String_1_5_Static)
         // Launch IS, they will discover each other
         is.run();
 
-        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub_String");
+        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_String");
 
         ASSERT_TRUE(pub.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 5, &type, "Sub1_String");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 6, &type, "Sub2_String");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 7, &type, "Sub3_String");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 8, &type, "Sub4_String");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 9, &type, "Sub5_String");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub1_String");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN6_RANDOM_NUMBER@, &type, "Sub2_String");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN7_RANDOM_NUMBER@, &type, "Sub3_String");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN8_RANDOM_NUMBER@, &type, "Sub4_String");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN9_RANDOM_NUMBER@, &type, "Sub5_String");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -374,15 +374,15 @@ TEST_F(Benchmark, String_3_1_Static)
         TestPublisher pub3;
         TestSubscriber sub;
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub1_String");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub2_String");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub3_String");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_String");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub2_String");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub3_String");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub_String");
+        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub_String");
 
         ASSERT_TRUE(sub.isInitialized());
 
@@ -427,15 +427,15 @@ TEST_F(Benchmark, String_3_1_Static)
         // Launch IS, they will discover each other
         is.run();
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub1_String");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 1, &type, "Pub2_String");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 2, &type, "Pub3_String");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_String");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN1_RANDOM_NUMBER@, &type, "Pub2_String");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN2_RANDOM_NUMBER@, &type, "Pub3_String");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 5, &type, "Sub_String");
+        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_String");
 
         ASSERT_TRUE(sub.isInitialized());
 
@@ -498,19 +498,19 @@ TEST_F(Benchmark, String_3_5_Static)
         TestSubscriber sub4;
         TestSubscriber sub5;
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub1_String");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub2_String");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub3_String");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_String");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub2_String");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub3_String");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub1_String");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub2_String");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub3_String");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub4_String");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub5_String");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub1_String");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub2_String");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub3_String");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub4_String");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub5_String");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -595,19 +595,19 @@ TEST_F(Benchmark, String_3_5_Static)
         // Launch IS, they will discover each other
         is.run();
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub1_String");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 1, &type, "Pub2_String");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 2, &type, "Pub3_String");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_String");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN1_RANDOM_NUMBER@, &type, "Pub2_String");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN2_RANDOM_NUMBER@, &type, "Pub3_String");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 5, &type, "Sub1_String");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 6, &type, "Sub2_String");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 7, &type, "Sub3_String");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 8, &type, "Sub4_String");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 9, &type, "Sub5_String");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub1_String");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN6_RANDOM_NUMBER@, &type, "Sub2_String");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN7_RANDOM_NUMBER@, &type, "Sub3_String");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN8_RANDOM_NUMBER@, &type, "Sub4_String");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN9_RANDOM_NUMBER@, &type, "Sub5_String");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -706,19 +706,19 @@ TEST_F(Benchmark, String_3_5_Dynamic)
         TestSubscriber sub4;
         TestSubscriber sub5;
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub1_String");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub2_String");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub3_String");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_String");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub2_String");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub3_String");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub1_String");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub2_String");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub3_String");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub4_String");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 0, &type, "Sub5_String");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub1_String");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub2_String");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub3_String");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub4_String");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub5_String");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -803,19 +803,19 @@ TEST_F(Benchmark, String_3_5_Dynamic)
         // Launch IS, they will discover each other
         is.run();
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 0, &type, "Pub1_String");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 1, &type, "Pub2_String");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", 2, &type, "Pub3_String");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_String");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN1_RANDOM_NUMBER@, &type, "Pub2_String");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN2_RANDOM_NUMBER@, &type, "Pub3_String");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 5, &type, "Sub1_String");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 6, &type, "Sub2_String");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 7, &type, "Sub3_String");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 8, &type, "Sub4_String");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", 9, &type, "Sub5_String");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub1_String");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN6_RANDOM_NUMBER@, &type, "Sub2_String");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN7_RANDOM_NUMBER@, &type, "Sub3_String");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN8_RANDOM_NUMBER@, &type, "Sub4_String");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "StringType", @DOMAIN9_RANDOM_NUMBER@, &type, "Sub5_String");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -912,15 +912,15 @@ TEST_F(Benchmark, Data1mb_1_5_Static)
         TestSubscriber sub4;
         TestSubscriber sub5;
 
-        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub_Data1mb");
+        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_Data1mb");
 
         ASSERT_TRUE(pub.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub1_Data1mb");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub2_Data1mb");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub3_Data1mb");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub4_Data1mb");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub5_Data1mb");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub1_Data1mb");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub2_Data1mb");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub3_Data1mb");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub4_Data1mb");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub5_Data1mb");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -998,15 +998,15 @@ TEST_F(Benchmark, Data1mb_1_5_Static)
         // Launch IS, they will discover each other
         is.run();
 
-        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub_Data1mb");
+        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_Data1mb");
 
         ASSERT_TRUE(pub.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 5, &type, "Sub1_Data1mb");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 6, &type, "Sub2_Data1mb");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 7, &type, "Sub3_Data1mb");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 8, &type, "Sub4_Data1mb");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 9, &type, "Sub5_Data1mb");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub1_Data1mb");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN6_RANDOM_NUMBER@, &type, "Sub2_Data1mb");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN7_RANDOM_NUMBER@, &type, "Sub3_Data1mb");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN8_RANDOM_NUMBER@, &type, "Sub4_Data1mb");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN9_RANDOM_NUMBER@, &type, "Sub5_Data1mb");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -1095,15 +1095,15 @@ TEST_F(Benchmark, Data1mb_3_1_Static)
         TestPublisher pub3;
         TestSubscriber sub;
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub1_Data1mb");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub2_Data1mb");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub3_Data1mb");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_Data1mb");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub2_Data1mb");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub3_Data1mb");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub_Data1mb");
+        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub_Data1mb");
 
         ASSERT_TRUE(sub.isInitialized());
 
@@ -1148,15 +1148,15 @@ TEST_F(Benchmark, Data1mb_3_1_Static)
         // Launch IS, they will discover each other
         is.run();
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub1_Data1mb");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 1, &type, "Pub2_Data1mb");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 2, &type, "Pub3_Data1mb");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_Data1mb");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN1_RANDOM_NUMBER@, &type, "Pub2_Data1mb");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN2_RANDOM_NUMBER@, &type, "Pub3_Data1mb");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 5, &type, "Sub_Data1mb");
+        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_Data1mb");
 
         ASSERT_TRUE(sub.isInitialized());
 
@@ -1217,15 +1217,15 @@ TEST_F(Benchmark, Data1mb_1_5_Dynamic)
         TestSubscriber sub4;
         TestSubscriber sub5;
 
-        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub_Data1mb");
+        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_Data1mb");
 
         ASSERT_TRUE(pub.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub1_Data1mb");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub2_Data1mb");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub3_Data1mb");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub4_Data1mb");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub5_Data1mb");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub1_Data1mb");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub2_Data1mb");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub3_Data1mb");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub4_Data1mb");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub5_Data1mb");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -1303,15 +1303,15 @@ TEST_F(Benchmark, Data1mb_1_5_Dynamic)
         // Launch IS, they will discover each other
         is.run();
 
-        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub_Data1mb");
+        pub.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_Data1mb");
 
         ASSERT_TRUE(pub.isInitialized());
 
-        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 5, &type, "Sub1_Data1mb");
-        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 6, &type, "Sub2_Data1mb");
-        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 7, &type, "Sub3_Data1mb");
-        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 8, &type, "Sub4_Data1mb");
-        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 9, &type, "Sub5_Data1mb");
+        sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub1_Data1mb");
+        sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN6_RANDOM_NUMBER@, &type, "Sub2_Data1mb");
+        sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN7_RANDOM_NUMBER@, &type, "Sub3_Data1mb");
+        sub4.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN8_RANDOM_NUMBER@, &type, "Sub4_Data1mb");
+        sub5.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN9_RANDOM_NUMBER@, &type, "Sub5_Data1mb");
 
         ASSERT_TRUE(sub1.isInitialized());
         ASSERT_TRUE(sub2.isInitialized());
@@ -1400,15 +1400,15 @@ TEST_F(Benchmark, Data1mb_3_1_Dynamic)
         TestPublisher pub3;
         TestSubscriber sub;
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub1_Data1mb");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub2_Data1mb");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub3_Data1mb");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_Data1mb");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub2_Data1mb");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub3_Data1mb");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 0, &type, "Sub_Data1mb");
+        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Sub_Data1mb");
 
         ASSERT_TRUE(sub.isInitialized());
 
@@ -1453,15 +1453,15 @@ TEST_F(Benchmark, Data1mb_3_1_Dynamic)
         // Launch IS, they will discover each other
         is.run();
 
-        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 0, &type, "Pub1_Data1mb");
-        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 1, &type, "Pub2_Data1mb");
-        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", 2, &type, "Pub3_Data1mb");
+        pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_Data1mb");
+        pub2.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN1_RANDOM_NUMBER@, &type, "Pub2_Data1mb");
+        pub3.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN2_RANDOM_NUMBER@, &type, "Pub3_Data1mb");
 
         ASSERT_TRUE(pub1.isInitialized());
         ASSERT_TRUE(pub2.isInitialized());
         ASSERT_TRUE(pub3.isInitialized());
 
-        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", 5, &type, "Sub_Data1mb");
+        sub.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_Data1mb");
 
         ASSERT_TRUE(sub.isInitialized());
 
