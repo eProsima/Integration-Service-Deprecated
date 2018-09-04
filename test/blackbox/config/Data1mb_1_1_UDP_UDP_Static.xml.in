@@ -13,7 +13,7 @@
         <participant profile_name="ParticipantA">
             <rtps>
                 <builtin>
-                    <domainId>0</domainId>
+                    <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -24,7 +24,7 @@
         <participant profile_name="ParticipantB">
             <rtps>
                 <builtin>
-                    <domainId>5</domainId>
+                    <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>

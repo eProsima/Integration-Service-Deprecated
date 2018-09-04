@@ -1,32 +1,23 @@
 <?xml version="1.0"?>
 <is>
     <topic_types>
-        <type name="Data1mb">
+        <type name="StringType">
+            <library>libTypes.so</library>
             <participants>
                 <participant name="ParticipantA1"/>
                 <participant name="ParticipantA2"/>
                 <participant name="ParticipantA3"/>
                 <participant name="ParticipantB"/>
             </participants>
+            <!--<dynamic_type>true</dynamic_type>-->
         </type>
     </topic_types>
 
     <profiles>
-        <transports>
-            <transport>
-                <transport_id>TCPServer</transport_id>
-                <type>TCPv4</type>
-                <listening_ports>
-                    <port>5101</port>
-                </listening_ports>
-                <metadata_logical_port>7200</metadata_logical_port>
-            </transport>
-        </transports>
-
         <participant profile_name="ParticipantA1">
             <rtps>
                 <builtin>
-                    <domainId>0</domainId>
+                    <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -37,7 +28,7 @@
         <participant profile_name="ParticipantA2">
             <rtps>
                 <builtin>
-                    <domainId>1</domainId>
+                    <domainId>@DOMAIN1_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -48,7 +39,7 @@
         <participant profile_name="ParticipantA3">
             <rtps>
                 <builtin>
-                    <domainId>2</domainId>
+                    <domainId>@DOMAIN2_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
@@ -58,49 +49,19 @@
 
         <participant profile_name="ParticipantB">
             <rtps>
-                <userTransports>
-                    <transport_id>TCPServer</transport_id>
-                </userTransports>
-                <defaultUnicastLocatorList>
-                    <locator>
-                        <kind>TCPv4</kind>
-                        <address>127.0.0.1</address>
-                        <ports_>
-                            <physical_port>5101</physical_port>
-                        </ports_>
-                    </locator>
-                </defaultUnicastLocatorList>
                 <builtin>
-                    <domainId>5</domainId>
+                    <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
-                    <leaseAnnouncement>
-                        <durationbyval>
-                            <seconds>1</seconds>
-                            <fraction>0</fraction>
-                        </durationbyval>
-                    </leaseAnnouncement>
-                    <metatrafficUnicastLocatorList>
-                        <locator>
-                            <kind>TCPv4</kind>
-                            <address>127.0.0.1</address>
-                            <ports_>
-                                <physical_port>5101</physical_port>
-                            </ports_>
-                        </locator>
-                    </metatrafficUnicastLocatorList>
                 </builtin>
-                <use_IP4_to_send>true</use_IP4_to_send>
-                <use_IP6_to_send>false</use_IP6_to_send>
-                <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
 
         <subscriber profile_name="subscriber">
             <topic>
-                <name>Data1mbTopic</name>
-                <dataType>Data1mb</dataType>
+                <name>StringType</name>
+                <dataType>StringType</dataType>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
@@ -115,8 +76,8 @@
 
         <publisher profile_name="publisher">
             <topic>
-                <name>Data1mbTopic</name>
-                <dataType>Data1mb</dataType>
+                <name>StringType</name>
+                <dataType>StringType</dataType>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
@@ -130,17 +91,17 @@
         </publisher>
     </profiles>
 
-    <connector name="String_1_1_UDP_UDP_Static">
+    <connector name="String_1_1_UDP_UDP_Dynamic">
         <subscriber participant_name="ParticipantA1" subscriber_name="subscriber"/>
         <publisher participant_name="ParticipantB" publisher_name="publisher"/>
     </connector>
 
-    <connector name="String_2_1_UDP_UDP_Static">
+    <connector name="String_2_1_UDP_UDP_Dynamic">
         <subscriber participant_name="ParticipantA2" subscriber_name="subscriber"/>
         <publisher participant_name="ParticipantB" publisher_name="publisher"/>
     </connector>
 
-    <connector name="String_3_1_UDP_UDP_Static">
+    <connector name="String_3_1_UDP_UDP_Dynamic">
         <subscriber participant_name="ParticipantA3" subscriber_name="subscriber"/>
         <publisher participant_name="ParticipantB" publisher_name="publisher"/>
     </connector>
