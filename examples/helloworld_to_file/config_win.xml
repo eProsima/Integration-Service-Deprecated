@@ -1,13 +1,5 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
-        <type name="HelloWorld">
-            <participants>
-                <participant name="rtps"/>
-            </participants>
-        </type>
-    </topic_types>
-
     <profiles>
         <participant profile_name="rtps">
             <rtps>
@@ -15,15 +7,15 @@
                     <domainId>0</domainId>
                 </builtin>
             </rtps>
-        </participant>
 
-        <subscriber profile_name="fastrtps_subscriber">
-            <topic>
-                <name>HelloWorldTopic</name>
-                <dataType>HelloWorld</dataType>
-            </topic>
-            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-        </subscriber>
+            <subscriber profile_name="fastrtps_subscriber">
+                <topic>
+                    <name>HelloWorldTopic</name>
+                    <dataType>HelloWorld</dataType>
+                </topic>
+                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            </subscriber>
+        </participant>
     </profiles>
 
     <bridge name="file">

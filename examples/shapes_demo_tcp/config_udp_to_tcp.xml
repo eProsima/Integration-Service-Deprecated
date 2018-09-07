@@ -3,12 +3,7 @@
     <topic_types>
         <type name="ShapeType">
             <library>libshapelib.so</library>
-            <participants> <!-- Participants who will register it -->
-                <participant name="LocalShapes"/>
-                <participant name="TCPShapes"/>
-            </participants>
         </type>
-        <types_library>libshapelib.so</types_library> <!-- Only one needed in this case. Kept for testing. -->
     </topic_types>
 
     <profiles>
@@ -105,9 +100,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
@@ -133,9 +125,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
@@ -161,9 +150,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
@@ -189,9 +175,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>
@@ -217,9 +200,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>
@@ -245,9 +225,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>

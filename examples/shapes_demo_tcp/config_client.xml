@@ -3,12 +3,7 @@
     <topic_types>
         <type name="ShapeType">
             <library>libshapelib.so</library>
-            <participants> <!-- Participants who will register it -->
-                <participant name="LocalShapes"/>
-                <participant name="TCPShapes"/>
-            </participants>
         </type>
-        <types_library>libshapelib.so</types_library> <!-- Only one needed in this case. Kept for testing. -->
     </topic_types>
 
     <profiles>
@@ -41,7 +36,7 @@
             <rtps>
                 <userTransports>
                     <transport_id>TCPv4_Client</transport_id>
-                </userTransports>   
+                </userTransports>
                 <defaultUnicastLocatorList>
                     <locator>
                         <kind>TCPv4</kind>
@@ -119,9 +114,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
@@ -147,9 +139,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
@@ -175,9 +164,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
@@ -203,9 +189,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>
@@ -231,9 +214,6 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>
@@ -259,25 +239,22 @@
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
-                <ownership>
-                    <kind>SHARED</kind>
-                </ownership>
             </qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>
     </profiles>
 
-    <connector name="TCP_Local_SQUARES"> 
+    <connector name="TCP_Local_SQUARES">
         <subscriber participant_name="TCPShapes" subscriber_name="subscriberSquare"/>
         <publisher participant_name="LocalShapes" publisher_name="publisherSquare"/>
     </connector>
 
-    <connector name="TCP_Local_TRIANGLES"> 
+    <connector name="TCP_Local_TRIANGLES">
         <subscriber participant_name="TCPShapes" subscriber_name="subscriberTriangle"/>
         <publisher participant_name="LocalShapes" publisher_name="publisherTriangle"/>
     </connector>
 
-    <connector name="TCP_Local_CIRCLES"> 
+    <connector name="TCP_Local_CIRCLES">
         <subscriber participant_name="TCPShapes" subscriber_name="subscriberCircle"/>
         <publisher participant_name="LocalShapes" publisher_name="publisherCircle"/>
     </connector>

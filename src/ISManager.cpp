@@ -44,6 +44,7 @@ static const std::string s_sFuncCreateSubscriber("create_subscriber");
 static const std::string s_sFuncCreatePublisher("create_publisher");
 static const std::string s_sTransformation("transformation");
 static const std::string s_sParticipantName("participant_name");
+static const std::string s_sBridgeName("bridge_name");
 static const std::string s_sSubscriberName("subscriber_name");
 static const std::string s_sPublisherName("publisher_name");
 static const std::string s_sFile("file");
@@ -217,12 +218,15 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
                 }
             }
 
-            element = _assignNextElement(type, s_sParticipants);
-            for (tinyxml2::XMLElement *part = element->FirstChildElement(s_sParticipant.c_str());
-                part != nullptr; part = part->NextSiblingElement(s_sParticipant.c_str()) )
+            element = _assignOptionalElement(type, s_sParticipants);
+            if (element != nullptr)
             {
-                const char* partName = part->Attribute(s_sName.c_str());
-                to_register_types.emplace_back(partName, type_name);
+                for (tinyxml2::XMLElement *part = element->FirstChildElement(s_sParticipant.c_str());
+                    part != nullptr; part = part->NextSiblingElement(s_sParticipant.c_str()) )
+                {
+                    const char* partName = part->Attribute(s_sName.c_str());
+                    to_register_types.emplace_back(partName, type_name);
+                }
             }
 
             type = type->NextSiblingElement(s_sType.c_str());
@@ -324,8 +328,46 @@ void ISManager::createSubscriber(Participant* participant, const std::string &na
         return;
     }
 
+    // Check type
+    SubscriberAttributes subscriber_att;
+    if ( xmlparser::XMLP_ret::XML_OK ==
+         xmlparser::XMLProfileManager::fillSubscriberAttributes(name, subscriber_att))
+    {
+        std::string topic_type = subscriber_att.topic.getTopicDataType();
+        TopicDataType *type = nullptr;
+        if (!Domain::getRegisteredType(participant, topic_type.c_str(), &type))
+        {
+            // Type not registered yet.
+            type = getTopicDataType(topic_type);
+            if (type != nullptr)
+            {
+                Domain::registerType(participant, type);
+                std::pair<std::string, std::string> idx =
+                        std::make_pair(std::string(participant->getAttributes().rtps.getName()), topic_type);
+                data_types[idx] = type;
+            }
+            else
+            {
+                LOG_WARN("Cannot determine the TopicDataType of " << name << ".");
+            }
+        }
+    }
+    else
+    {
+        LOG_WARN("Cannot get subscriber attributes: The subscriber " << name << " creation probably will fail.");
+    }
+
     // Create Subscriber
-    listener->setRTPSSubscriber(Domain::createSubscriber(participant, name, (SubscriberListener*)listener));
+    eprosima::fastrtps::Subscriber *subscriber =
+            Domain::createSubscriber(participant, name, (SubscriberListener*)listener);
+
+    listener->setRTPSSubscriber(subscriber);
+
+    if(!listener->hasRTPSSubscriber())
+    {
+        LOG_ERROR("Error creating subscriber");
+        return;
+    }
 
     //Associate types
     const std::string &typeName = listener->getRTPSSubscriber()->getAttributes().topic.topicDataType;
@@ -334,14 +376,6 @@ void ISManager::createSubscriber(Participant* participant, const std::string &na
         std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
     listener->input_type = data_types[idx];
     listener->input_type->setName(typeName.c_str());
-
-    // Create Subscriber
-    //listener->setRTPSSubscriber(Domain::createSubscriber(participant, name, (SubscriberListener*)listener));
-    if(!listener->hasRTPSSubscriber())
-    {
-        LOG_ERROR("Error creating subscriber");
-        return;
-    }
 
     addSubscriber(listener);
     LOG_INFO("Added subscriber " << listener->getName() << "[" << topic_name << ":"
@@ -359,6 +393,35 @@ void ISManager::createPublisher(Participant* participant, const std::string &nam
         delete publisher;
         LOG_ERROR("Error creating publisher");
         return;
+    }
+
+    // Check type
+    PublisherAttributes publisher_att;
+    if ( xmlparser::XMLP_ret::XML_OK ==
+         xmlparser::XMLProfileManager::fillPublisherAttributes(name, publisher_att))
+    {
+        std::string topic_type = publisher_att.topic.getTopicDataType();
+        TopicDataType *type = nullptr;
+        if (!Domain::getRegisteredType(participant, topic_type.c_str(), &type))
+        {
+            // Type not registered yet.
+            type = getTopicDataType(topic_type);
+            if (type != nullptr)
+            {
+                Domain::registerType(participant, type);
+                std::pair<std::string, std::string> idx =
+                        std::make_pair(std::string(participant->getAttributes().rtps.getName()), topic_type);
+                data_types[idx] = type;
+            }
+            else
+            {
+                LOG_WARN("Cannot determine the TopicDataType of " << name << ".");
+            }
+        }
+    }
+    else
+    {
+        LOG_WARN("Cannot get publisher attributes: The publisher " << name << " creation probably will fail.");
     }
 
     //Create publisher
@@ -490,26 +553,70 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         tinyxml2::XMLElement *pub_el = _assignNextElement(connector_element, s_sPublisher);
         tinyxml2::XMLElement *trans_el = _assignOptionalElement(connector_element, s_sTransformation);
 
-        const char* sub_part = sub_el->Attribute(s_sParticipantName.c_str());
-        const char* sub_name = sub_el->Attribute(s_sSubscriberName.c_str());
-        const char* pub_part = pub_el->Attribute(s_sParticipantName.c_str());
-        const char* pub_name = pub_el->Attribute(s_sPublisherName.c_str());
+        const char* sub_part   = sub_el->Attribute(s_sParticipantName.c_str());
+        const char* sub_bridge = sub_el->Attribute(s_sBridgeName.c_str());
+        const char* sub_name   = sub_el->Attribute(s_sSubscriberName.c_str());
+        const char* pub_part   = pub_el->Attribute(s_sParticipantName.c_str());
+        const char* pub_bridge = pub_el->Attribute(s_sBridgeName.c_str());
+        const char* pub_name   = pub_el->Attribute(s_sPublisherName.c_str());
 
-        Participant* participant_subscriber = getParticipant(sub_part);
-        Participant* participant_publisher = getParticipant(pub_part);
-
-        if (participant_subscriber != nullptr)
+        if (sub_part == nullptr && sub_bridge == nullptr)
         {
-            createSubscriber(participant_subscriber, sub_name);
+            LOG_ERROR("Neither subscriber's participant or bridge are defined in connector " << connector_name << ".");
+            throw 0;
         }
 
-        if (participant_publisher != nullptr)
+        if (sub_part != nullptr && sub_bridge != nullptr)
         {
-            createPublisher(participant_publisher, pub_name);
+            LOG_ERROR("Both subscriber's participant and bridge are defined in connector " << connector_name << ".");
+            throw 0;
         }
 
-        std::string subName = getEndPointName(sub_part, sub_name);
-        std::string pubName = getEndPointName(pub_part, pub_name);
+        if (pub_part == nullptr && pub_bridge == nullptr)
+        {
+            LOG_ERROR("Neither publisher's participant or bridge are defined in connector " << connector_name << ".");
+            throw 0;
+        }
+
+        if (pub_part != nullptr && pub_bridge != nullptr)
+        {
+            LOG_ERROR("Both publisher's participant and bridge are defined in connector " << connector_name << ".");
+            throw 0;
+        }
+
+        std::string subName;
+        std::string pubName;
+        if (sub_part != nullptr)
+        {
+            Participant* participant_subscriber = getParticipant(sub_part);
+
+            if (participant_subscriber != nullptr)
+            {
+                createSubscriber(participant_subscriber, sub_name);
+                subName = getEndPointName(sub_part, sub_name);
+            }
+        }
+        else
+        {
+            // Bridge's load created it
+            subName = getEndPointName(sub_bridge, sub_name);
+        }
+
+        if (pub_part != nullptr)
+        {
+            Participant* participant_publisher = getParticipant(pub_part);
+
+            if (participant_publisher != nullptr)
+            {
+                createPublisher(participant_publisher, pub_name);
+                pubName = getEndPointName(pub_part, pub_name);
+            }
+        }
+        else
+        {
+            // Bridge's load created it
+            pubName = getEndPointName(pub_bridge, pub_name);
+        }
 
         auto its = subscribers.find(subName);
         if (its == subscribers.end())
@@ -551,8 +658,10 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
 
         // Any participant is a bridge?
         ISBridge* bridge;
-        auto itsb = bridges.find(sub_part);
-        auto itpb = bridges.find(pub_part);
+
+        auto itsb = sub_bridge != nullptr ? bridges.find(sub_bridge) : bridges.end();
+        auto itpb = pub_bridge != nullptr ? bridges.find(pub_bridge) : bridges.end();
+
         if (itsb == bridges.end() && itpb == bridges.end())
         {
             // Create the RTPS bridge
@@ -587,7 +696,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
             bridge->addFunction(sub->getName(), function_name, dynFunction);
         }
 
-        LOG_INFO("Set bridge between " << sub->getName() << " and " << pub->getName());
+        LOG_INFO("Set connector between " << sub->getName() << " and " << pub->getName());
     }
     catch (int e_code)
     {

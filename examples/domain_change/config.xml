@@ -1,14 +1,5 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
-        <type name="Text">
-            <participants>
-                <participant name="domain0"/>
-                <participant name="domain5"/>
-            </participants>
-        </type>
-    </topic_types>
-
     <profiles>
         <participant profile_name="domain0">
             <rtps>
@@ -19,6 +10,14 @@
                     </leaseDuration>
                 </builtin>
             </rtps>
+
+            <subscriber profile_name="is_subscriber">
+                <topic>
+                    <name>TextPubSubTopic</name>
+                    <dataType>Text</dataType>
+                </topic>
+                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            </subscriber>
         </participant>
 
         <participant profile_name="domain5">
@@ -30,26 +29,18 @@
                     </leaseDuration>
                 </builtin>
             </rtps>
+
+            <publisher profile_name="is_publisher">
+                <topic>
+                    <name>TextPubSubTopic</name>
+                    <dataType>Text</dataType>
+                </topic>
+                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            </publisher>
         </participant>
-
-        <subscriber profile_name="is_subscriber">
-            <topic>
-                <name>TextPubSubTopic</name>
-                <dataType>Text</dataType>
-            </topic>
-            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-        </subscriber>
-
-        <publisher profile_name="is_publisher">
-            <topic>
-                <name>TextPubSubTopic</name>
-                <dataType>Text</dataType>
-            </topic>
-            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-        </publisher>
     </profiles>
 
-    <connector name="domain_change"> 
+    <connector name="domain_change">
         <subscriber participant_name="domain0" subscriber_name="is_subscriber"/>
         <publisher participant_name="domain5" publisher_name="is_publisher"/>
     </connector>
