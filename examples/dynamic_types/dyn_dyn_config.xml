@@ -1,11 +1,5 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
-        <type name="HelloWorld">
-            <library>build/libkeyhelloworld_dyn_dyn_lib.so</library>
-        </type>
-    </topic_types>
-
     <types>
         <!--
         struct sample{
@@ -21,14 +15,17 @@
         </type>
     </types>
 
+    <topic_types>
+        <type name="HelloWorld">
+            <library>build/libkeyhelloworld_dyn_dyn_lib.so</library>
+        </type>
+    </topic_types>
+
     <profiles>
         <participant profile_name="HelloWorldParticipant">
             <rtps>
                 <builtin>
                     <domainId>0</domainId>
-                    <leaseDuration>
-                        <durationbyname>INFINITE</durationbyname>
-                    </leaseDuration>
                 </builtin>
             </rtps>
 
@@ -37,18 +34,6 @@
                     <name>HelloWorldTopic</name>
                     <dataType>HelloWorld</dataType>
                 </topic>
-                <qos>
-                    <reliability>
-                        <kind>RELIABLE</kind>
-                    </reliability>
-                    <liveliness>
-                        <kind>AUTOMATIC</kind>
-                        <lease_duration>INFINITE</lease_duration>
-                    </liveliness>
-                    <durability>
-                        <kind>TRANSIENT_LOCAL</kind>
-                    </durability>
-                </qos>
                 <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
             </subscriber>
 
@@ -57,18 +42,6 @@
                     <name>HelloWorldTopic</name>
                     <dataType>HelloWorld</dataType>
                 </topic>
-                <qos>
-                    <reliability>
-                        <kind>RELIABLE</kind>
-                    </reliability>
-                    <liveliness>
-                        <kind>AUTOMATIC</kind>
-                        <lease_duration>INFINITE</lease_duration>
-                    </liveliness>
-                    <durability>
-                        <kind>TRANSIENT_LOCAL</kind>
-                    </durability>
-                </qos>
                 <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
             </publisher>
 
@@ -78,9 +51,6 @@
             <rtps>
                 <builtin>
                     <domainId>0</domainId>
-                    <leaseDuration>
-                        <durationbyname>INFINITE</durationbyname>
-                    </leaseDuration>
                 </builtin>
             </rtps>
 
@@ -89,24 +59,7 @@
                     <name>samplePubSubTopic</name>
                     <dataType>sample</dataType>
                     <kind>WITH_KEY</kind>
-                    <historyQos>
-                        <kind>KEEP_ALL</kind>
-                    </historyQos>
-                    <resourceLimitsQos>
-                        <max_samples>100</max_samples>
-                        <allocated_samples>100</allocated_samples>
-                        <max_instances>5</max_instances>
-                        <max_samples_per_instance>20</max_samples_per_instance>
-                    </resourceLimitsQos>
                 </topic>
-                <qos>
-                    <reliability>
-                        <kind>RELIABLE</kind>
-                    </reliability>
-                    <durability>
-                        <kind>VOLATILE</kind>
-                    </durability>
-                </qos>
                 <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
             </subscriber>
 
@@ -115,24 +68,7 @@
                     <name>samplePubSubTopic</name>
                     <dataType>sample</dataType>
                     <kind>WITH_KEY</kind>
-                    <historyQos>
-                        <kind>KEEP_ALL</kind>
-                    </historyQos>
-                    <resourceLimitsQos>
-                        <max_samples>100</max_samples>
-                        <allocated_samples>100</allocated_samples>
-                        <max_instances>5</max_instances>
-                        <max_samples_per_instance>20</max_samples_per_instance>
-                    </resourceLimitsQos>
                 </topic>
-                <qos>
-                    <reliability>
-                        <kind>RELIABLE</kind>
-                    </reliability>
-                    <durability>
-                        <kind>VOLATILE</kind>
-                    </durability>
-                </qos>
                 <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
             </publisher>
         </participant>

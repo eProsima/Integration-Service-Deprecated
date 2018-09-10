@@ -5,9 +5,6 @@
             <rtps>
                 <builtin>
                     <domainId>0</domainId>
-                    <leaseDuration>
-                        <durationbyname>INFINITE</durationbyname>
-                    </leaseDuration>
                 </builtin>
             </rtps>
 
@@ -24,9 +21,6 @@
             <rtps>
                 <builtin>
                     <domainId>5</domainId>
-                    <leaseDuration>
-                        <durationbyname>INFINITE</durationbyname>
-                    </leaseDuration>
                 </builtin>
             </rtps>
 
