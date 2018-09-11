@@ -1,18 +1,6 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
-        <type name="HelloWorld">
-            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_dyn_dyn_lib.dll</library>
-        </type>
-    </topic_types>
-
     <types>
-        <!--
-        struct sample{
-            octet index;
-            @Key octet key_value;
-        };
-        -->
         <type>
             <struct name="sample">
                 <octet name="index"/>
@@ -20,6 +8,12 @@
             </struct>
         </type>
     </types>
+
+    <topic_types>
+        <type name="HelloWorld">
+            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_dyn_dyn_lib.dll</library>
+        </type>
+    </topic_types>
 
     <profiles>
         <participant profile_name="HelloWorldParticipant">

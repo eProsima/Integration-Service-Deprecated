@@ -15,7 +15,6 @@
                 <listening_ports>
                     <port>5100</port>
                 </listening_ports>
-                <metadata_logical_port>7401</metadata_logical_port>
             </transport>
         </transports>
 
@@ -23,9 +22,6 @@
             <rtps>
                 <builtin>
                     <domainId>0</domainId>
-                    <leaseDuration>
-                        <durationbyname>INFINITE</durationbyname>
-                    </leaseDuration>
                 </builtin>
             </rtps>
         </participant>
@@ -41,7 +37,6 @@
                         <address>127.0.0.1</address>
                         <ports_>
                             <physical_port>5100</physical_port>
-                            <logical_port>7410</logical_port>
                         </ports_>
                     </locator>
                 </defaultUnicastLocatorList>
@@ -50,19 +45,12 @@
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
-                    <leaseAnnouncement>
-                        <durationbyval>
-                            <seconds>0</seconds>
-                            <fraction>333</fraction>
-                        </durationbyval>
-                    </leaseAnnouncement>
                     <metatrafficUnicastLocatorList>
                         <locator>
                             <kind>TCPv4</kind>
                             <address>127.0.0.1</address>
                             <ports_>
                                 <physical_port>5100</physical_port>
-                                <logical_port>7401</logical_port>
                             </ports_>
                         </locator>
                     </metatrafficUnicastLocatorList>
@@ -155,7 +143,7 @@
                 <kind>WITH_KEY</kind>
                 <historyQos>
                     <kind>KEEP_LAST</kind>
-                    <depth>20</depth>
+                    <depth>6</depth>
                 </historyQos>
             </topic>
             <qos>
@@ -180,7 +168,7 @@
                 <kind>WITH_KEY</kind>
                 <historyQos>
                     <kind>KEEP_LAST</kind>
-                    <depth>20</depth>
+                    <depth>6</depth>
                 </historyQos>
             </topic>
             <qos>
@@ -205,7 +193,7 @@
                 <kind>WITH_KEY</kind>
                 <historyQos>
                     <kind>KEEP_LAST</kind>
-                    <depth>20</depth>
+                    <depth>6</depth>
                 </historyQos>
             </topic>
             <qos>

@@ -1,18 +1,26 @@
 <?xml version="1.0"?>
 <is>
     <types>
-        <!--
-        struct sample{
-            octet index;
-            @Key octet key_value;
-        };
-        -->
         <type>
             <struct name="sample">
                 <octet name="index"/>
                 <octet name="key_value" key="true"/>
             </struct>
         </type>
+
+        <!--
+        struct HelloWorld
+        {
+            unsigned long index;
+            string message;
+        };
+        <type>
+            <struct name="HelloWorld">
+                <unsignedlong name="index"/>
+                <string name="message"/>
+            </struct>
+        </type>
+        -->
     </types>
 
     <topic_types>
