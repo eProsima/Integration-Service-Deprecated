@@ -7,12 +7,12 @@
     </topic_types>
 
     <profiles>
-        <transports>
-            <transport>
+        <transport_descriptors>
+            <transport_descriptor>
                 <transport_id>TCPv4_Client</transport_id>
                 <type>TCPv4</type>
-            </transport>
-        </transports>
+            </transport_descriptor>
+        </transport_descriptors>
 
         <participant profile_name="LocalShapes">
             <rtps>

@@ -7,16 +7,16 @@
     </topic_types>
 
     <profiles>
-        <transports>
-            <transport>
+        <transport_descriptors>
+            <transport_descriptor>
                 <transport_id>TCPv4_Server</transport_id>
                 <type>TCPv4</type>
                 <wan_addr>127.0.0.1</wan_addr>
                 <listening_ports>
                     <port>5100</port>
                 </listening_ports>
-            </transport>
-        </transports>
+            </transport_descriptor>
+        </transport_descriptors>
 
         <participant profile_name="LocalShapes">
             <rtps>

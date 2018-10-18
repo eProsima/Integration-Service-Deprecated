@@ -14,8 +14,8 @@
     </topic_types>
 
     <profiles>
-        <transports>
-            <transport>
+        <transport_descriptors>
+            <transport_descriptor>
                 <transport_id>TCPClient</transport_id>
                 <type>TCPv4</type>
                 <!--
@@ -24,8 +24,8 @@
                 </listening_ports>
                 <metadata_logical_port>0</metadata_logical_port>
                 -->
-            </transport>
-        </transports>
+            </transport_descriptor>
+        </transport_descriptors>
 
         <participant profile_name="ParticipantA">
             <rtps>

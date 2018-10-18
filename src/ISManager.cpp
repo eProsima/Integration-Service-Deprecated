@@ -68,70 +68,75 @@ ISManager::ISManager(const std::string &xml_file_path)
 {
     //Log::SetVerbosity(Log::Warning);
     tinyxml2::XMLDocument doc;
-    doc.LoadFile(xml_file_path.c_str());
-
-    tinyxml2::XMLElement *bridge_element = doc.FirstChildElement(s_sIS.c_str());
-    if (!bridge_element)
+    if (doc.LoadFile(xml_file_path.c_str()) == tinyxml2::XMLError::XML_SUCCESS)
     {
-        LOG("Invalid config file");
-        return;
-    }
-
-    for (auto child = doc.FirstChildElement(s_sIS.c_str());
-        child != nullptr; child = child->NextSiblingElement(s_sIS.c_str()))
-    {
-
-        tinyxml2::XMLElement *types = child->FirstChildElement(s_sTypes.c_str());
-        if(types)
+        tinyxml2::XMLElement *bridge_element = doc.FirstChildElement(s_sIS.c_str());
+        if (!bridge_element)
         {
-            //loadDynamicTypes(types);
-            loadDynamicTypes(child);
-        }
-
-        tinyxml2::XMLElement *topic_types = child->FirstChildElement(s_sTopicTypes.c_str());
-        if(topic_types)
-        {
-            loadTopicTypes(topic_types);
-        }
-
-        tinyxml2::XMLElement *profiles = child->FirstChildElement(s_sProfiles.c_str());
-        if(profiles)
-        {
-            loadProfiles(profiles);
-        }
-        else
-        {
-            LOG_ERROR("No profiles found!");
+            LOG("Invalid config file");
             return;
         }
 
-        /*
-        tinyxml2::XMLElement *participant = child->FirstChildElement(s_sParticipant.c_str());
-        while(participant)
+        for (auto child = doc.FirstChildElement(s_sIS.c_str());
+            child != nullptr; child = child->NextSiblingElement(s_sIS.c_str()))
         {
-            loadParticipant(participant);
-            participant = participant->NextSiblingElement(s_sParticipant.c_str());
-        }
-        */
 
-        tinyxml2::XMLElement *bridge = child->FirstChildElement(s_sBridge.c_str());
-        while(bridge)
-        {
-            loadBridge(bridge);
-            bridge = bridge->NextSiblingElement(s_sBridge.c_str());
+            tinyxml2::XMLElement *types = child->FirstChildElement(s_sTypes.c_str());
+            if (types)
+            {
+                //loadDynamicTypes(types);
+                loadDynamicTypes(child);
+            }
+
+            tinyxml2::XMLElement *topic_types = child->FirstChildElement(s_sTopicTypes.c_str());
+            if (topic_types)
+            {
+                loadTopicTypes(topic_types);
+            }
+
+            tinyxml2::XMLElement *profiles = child->FirstChildElement(s_sProfiles.c_str());
+            if (profiles)
+            {
+                loadProfiles(profiles);
+            }
+            else
+            {
+                LOG_ERROR("No profiles found!");
+                return;
+            }
+
+            /*
+            tinyxml2::XMLElement *participant = child->FirstChildElement(s_sParticipant.c_str());
+            while(participant)
+            {
+                loadParticipant(participant);
+                participant = participant->NextSiblingElement(s_sParticipant.c_str());
+            }
+            */
+
+            tinyxml2::XMLElement *bridge = child->FirstChildElement(s_sBridge.c_str());
+            while (bridge)
+            {
+                loadBridge(bridge);
+                bridge = bridge->NextSiblingElement(s_sBridge.c_str());
+            }
+
+            tinyxml2::XMLElement *connector = child->FirstChildElement(s_sConnector.c_str());
+            while (connector)
+            {
+                loadConnector(connector);
+                connector = connector->NextSiblingElement(s_sConnector.c_str());
+            }
         }
 
-        tinyxml2::XMLElement *connector = child->FirstChildElement(s_sConnector.c_str());
-        while(connector)
+        if (bridges.size() > 0)
         {
-            loadConnector(connector);
-            connector = connector->NextSiblingElement(s_sConnector.c_str());
+            active = true;
         }
     }
-
-    if (bridges.size() > 0)
+    else
     {
-        active = true;
+        LOG("Config file not found.");
     }
 }
 
@@ -527,7 +532,7 @@ Participant* ISManager::getParticipant(const std::string &name)
         }
         else
         {
-            participant = Domain::createParticipant(name, nullptr, true); // Use profile name as participant name
+            participant = Domain::createParticipant(name, nullptr); // Use profile name as participant name
             rtps_participants[name] = participant;
 
             // Register its types

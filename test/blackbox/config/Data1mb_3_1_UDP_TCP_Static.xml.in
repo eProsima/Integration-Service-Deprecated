@@ -12,16 +12,16 @@
     </topic_types>
 
     <profiles>
-        <transports>
-            <transport>
+        <transport_descriptors>
+            <transport_descriptor>
                 <transport_id>TCPServer</transport_id>
                 <type>TCPv4</type>
                 <listening_ports>
                     <port>5101</port>
                 </listening_ports>
                 <metadata_logical_port>7200</metadata_logical_port>
-            </transport>
-        </transports>
+            </transport_descriptor>
+        </transport_descriptors>
 
         <participant profile_name="ParticipantA1">
             <rtps>
