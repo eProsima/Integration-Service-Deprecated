@@ -64,7 +64,7 @@ class ISManager
     std::map<std::pair<std::string, std::string>, TopicDataType*> data_types;
     bool active;
     void parseProperties(tinyxml2::XMLElement *parent_element,
-                         std::vector<std::pair<std::string, std::string>> &props);
+        std::vector<std::pair<std::string, std::string>> &props);
     MyParticipantListener myParticipantListener;
     TopicDataType* getTopicDataType(const std::string &type);
 public:
@@ -81,8 +81,8 @@ public:
     void loadDynamicTypes(tinyxml2::XMLElement *types);
     //void loadParticipant(tinyxml2::XMLElement *participant_element);
     Participant* getParticipant(const std::string &name);
-    void createSubscriber(Participant* participant, const std::string &name);
-    void createPublisher(Participant* participant, const std::string &name);
+    void createSubscriber(Participant* participant, const std::string &participant_profile, const std::string &name);
+    void createPublisher(Participant* participant, const std::string &participant_profile, const std::string &name);
     void loadBridge(tinyxml2::XMLElement *bridge_element);
     void loadConnector(tinyxml2::XMLElement *connector_element);
     void onTerminate();

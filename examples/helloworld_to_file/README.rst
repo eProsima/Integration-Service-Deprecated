@@ -131,8 +131,8 @@ The next step is to set the *config.xml* file with the specific parameters of ou
         </bridge>
 
         <connector name="dump_to_file">
-            <subscriber participant_name="rtps" subscriber_name="fastrtps_subscriber"/>
-            <publisher participant_name="file" publisher_name="file_publisher"/>
+            <subscriber participant_profile="rtps" subscriber_profile="fastrtps_subscriber"/>
+            <publisher bridge_name="file" publisher_name="file_publisher"/>
         </connector>
     </is>
 

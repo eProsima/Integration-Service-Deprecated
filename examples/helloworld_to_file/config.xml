@@ -38,7 +38,7 @@
     </bridge>
 
     <connector name="dump_to_file">
-        <subscriber participant_name="rtps" subscriber_name="fastrtps_subscriber"/>
+        <subscriber participant_profile="rtps" subscriber_profile="fastrtps_subscriber"/>
         <publisher bridge_name="file" publisher_name="file_publisher"/>
     </connector>
 </is>

@@ -66,7 +66,7 @@
     </profiles>
 
     <connector name="String_1_1_UDP_UDP_Static">
-        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
-        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
     </connector>
 </is>

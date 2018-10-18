@@ -35,7 +35,7 @@
     </profiles>
 
     <connector name="domain_change">
-        <subscriber participant_name="domain0" subscriber_name="is_subscriber"/>
-        <publisher participant_name="domain5" publisher_name="is_publisher"/>
+        <subscriber participant_profile="domain0" subscriber_profile="is_subscriber"/>
+        <publisher participant_profile="domain5" publisher_profile="is_publisher"/>
     </connector>
 </is>

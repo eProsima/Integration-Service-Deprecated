@@ -225,17 +225,17 @@
     </profiles>
 
     <connector name="TCP_Local_SQUARES">
-        <subscriber participant_name="TCPShapes" subscriber_name="subscriberSquare"/>
-        <publisher participant_name="LocalShapes" publisher_name="publisherSquare"/>
+        <subscriber participant_profile="TCPShapes" subscriber_profile="subscriberSquare"/>
+        <publisher participant_profile="LocalShapes" publisher_profile="publisherSquare"/>
     </connector>
 
     <connector name="TCP_Local_TRIANGLES">
-        <subscriber participant_name="TCPShapes" subscriber_name="subscriberTriangle"/>
-        <publisher participant_name="LocalShapes" publisher_name="publisherTriangle"/>
+        <subscriber participant_profile="TCPShapes" subscriber_profile="subscriberTriangle"/>
+        <publisher participant_profile="LocalShapes" publisher_profile="publisherTriangle"/>
     </connector>
 
     <connector name="TCP_Local_CIRCLES">
-        <subscriber participant_name="TCPShapes" subscriber_name="subscriberCircle"/>
-        <publisher participant_name="LocalShapes" publisher_name="publisherCircle"/>
+        <subscriber participant_profile="TCPShapes" subscriber_profile="subscriberCircle"/>
+        <publisher participant_profile="LocalShapes" publisher_profile="publisherCircle"/>
     </connector>
 </is>

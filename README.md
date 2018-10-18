@@ -237,26 +237,26 @@ As reference, let's take this configuration file:
         </bridge>
 
         <connector name="shapes_projection">
-        <subscriber participant_name="3Dshapes" subscriber_name="3d_subscriber"/>
-        <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
+        <subscriber participant_profile="3Dshapes" subscriber_profile="3d_subscriber"/>
+        <publisher participant_profile="2Dshapes" publisher_profile="2d_publisher"/>
         <transformation file="/path/to/transform/libuserlib.so" function="transform3D_to_2D"/>
         </connector>
 
         <connector name="shapes_stereo">
-        <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
-        <publisher participant_name="3Dshapes" publisher_name="3d_publisher"/>
+        <subscriber participant_profile="2Dshapes" subscriber_profile="2d_subscriber"/>
+        <publisher participant_profile="3Dshapes" publisher_profile="3d_publisher"/>
         <transformation file="/path/to/transform/libuserlib.so" function="transform2D_to_3D"/>
         </connector>
 
         <connector name="shapes_protocol">
-        <subscriber participant_name="2Dshapes" subscriber_name="2d_subscriber"/>
-        <publisher participant_name="protocol" publisher_name="protocol_publisher"/>
+        <subscriber participant_profile="2Dshapes" subscriber_profile="2d_subscriber"/>
+        <publisher participant_profile="protocol" publisher_profile="protocol_publisher"/>
         <transformation file="/path/to/transform/libprotocoltransf.so" function="transformFrom2D"/>
         </connector>
 
         <connector name="protocol_shapes">
-        <subscriber participant_name="protocol" subscriber_name="protocol_subscriber"/>
-        <publisher participant_name="2Dshapes" publisher_name="2d_publisher"/>
+        <subscriber participant_profile="protocol" subscriber_profile="protocol_subscriber"/>
+        <publisher participant_profile="2Dshapes" publisher_profile="2d_publisher"/>
         <transformation file="/path/to/transform/libprotocoltransf.so" function="transformTo2D"/>
         </connector>
     </is>

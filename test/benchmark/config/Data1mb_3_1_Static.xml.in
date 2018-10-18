@@ -90,17 +90,17 @@
     </profiles>
 
     <connector name="Data1mb_1_1_Static">
-        <subscriber participant_name="ParticipantA1" subscriber_name="subscriber"/>
-        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+        <subscriber participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_2_1_Static">
-        <subscriber participant_name="ParticipantA2" subscriber_name="subscriber"/>
-        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+        <subscriber participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_3_1_Static">
-        <subscriber participant_name="ParticipantA3" subscriber_name="subscriber"/>
-        <publisher participant_name="ParticipantB" publisher_name="publisher"/>
+        <subscriber participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
     </connector>
 </is>

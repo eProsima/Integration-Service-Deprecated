@@ -115,27 +115,27 @@
     </profiles>
 
     <connector name="Data1mb_1_1_Dynamic">
-        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
-        <publisher participant_name="ParticipantB1" publisher_name="publisher"/>
+        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <publisher participant_profile="ParticipantB1" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_1_2_Dynamic">
-        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
-        <publisher participant_name="ParticipantB2" publisher_name="publisher"/>
+        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <publisher participant_profile="ParticipantB2" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_1_3_Dynamic">
-        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
-        <publisher participant_name="ParticipantB3" publisher_name="publisher"/>
+        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <publisher participant_profile="ParticipantB3" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_1_4_Dynamic">
-        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
-        <publisher participant_name="ParticipantB4" publisher_name="publisher"/>
+        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <publisher participant_profile="ParticipantB4" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_1_5_Dynamic">
-        <subscriber participant_name="ParticipantA" subscriber_name="subscriber"/>
-        <publisher participant_name="ParticipantB5" publisher_name="publisher"/>
+        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <publisher participant_profile="ParticipantB5" publisher_profile="publisher"/>
     </connector>
 </is>

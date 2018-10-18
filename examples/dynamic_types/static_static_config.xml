@@ -62,14 +62,14 @@
     </profiles>
 
     <connector name="HW_to_Key">
-        <subscriber participant_name="HelloWorldParticipant" subscriber_name="subHW"/>
-        <publisher participant_name="KeysParticipant" publisher_name="pubK"/>
+        <subscriber publisher_profile="HelloWorldParticipant" subscriber_profile="subHW"/>
+        <publisher publisher_profile="KeysParticipant" publisher_profile="pubK"/>
         <transformation file="build/libkeyhelloworld_static_static_lib.so" function="HelloWorldToKey"/>
     </connector>
 <!--
     <connector name="Key_to_HW">
-        <subscriber participant_name="KeysParticipant" subscriber_name="subK"/>
-        <publisher participant_name="HelloWorldParticipant" publisher_name="pubHW"/>
+        <subscriber publisher_profile="KeysParticipant" subscriber_profile="subK"/>
+        <publisher publisher_profile="HelloWorldParticipant" publisher_profile="pubHW"/>
     <transformation file="build/libkeyhelloworld_static_static_lib.so" function="KeyToHelloWorld"/>
     </connector>
 -->
