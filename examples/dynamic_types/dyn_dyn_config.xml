@@ -36,24 +36,23 @@
                     <domainId>0</domainId>
                 </builtin>
             </rtps>
-
-            <subscriber profile_name="subHW">
-                <topic>
-                    <name>HelloWorldTopic</name>
-                    <dataType>HelloWorld</dataType>
-                </topic>
-                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-            </subscriber>
-
-            <publisher profile_name="pubHW">
-                <topic>
-                    <name>HelloWorldTopic</name>
-                    <dataType>HelloWorld</dataType>
-                </topic>
-                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-            </publisher>
-
         </participant>
+
+        <subscriber profile_name="subHW">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <publisher profile_name="pubHW">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
 
         <participant profile_name="KeysParticipant">
             <rtps>
@@ -61,25 +60,25 @@
                     <domainId>0</domainId>
                 </builtin>
             </rtps>
-
-            <subscriber profile_name="subK">
-                <topic>
-                    <name>samplePubSubTopic</name>
-                    <dataType>sample</dataType>
-                    <kind>WITH_KEY</kind>
-                </topic>
-                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-            </subscriber>
-
-            <publisher profile_name="pubK">
-                <topic>
-                    <name>samplePubSubTopic</name>
-                    <dataType>sample</dataType>
-                    <kind>WITH_KEY</kind>
-                </topic>
-                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-            </publisher>
         </participant>
+
+        <subscriber profile_name="subK">
+            <topic>
+                <name>samplePubSubTopic</name>
+                <dataType>sample</dataType>
+                <kind>WITH_KEY</kind>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <publisher profile_name="pubK">
+            <topic>
+                <name>samplePubSubTopic</name>
+                <dataType>sample</dataType>
+                <kind>WITH_KEY</kind>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>        
     </profiles>
 
     <connector name="HW_to_Key">

@@ -7,15 +7,14 @@
                     <domainId>0</domainId>
                 </builtin>
             </rtps>
-
-            <subscriber profile_name="fastrtps_subscriber">
-                <topic>
-                    <name>HelloWorldTopic</name>
-                    <dataType>HelloWorld</dataType>
-                </topic>
-                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-            </subscriber>
         </participant>
+        <subscriber profile_name="fastrtps_subscriber">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>        
     </profiles>
 
     <bridge name="file">

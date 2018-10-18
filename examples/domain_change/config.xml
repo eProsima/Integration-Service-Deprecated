@@ -7,15 +7,15 @@
                     <domainId>0</domainId>
                 </builtin>
             </rtps>
-
-            <subscriber profile_name="is_subscriber">
-                <topic>
-                    <name>TextPubSubTopic</name>
-                    <dataType>Text</dataType>
-                </topic>
-                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-            </subscriber>
         </participant>
+
+        <subscriber profile_name="is_subscriber">
+            <topic>
+                <name>TextPubSubTopic</name>
+                <dataType>Text</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
 
         <participant profile_name="domain5">
             <rtps>
@@ -23,15 +23,15 @@
                     <domainId>5</domainId>
                 </builtin>
             </rtps>
-
-            <publisher profile_name="is_publisher">
-                <topic>
-                    <name>TextPubSubTopic</name>
-                    <dataType>Text</dataType>
-                </topic>
-                <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-            </publisher>
         </participant>
+
+        <publisher profile_name="is_publisher">
+            <topic>
+                <name>TextPubSubTopic</name>
+                <dataType>Text</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
     </profiles>
 
     <connector name="domain_change">
