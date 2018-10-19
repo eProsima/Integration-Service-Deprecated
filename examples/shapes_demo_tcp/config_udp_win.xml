@@ -2,74 +2,42 @@
 <is>
     <topic_types>
         <type name="ShapeType">
-            <library>shapelib.dll</library>
+            <library>libshapelib.dll</library>
         </type>
     </topic_types>
 
     <profiles>
-        <transport_descriptors>
-            <transport_descriptor>
-                <transport_id>TCPv4_Client</transport_id>
-                <type>TCPv4</type>
-            </transport_descriptor>
-        </transport_descriptors>
-
         <participant profile_name="LocalShapes">
             <rtps>
                 <builtin>
                     <domainId>1</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>0</seconds>
+                            <fraction>333</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
             </rtps>
         </participant>
 
         <participant profile_name="TCPShapes">
             <rtps>
-                <userTransports>
-                    <transport_id>TCPv4_Client</transport_id>
-                </userTransports>
-                <defaultUnicastLocatorList>
-                    <locator>
-                        <kind>TCPv4</kind>
-                        <address>127.0.0.1</address>
-                        <ports_>
-                            <physical_port>5100</physical_port>
-                        </ports_>
-                    </locator>
-                </defaultUnicastLocatorList>
                 <builtin>
                     <domainId>0</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
-                    <metatrafficUnicastLocatorList>
-                        <locator>
-                            <kind>TCPv4</kind>
-                            <address>127.0.0.1</address>
-                            <ports_>
-                                <physical_port>5100</physical_port>
-                            </ports_>
-                        </locator>
-                    </metatrafficUnicastLocatorList>
-                    <initialPeersList>
-                        <locator>
-                            <kind>TCPv4</kind>
-                            <address>127.0.0.1</address>
-                            <ports_>
-                                <physical_port>5100</physical_port>
-                            </ports_>
-                        </locator>
-                        <locator>
-                            <kind>TCPv4</kind>
-                            <address>127.0.0.1</address>
-                            <ports_>
-                                <physical_port>5100</physical_port>
-                            </ports_>
-                        </locator>
-                    </initialPeersList>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>0</seconds>
+                            <fraction>333</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
-                <use_IP4_to_send>true</use_IP4_to_send>
-                <use_IP6_to_send>false</use_IP6_to_send>
-                <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
 
@@ -155,7 +123,7 @@
                 <kind>WITH_KEY</kind>
                 <historyQos>
                     <kind>KEEP_LAST</kind>
-                    <depth>6</depth>
+                    <depth>20</depth>
                 </historyQos>
             </topic>
             <qos>
@@ -180,7 +148,7 @@
                 <kind>WITH_KEY</kind>
                 <historyQos>
                     <kind>KEEP_LAST</kind>
-                    <depth>6</depth>
+                    <depth>20</depth>
                 </historyQos>
             </topic>
             <qos>
@@ -205,7 +173,7 @@
                 <kind>WITH_KEY</kind>
                 <historyQos>
                     <kind>KEEP_LAST</kind>
-                    <depth>6</depth>
+                    <depth>20</depth>
                 </historyQos>
             </topic>
             <qos>
@@ -224,6 +192,21 @@
         </publisher>
     </profiles>
 
+    <connector name="Local_TCP_SQUARES">
+        <subscriber participant_profile="LocalShapes" subscriber_profile="subscriberSquare"/>
+        <publisher participant_profile="TCPShapes" publisher_profile="publisherSquare"/>
+    </connector>
+
+    <connector name="Local_TCP_TRIANGLES">
+        <subscriber participant_profile="LocalShapes" subscriber_profile="subscriberTriangle"/>
+        <publisher participant_profile="TCPShapes" publisher_profile="publisherTriangle"/>
+    </connector>
+
+    <connector name="Local_TCP_CIRCLES">
+        <subscriber participant_profile="LocalShapes" subscriber_profile="subscriberCircle"/>
+        <publisher participant_profile="TCPShapes" publisher_profile="publisherCircle"/>
+    </connector>
+<!--
     <connector name="TCP_Local_SQUARES">
         <subscriber participant_profile="TCPShapes" subscriber_profile="subscriberSquare"/>
         <publisher participant_profile="LocalShapes" publisher_profile="publisherSquare"/>
@@ -238,4 +221,5 @@
         <subscriber participant_profile="TCPShapes" subscriber_profile="subscriberCircle"/>
         <publisher participant_profile="LocalShapes" publisher_profile="publisherCircle"/>
     </connector>
+-->
 </is>

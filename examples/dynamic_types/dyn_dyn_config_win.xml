@@ -7,6 +7,20 @@
                 <octet name="key_value" key="true"/>
             </struct>
         </type>
+
+        <!--
+        struct HelloWorld
+        {
+            unsigned long index;
+            string message;
+        };
+        <type>
+            <struct name="HelloWorld">
+                <unsignedlong name="index"/>
+                <string name="message"/>
+            </struct>
+        </type>
+        -->
     </types>
 
     <topic_types>
@@ -72,10 +86,11 @@
         <publisher participant_profile="KeysParticipant" publisher_profile="pubK"/>
         <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_dyn_dyn_lib.dll" function="HelloWorldToKey"/>
     </connector>
-
+<!--
     <connector name="Key_to_HW">
         <subscriber participant_profile="KeysParticipant" subscriber_profile="subK"/>
         <publisher participant_profile="HelloWorldParticipant" publisher_profile="pubHW"/>
     <transformation file="C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_dyn_dyn_lib.dll" function="KeyToHelloWorld"/>
     </connector>
+-->
 </is>

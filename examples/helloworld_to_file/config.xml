@@ -14,7 +14,7 @@
                 <dataType>HelloWorld</dataType>
             </topic>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-        </subscriber>        
+        </subscriber>
     </profiles>
 
     <bridge name="file">
