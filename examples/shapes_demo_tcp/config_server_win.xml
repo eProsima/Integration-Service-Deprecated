@@ -11,7 +11,7 @@
             <transport_descriptor>
                 <transport_id>TCPv4_Server</transport_id>
                 <type>TCPv4</type>
-                <wan_addr>127.0.0.1</wan_addr>
+                <wait_negotiation>false</wait_negotiation>
                 <listening_ports>
                     <port>5100</port>
                 </listening_ports>
@@ -31,32 +31,12 @@
                 <userTransports>
                     <transport_id>TCPv4_Server</transport_id>
                 </userTransports>
-                <defaultUnicastLocatorList>
-                    <locator>
-                        <kind>TCPv4</kind>
-                        <address>127.0.0.1</address>
-                        <ports_>
-                            <physical_port>5100</physical_port>
-                        </ports_>
-                    </locator>
-                </defaultUnicastLocatorList>
                 <builtin>
                     <domainId>0</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
-                    <metatrafficUnicastLocatorList>
-                        <locator>
-                            <kind>TCPv4</kind>
-                            <address>127.0.0.1</address>
-                            <ports_>
-                                <physical_port>5100</physical_port>
-                            </ports_>
-                        </locator>
-                    </metatrafficUnicastLocatorList>
                 </builtin>
-                <use_IP4_to_send>true</use_IP4_to_send>
-                <use_IP6_to_send>false</use_IP6_to_send>
                 <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>

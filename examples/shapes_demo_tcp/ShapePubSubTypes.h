@@ -47,4 +47,4 @@ public:
 	unsigned char* m_keyBuffer;
 };
 
-#endif // _Shape_PUBSUBTYPE_H_
+#endif // _SHAPE_PUBSUBTYPES_H_

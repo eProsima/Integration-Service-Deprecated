@@ -11,7 +11,7 @@
             <transport_descriptor>
                 <transport_id>TCPv4_Server</transport_id>
                 <type>TCPv4</type>
-                <wan_addr>127.0.0.1</wan_addr>
+                <wait_negotiation>false</wait_negotiation>
                 <listening_ports>
                     <port>5100</port>
                 </listening_ports>
@@ -19,8 +19,8 @@
             </transport_descriptor>
             <transport_descriptor>
                 <transport_id>TCPv4_Client</transport_id>
+                <wait_negotiation>false</wait_negotiation>
                 <type>TCPv4</type>
-                <metadata_logical_port>0</metadata_logical_port>
             </transport_descriptor>
         </transport_descriptors>
 
@@ -33,8 +33,8 @@
                     </leaseDuration>
                     <leaseAnnouncement>
                         <durationbyval>
-                            <seconds>0</seconds>
-                            <fraction>333</fraction>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
                         </durationbyval>
                     </leaseAnnouncement>
                 </builtin>
@@ -50,8 +50,8 @@
                     </leaseDuration>
                     <leaseAnnouncement>
                         <durationbyval>
-                            <seconds>0</seconds>
-                            <fraction>333</fraction>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
                         </durationbyval>
                     </leaseAnnouncement>
                 </builtin>
@@ -63,46 +63,18 @@
                 <userTransports>
                     <transport_id>TCPv4_Client</transport_id>
                 </userTransports>
-                <defaultUnicastLocatorList>
-                    <locator>
-                        <kind>TCPv4</kind>
-                        <address>127.0.0.1</address>
-                        <ports_>
-                            <physical_port>5100</physical_port>
-                            <logical_port>0</logical_port>
-                        </ports_>
-                    </locator>
-                </defaultUnicastLocatorList>
                 <builtin>
-                    <domainId>1</domainId>
+                    <domainId>0</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
                     <leaseAnnouncement>
                         <durationbyval>
-                            <seconds>0</seconds>
-                            <fraction>333</fraction>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
                         </durationbyval>
                     </leaseAnnouncement>
-                    <metatrafficUnicastLocatorList>
-                        <locator>
-                            <kind>TCPv4</kind>
-                            <address>127.0.0.1</address>
-                            <ports_>
-                                <physical_port>5100</physical_port>
-                                <logical_port>0</logical_port>
-                            </ports_>
-                        </locator>
-                    </metatrafficUnicastLocatorList>
                     <initialPeersList>
-                        <locator>
-                            <kind>TCPv4</kind>
-                            <address>127.0.0.1</address>
-                            <ports_>
-                                <physical_port>5100</physical_port>
-                                <logical_port>0</logical_port>
-                            </ports_>
-                        </locator>
                         <locator>
                             <kind>TCPv4</kind>
                             <address>127.0.0.1</address>
@@ -113,8 +85,6 @@
                         </locator>
                     </initialPeersList>
                 </builtin>
-                <use_IP4_to_send>true</use_IP4_to_send>
-                <use_IP6_to_send>false</use_IP6_to_send>
                 <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
@@ -124,16 +94,6 @@
                 <userTransports>
                     <transport_id>TCPv4_Server</transport_id>
                 </userTransports>
-                <defaultUnicastLocatorList>
-                    <locator>
-                        <kind>TCPv4</kind>
-                        <address>127.0.0.1</address>
-                        <ports_>
-                            <physical_port>5100</physical_port>
-                            <logical_port>0</logical_port>
-                        </ports_>
-                    </locator>
-                </defaultUnicastLocatorList>
                 <builtin>
                     <domainId>0</domainId>
                     <leaseDuration>
@@ -141,23 +101,11 @@
                     </leaseDuration>
                     <leaseAnnouncement>
                         <durationbyval>
-                            <seconds>0</seconds>
-                            <fraction>333</fraction>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
                         </durationbyval>
                     </leaseAnnouncement>
-                    <metatrafficUnicastLocatorList>
-                        <locator>
-                            <kind>TCPv4</kind>
-                            <address>127.0.0.1</address>
-                            <ports_>
-                                <physical_port>5100</physical_port>
-                                <logical_port>0</logical_port>
-                            </ports_>
-                        </locator>
-                    </metatrafficUnicastLocatorList>
                 </builtin>
-                <use_IP4_to_send>true</use_IP4_to_send>
-                <use_IP6_to_send>false</use_IP6_to_send>
                 <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
