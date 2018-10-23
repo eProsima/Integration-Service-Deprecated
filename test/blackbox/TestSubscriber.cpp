@@ -44,7 +44,7 @@ TestSubscriber::TestSubscriber()
 }
 
 bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const std::string& topicName,
-        int domain, TopicDataType* type, const std::string& name, unsigned short port)
+        int domain, TopicDataType* type, const std::string& name, unsigned short port, const std::string& address)
 {
     m_Name = name;
     m_Type = type;
@@ -64,24 +64,13 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
 
         Locator_t initial_peer_locator;
         initial_peer_locator.kind = kind;
-        IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
+        IPLocator::setIPv4(initial_peer_locator, address);
         initial_peer_locator.port = port;
         PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
-        Locator_t unicast_locator;
-        unicast_locator.kind = kind;
-        IPLocator::setIPv4(unicast_locator, "127.0.0.1");
-        unicast_locator.port = port;
-        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Subscriber's data channel
-
-        Locator_t meta_locator;
-        meta_locator.kind = kind;
-        IPLocator::setIPv4(meta_locator, "127.0.0.1");
-        meta_locator.port = port;
-        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator); // Subscriber's meta channel
-
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+        descriptor->wait_for_tcp_negotiation = false;
 		descriptor->sendBufferSize = 8912896; // 8.5Mb
 		descriptor->receiveBufferSize = 8912896; // 8.5Mb
         PParam.rtps.userTransports.push_back(descriptor);
@@ -100,22 +89,9 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
 
         Locator_t initial_peer_locator;
         initial_peer_locator.kind = kind;
-        IPLocator::setIPv6(initial_peer_locator, "::1");
+        IPLocator::setIPv6(initial_peer_locator, address);
         initial_peer_locator.port = port;
         PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
-        PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
-
-        Locator_t unicast_locator;
-        unicast_locator.kind = kind;
-        IPLocator::setIPv6(unicast_locator, "::1");
-        unicast_locator.port = port;
-        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Subscriber's data channel
-
-        Locator_t meta_locator;
-        meta_locator.kind = kind;
-        IPLocator::setIPv6(meta_locator, "::1");
-        meta_locator.port = port;
-        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator); // Subscriber's meta channel
 
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();
@@ -137,14 +113,9 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
     Domain::registerType(mp_participant, type);
 
 	Rparam.topic.topicName = topicName;
-    Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Rparam.topic.historyQos.depth = 5;
-    Rparam.topic.resourceLimitsQos.max_samples = 15;
-    Rparam.topic.resourceLimitsQos.allocated_samples = 15;
-    Rparam.topic.resourceLimitsQos.max_samples_per_instance = 5;
-    Rparam.topic.resourceLimitsQos.max_instances = 3;
+    Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     Rparam.qos.m_reliability.kind = qosKind;
-    Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    Rparam.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_subListener);
 
     if (mp_subscriber == nullptr)

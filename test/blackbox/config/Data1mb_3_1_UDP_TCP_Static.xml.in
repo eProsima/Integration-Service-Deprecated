@@ -1,25 +1,14 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
-        <type name="Data1mb">
-            <participants>
-                <participant name="ParticipantA1"/>
-                <participant name="ParticipantA2"/>
-                <participant name="ParticipantA3"/>
-                <participant name="ParticipantB"/>
-            </participants>
-        </type>
-    </topic_types>
-
     <profiles>
         <transport_descriptors>
             <transport_descriptor>
                 <transport_id>TCPServer</transport_id>
                 <type>TCPv4</type>
                 <listening_ports>
-                    <port>5101</port>
+                    <port>5103</port>
                 </listening_ports>
-                <metadata_logical_port>7200</metadata_logical_port>
+                <wait_negotiation>false</wait_negotiation>
             </transport_descriptor>
         </transport_descriptors>
 
@@ -30,6 +19,12 @@
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
             </rtps>
         </participant>
@@ -41,6 +36,12 @@
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
             </rtps>
         </participant>
@@ -52,6 +53,12 @@
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
             </rtps>
         </participant>
@@ -61,15 +68,6 @@
                 <userTransports>
                     <transport_id>TCPServer</transport_id>
                 </userTransports>
-                <defaultUnicastLocatorList>
-                    <locator>
-                        <kind>TCPv4</kind>
-                        <address>127.0.0.1</address>
-                        <ports_>
-                            <physical_port>5101</physical_port>
-                        </ports_>
-                    </locator>
-                </defaultUnicastLocatorList>
                 <builtin>
                     <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -81,18 +79,7 @@
                             <fraction>0</fraction>
                         </durationbyval>
                     </leaseAnnouncement>
-                    <metatrafficUnicastLocatorList>
-                        <locator>
-                            <kind>TCPv4</kind>
-                            <address>127.0.0.1</address>
-                            <ports_>
-                                <physical_port>5101</physical_port>
-                            </ports_>
-                        </locator>
-                    </metatrafficUnicastLocatorList>
                 </builtin>
-                <use_IP4_to_send>true</use_IP4_to_send>
-                <use_IP6_to_send>false</use_IP6_to_send>
                 <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
@@ -121,12 +108,12 @@
                     <kind>KEEP_ALL</kind>
                 </historyQos>
             </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
             </qos>
-            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </publisher>
     </profiles>
 

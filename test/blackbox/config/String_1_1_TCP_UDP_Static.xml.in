@@ -1,31 +1,46 @@
 <?xml version="1.0"?>
 <is>
     <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>TCPClientString</transport_id>
+                <type>TCPv4</type>
+                <wait_negotiation>false</wait_negotiation>
+            </transport_descriptor>
+        </transport_descriptors>
+
         <participant profile_name="ParticipantA">
             <rtps>
+                <userTransports>
+                    <transport_id>TCPClientString</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
-                    <leaseDuration>
-                        <durationbyname>INFINITE</durationbyname>
-                    </leaseDuration>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>192.168.1.38</address>
+                            <ports_>
+                                <physical_port>5100</physical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
                 </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
 
-        <participant profile_name="ParticipantB">
+        <participant profile_name="ParticipantB1">
             <rtps>
                 <builtin>
                     <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
-                    <leaseDuration>
-                        <durationbyname>INFINITE</durationbyname>
-                    </leaseDuration>
                 </builtin>
             </rtps>
         </participant>
 
         <subscriber profile_name="subscriber">
             <topic>
-                <name>StringType</name>
+                <name>StringTopic</name>
                 <dataType>StringType</dataType>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
@@ -41,7 +56,7 @@
 
         <publisher profile_name="publisher">
             <topic>
-                <name>StringType</name>
+                <name>StringTopic</name>
                 <dataType>StringType</dataType>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
@@ -56,8 +71,8 @@
         </publisher>
     </profiles>
 
-    <connector name="String_1_1_UDP_UDP_Static">
+    <connector name="String_1_1_TCP_UDP_Static">
         <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
+        <publisher participant_profile="ParticipantB1" publisher_profile="publisher"/>
     </connector>
 </is>

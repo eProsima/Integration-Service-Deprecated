@@ -66,25 +66,13 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
     }
     else if (transport == 2)
     {
-        uint32_t kind = LOCATOR_KIND_TCPv4;
+        //uint32_t kind = LOCATOR_KIND_TCPv4;
         PParam.rtps.useBuiltinTransports = false;
-
-        Locator_t unicast_locator;
-        unicast_locator.kind = kind;
-        IPLocator::setIPv4(unicast_locator, "127.0.0.1");
-        unicast_locator.port = port;
-        PParam.rtps.defaultUnicastLocatorList.push_back(unicast_locator); // Publisher's data channel
-
-        Locator_t meta_locator;
-        meta_locator.kind = kind;
-        IPLocator::setIPv4(meta_locator, "127.0.0.1");
-        meta_locator.port = port;
-        PParam.rtps.builtin.metatrafficUnicastLocatorList.push_back(meta_locator);  // Publisher's meta channel
 
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
         descriptor->sendBufferSize = 8912896; // 8.5Mb
         descriptor->receiveBufferSize = 8912896; // 8.5Mb
-        descriptor->set_WAN_address("127.0.0.1");
+        descriptor->wait_for_tcp_negotiation = false;
         descriptor->add_listener_port(port);
         PParam.rtps.userTransports.push_back(descriptor);
     }
@@ -136,16 +124,9 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
     Domain::registerType(mp_participant, type);
 
 	Wparam.topic.topicName = topicName;
-    Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 5;
-    Wparam.topic.resourceLimitsQos.max_samples = 15;
-    Wparam.topic.resourceLimitsQos.max_samples_per_instance = 5;
-    Wparam.topic.resourceLimitsQos.max_instances = 3;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 15;
-    Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
+    Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     Wparam.qos.m_reliability.kind = qosKind;
-	Wparam.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
+    Wparam.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
 
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_pubListener);
     if (mp_publisher == nullptr)

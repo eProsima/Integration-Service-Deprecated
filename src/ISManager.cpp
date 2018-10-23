@@ -349,8 +349,7 @@ void ISManager::createSubscriber(Participant* participant, const std::string &pa
             if (type != nullptr)
             {
                 Domain::registerType(participant, type);
-                std::pair<std::string, std::string> idx =
-                        std::make_pair(std::string(participant->getAttributes().rtps.getName()), topic_type);
+                std::pair<std::string, std::string> idx = std::make_pair(participant_profile, topic_type);
                 data_types[idx] = type;
             }
             else
@@ -379,8 +378,7 @@ void ISManager::createSubscriber(Participant* participant, const std::string &pa
     //Associate types
     const std::string &typeName = listener->getRTPSSubscriber()->getAttributes().topic.topicDataType;
     const std::string &topic_name = listener->getRTPSSubscriber()->getAttributes().topic.topicName;
-    std::pair<std::string, std::string> idx =
-        std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
+    std::pair<std::string, std::string> idx = std::make_pair(participant_profile, typeName);
     listener->input_type = data_types[idx];
     listener->input_type->setName(typeName.c_str());
 
@@ -416,8 +414,7 @@ void ISManager::createPublisher(Participant* participant, const std::string &par
             if (type != nullptr)
             {
                 Domain::registerType(participant, type);
-                std::pair<std::string, std::string> idx =
-                        std::make_pair(std::string(participant->getAttributes().rtps.getName()), topic_type);
+                std::pair<std::string, std::string> idx = std::make_pair(participant_profile, topic_type);
                 data_types[idx] = type;
             }
             else
@@ -438,8 +435,7 @@ void ISManager::createPublisher(Participant* participant, const std::string &par
     //Associate types
     const std::string &typeName = publisher->getRTPSPublisher()->getAttributes().topic.topicDataType;
     const std::string &topic_name = publisher->getRTPSPublisher()->getAttributes().topic.topicName;
-    std::pair<std::string, std::string> idx =
-        std::make_pair(std::string(participant->getAttributes().rtps.getName()), typeName);
+    std::pair<std::string, std::string> idx = std::make_pair(participant_profile, typeName);
     publisher->output_type = data_types[idx];
     publisher->output_type->setName(typeName.c_str());
 

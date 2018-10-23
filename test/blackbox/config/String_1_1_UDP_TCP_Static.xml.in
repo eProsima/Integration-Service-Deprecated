@@ -1,31 +1,58 @@
 <?xml version="1.0"?>
 <is>
     <profiles>
-        <participant profile_name="ParticipantA">
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>TCPServerString</transport_id>
+                <type>TCPv4</type>
+                <listening_ports>
+                    <port>5101</port>
+                </listening_ports>
+                <wait_negotiation>false</wait_negotiation>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="ParticipantA1">
             <rtps>
                 <builtin>
                     <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
             </rtps>
         </participant>
 
         <participant profile_name="ParticipantB">
             <rtps>
+                <userTransports>
+                    <transport_id>TCPServerString</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
         </participant>
 
         <subscriber profile_name="subscriber">
             <topic>
-                <name>StringType</name>
+                <name>StringTopic</name>
                 <dataType>StringType</dataType>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
@@ -41,7 +68,7 @@
 
         <publisher profile_name="publisher">
             <topic>
-                <name>StringType</name>
+                <name>StringTopic</name>
                 <dataType>StringType</dataType>
                 <historyQos>
                     <kind>KEEP_ALL</kind>
@@ -56,8 +83,8 @@
         </publisher>
     </profiles>
 
-    <connector name="String_1_1_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+    <connector name="String_1_1_UDP_TCP_Static">
+        <subscriber participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
         <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
     </connector>
 </is>

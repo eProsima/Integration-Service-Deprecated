@@ -35,7 +35,8 @@ public:
 
     //!Initialize the subscriber
 	bool init(int transport, eprosima::fastrtps::ReliabilityQosPolicyKind kind, const std::string& topicName,
-        int domain, eprosima::fastrtps::TopicDataType* type, const std::string& name, unsigned short port = 0);
+        int domain, eprosima::fastrtps::TopicDataType* type, const std::string& name,
+        unsigned short port = 0, const std::string& address = "127.0.0.1");
 
     //!RUN the subscriber
 	void run();
