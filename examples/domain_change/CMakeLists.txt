@@ -15,8 +15,8 @@
 cmake_minimum_required(VERSION 2.8.12)
 project("DomainExample")
 
-find_package(fastrtps REQUIRED)
 find_package(fastcdr REQUIRED)
+find_package(fastrtps REQUIRED)
 
 # Set C++11
 include(CheckCXXCompilerFlag)

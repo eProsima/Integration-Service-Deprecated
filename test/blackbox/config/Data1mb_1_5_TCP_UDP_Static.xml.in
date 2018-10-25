@@ -19,7 +19,7 @@
                     <initialPeersList>
                         <locator>
                             <kind>TCPv4</kind>
-                            <address>192.168.1.38</address>
+                            <address>192.168.1.41</address>
                             <ports_>
                                 <physical_port>5102</physical_port>
                             </ports_>

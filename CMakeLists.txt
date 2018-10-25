@@ -75,6 +75,21 @@ endif()
 
 include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
 
+###############################################################################
+# Test system configuration
+###############################################################################
+include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
+check_stdcxx()
+check_compile_feature()
+check_endianness()
+
+###############################################################################
+# Check MSVC architecture
+###############################################################################
+if(MSVC OR MSVC_IDE)
+    check_msvc_arch()
+endif()
+
 find_package(fastcdr REQUIRED)
 find_package(fastrtps REQUIRED)
 

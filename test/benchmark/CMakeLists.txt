@@ -98,6 +98,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         # Unit tests
         ###############################################################################
         set(BENCHMARK_SOURCE Benchmark.cpp
+            ../../thirdparty/tinyxml2/tinyxml2.cpp 
+            ../../thirdparty/tinyxml2/tinyxml2.h
             types/String.cpp
             types/StringType.cpp
             types/Data1mb.cpp
@@ -136,7 +138,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         configure_file("Benchmark.cpp.in" ${PROJECT_SOURCE_DIR}/test/benchmark/Benchmark.cpp)
 
         add_executable(Benchmark ${BENCHMARK_SOURCE})
-        target_include_directories(Benchmark PRIVATE ${GTEST_INCLUDE_DIRS})
+        target_include_directories(Benchmark PRIVATE ${GTEST_INCLUDE_DIRS} ${ASIO_INCLUDE_DIR} ../../thirdparty/tinyxml2)
         target_link_libraries(Benchmark fastrtps fastcdr islib ${GTEST_LIBRARIES})
         add_benchmark_gtest(Benchmark SOURCES ${BENCHMARK_SOURCE}
             "DOMAIN0_RANDOM_NUMBER=${DOMAIN0_RANDOM_NUMBER}"

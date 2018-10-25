@@ -47,7 +47,7 @@ class BlackBox : public ::testing::Test
 
         BlackBox()
         {
-            //Log::SetVerbosity(Log::Info);
+            Log::SetVerbosity(Log::Info);
             //Log::SetCategoryFilter(std::regex("(SECURITY)"));
         }
 
@@ -70,7 +70,11 @@ TEST_F(BlackBox, Keyed_3_5_TCP_UDP_Dynamic)
     TestSubscriber sub3;
     TestSubscriber sub4;
     TestSubscriber sub5;
+#ifdef _WIN32
+    TestIS is("config/Keyed_3_5_TCP_UDP_Dynamic_win.xml");
+#else
     TestIS is("config/Keyed_3_5_TCP_UDP_Dynamic.xml");
+#endif
     const uint16_t nmsgs = 5;
 
     pub1.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "KeyedTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_Keyed", 6200);
@@ -123,11 +127,11 @@ TEST_F(BlackBox, Keyed_3_5_TCP_UDP_Dynamic)
     sub4.block_for_at_least(3);
     sub5.block_for_at_least(3);
 
-    ASSERT_GE(sub1.samplesReceived(), 3);
-    ASSERT_GE(sub2.samplesReceived(), 3);
-    ASSERT_GE(sub3.samplesReceived(), 3);
-    ASSERT_GE(sub4.samplesReceived(), 3);
-    ASSERT_GE(sub5.samplesReceived(), 3);
+    ASSERT_GE(sub1.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub2.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub3.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub4.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub5.samplesReceived(), uint32_t(3));
     is.stop();
 }
 

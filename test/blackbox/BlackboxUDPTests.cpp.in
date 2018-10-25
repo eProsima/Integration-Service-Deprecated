@@ -97,7 +97,7 @@ TEST_F(BlackBox, String_1_1_UDP_UDP_Static)
     //eClock::my_sleep(500);
     sub.block_for_at_least(3);
 
-    ASSERT_GE(sub.samplesReceived(), 3);
+    ASSERT_GE(sub.samplesReceived(), uint32_t(3));
     is.stop();
 }
 
@@ -154,11 +154,11 @@ TEST_F(BlackBox, String_1_5_UDP_UDP_Static)
     sub4.block_for_at_least(3);
     sub5.block_for_at_least(3);
 
-    ASSERT_GE(sub1.samplesReceived(), 3);
-    ASSERT_GE(sub2.samplesReceived(), 3);
-    ASSERT_GE(sub3.samplesReceived(), 3);
-    ASSERT_GE(sub4.samplesReceived(), 3);
-    ASSERT_GE(sub5.samplesReceived(), 3);
+    ASSERT_GE(sub1.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub2.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub3.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub4.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub5.samplesReceived(), uint32_t(3));
     is.stop();
 }
 
@@ -206,7 +206,7 @@ TEST_F(BlackBox, String_3_1_UDP_UDP_Static)
     //eClock::my_sleep(500);
     sub.block_for_at_least(9);
 
-    ASSERT_GE(sub.samplesReceived(), 3);
+    ASSERT_GE(sub.samplesReceived(), uint32_t(3));
     is.stop();
 }
 
@@ -274,11 +274,11 @@ TEST_F(BlackBox, String_3_5_UDP_UDP_Static)
     sub4.block_for_at_least(9);
     sub5.block_for_at_least(9);
 
-    ASSERT_GE(sub1.samplesReceived(), 9);
-    ASSERT_GE(sub2.samplesReceived(), 9);
-    ASSERT_GE(sub3.samplesReceived(), 9);
-    ASSERT_GE(sub4.samplesReceived(), 9);
-    ASSERT_GE(sub5.samplesReceived(), 9);
+    ASSERT_GE(sub1.samplesReceived(), uint32_t(9));
+    ASSERT_GE(sub2.samplesReceived(), uint32_t(9));
+    ASSERT_GE(sub3.samplesReceived(), uint32_t(9));
+    ASSERT_GE(sub4.samplesReceived(), uint32_t(9));
+    ASSERT_GE(sub5.samplesReceived(), uint32_t(9));
     is.stop();
 }
 
@@ -320,7 +320,7 @@ TEST_F(BlackBox, Data1mb_1_1_UDP_UDP_Static)
     //eClock::my_sleep(500);
     sub.block_for_at_least(5);
 
-    ASSERT_GE(sub.samplesReceived(), 5);
+    ASSERT_GE(sub.samplesReceived(), uint32_t(5));
     is.stop();
 }
 */
@@ -378,11 +378,11 @@ TEST_F(BlackBox, Data1mb_1_5_UDP_UDP_Static)
     sub4.block_for_at_least(3);
     sub5.block_for_at_least(3);
 
-    ASSERT_GE(sub1.samplesReceived(), 3);
-    ASSERT_GE(sub2.samplesReceived(), 3);
-    ASSERT_GE(sub3.samplesReceived(), 3);
-    ASSERT_GE(sub4.samplesReceived(), 3);
-    ASSERT_GE(sub5.samplesReceived(), 3);
+    ASSERT_GE(sub1.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub2.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub3.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub4.samplesReceived(), uint32_t(3));
+    ASSERT_GE(sub5.samplesReceived(), uint32_t(3));
     is.stop();
 }
 
@@ -393,7 +393,11 @@ TEST_F(BlackBox, String_3_1_UDP_UDP_Dynamic)
     TestPublisher pub2;
     TestPublisher pub3;
     TestSubscriber sub;
-    TestIS is("config/String_3_1_UDP_UDP_Dynamic.xml");
+#ifdef _WIN32
+    TestIS is("config/String_3_1_UDP_UDP_Dynamic_win.xml");
+#else
+	TestIS is("config/String_3_1_UDP_UDP_Dynamic.xml");
+#endif
     const uint16_t nmsgs = 5;
 
     pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringType", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_String");
@@ -430,7 +434,7 @@ TEST_F(BlackBox, String_3_1_UDP_UDP_Dynamic)
     //eClock::my_sleep(500);
     sub.block_for_at_least(9);
 
-    ASSERT_GE(sub.samplesReceived(), 3);
+    ASSERT_GE(sub.samplesReceived(), uint32_t(3));
     is.stop();
 }
 

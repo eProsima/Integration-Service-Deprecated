@@ -71,8 +71,8 @@ public:
 
     ~Chrono()
     {
-        m_Result = std::chrono::duration_cast<std::chrono::milliseconds>(
-                std::chrono::high_resolution_clock::now() - m_Start).count();
+        m_Result = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::high_resolution_clock::now() - m_Start).count());
     }
 private:
     double& m_Result;
@@ -119,7 +119,7 @@ TEST_F(Benchmark, String_1_1_Static)
         if (recv < nmsgs)
         {
             std::cout << "Received " << recv << " samples!!" << std::endl;
-            lostD = 100. - (recv * 100.) / nmsgs;
+            lostD = 100.f - (recv * 100.f) / nmsgs;
         }
     }
 
@@ -161,7 +161,7 @@ TEST_F(Benchmark, String_1_1_Static)
         if (recv < nmsgs)
         {
             std::cout << "Received " << recv << " samples!!" << std::endl;
-            lostI = 100. - (recv * 100.) / nmsgs;
+            lostI = 100.f - (recv *100.f) / nmsgs;
         }
 
         is.stop();
@@ -171,7 +171,7 @@ TEST_F(Benchmark, String_1_1_Static)
     std::cout << "Direct communication:  " << direct << " ms. (" << lostD << "% lost)" << std::endl;
     std::cout << "Communication with IS: " << indirect << " ms. (" << lostI << "% lost)" << std::endl;
     std::cout << "Difference: " << indirect - direct << " ms. ("
-        << (100. * (indirect - direct)) / direct << " %)" << std::endl;
+        << (100.f * (indirect - direct)) / direct << " %)" << std::endl;
 }
 
 TEST_F(Benchmark, String_1_5_Static)
@@ -238,27 +238,27 @@ TEST_F(Benchmark, String_1_5_Static)
         if (recv1 < nmsgs)
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostD += 100. - (recv1 * 100.) / nmsgs;
+            lostD += 100.f - (recv1 *100.f) / nmsgs;
         }
         if (recv2 < nmsgs)
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostD += 100. - (recv2 * 100.) / nmsgs;
+            lostD += 100.f - (recv2 *100.f) / nmsgs;
         }
         if (recv3 < nmsgs)
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostD += 100. - (recv3 * 100.) / nmsgs;
+            lostD += 100.f - (recv3 *100.f) / nmsgs;
         }
         if (recv4 < nmsgs)
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostD += 100. - (recv4 * 100.) / nmsgs;
+            lostD += 100.f - (recv4 *100.f) / nmsgs;
         }
         if (recv5 < nmsgs)
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostD += 100. - (recv5 * 100.) / nmsgs;
+            lostD += 100.f - (recv5 *100.f) / nmsgs;
         }
         lostD /= 5.;
 
@@ -325,27 +325,27 @@ TEST_F(Benchmark, String_1_5_Static)
         if (recv1 < nmsgs)
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostI += 100. - (recv1 * 100.) / nmsgs;
+            lostI += 100.f - (recv1 *100.f) / nmsgs;
         }
         if (recv2 < nmsgs)
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostI += 100. - (recv2 * 100.) / nmsgs;
+            lostI += 100.f - (recv2 *100.f) / nmsgs;
         }
         if (recv3 < nmsgs)
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostI += 100. - (recv3 * 100.) / nmsgs;
+            lostI += 100.f - (recv3 *100.f) / nmsgs;
         }
         if (recv4 < nmsgs)
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostI += 100. - (recv4 * 100.) / nmsgs;
+            lostI += 100.f - (recv4 *100.f) / nmsgs;
         }
         if (recv5 < nmsgs)
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostI += 100. - (recv5 * 100.) / nmsgs;
+            lostI += 100.f - (recv5 *100.f) / nmsgs;
         }
         lostI /= 5.;
 
@@ -356,7 +356,7 @@ TEST_F(Benchmark, String_1_5_Static)
     std::cout << "Direct communication:  " << direct << " ms. (" << lostD << "% lost)" << std::endl;
     std::cout << "Communication with IS: " << indirect << " ms. (" << lostI << "% lost)" << std::endl;
     std::cout << "Difference: " << indirect - direct << " ms. ("
-        << (100. * (indirect - direct)) / direct << " %)" << std::endl;
+        << (100.f * (indirect - direct)) / direct << " %)" << std::endl;
 }
 
 TEST_F(Benchmark, String_3_1_Static)
@@ -411,7 +411,7 @@ TEST_F(Benchmark, String_3_1_Static)
         if (recv < nmsgs*3)
         {
             std::cout << "Received " << recv << " samples!!" << std::endl;
-            lostD = 100. - (recv * 100.) / (nmsgs*3);
+            lostD = 100.f - (recv *100.f) / (nmsgs*3);
         }
 
     }
@@ -466,7 +466,7 @@ TEST_F(Benchmark, String_3_1_Static)
         if (recv < nmsgs*3)
         {
             std::cout << "Received " << recv << " samples!!" << std::endl;
-            lostI = 100. - (recv * 100.) / (nmsgs*3);
+            lostI = 100.f - (recv *100.f) / (nmsgs*3);
         }
 
         is.stop();
@@ -476,7 +476,7 @@ TEST_F(Benchmark, String_3_1_Static)
     std::cout << "Direct communication:  " << direct << " ms. (" << lostD << "% lost)" << std::endl;
     std::cout << "Communication with IS: " << indirect << " ms. (" << lostI << "% lost)" << std::endl;
     std::cout << "Difference: " << indirect - direct << " ms. ("
-        << (100. * (indirect - direct)) / direct << " %)" << std::endl;
+        << (100.f * (indirect - direct)) / direct << " %)" << std::endl;
 }
 
 TEST_F(Benchmark, String_3_5_Static)
@@ -554,27 +554,27 @@ TEST_F(Benchmark, String_3_5_Static)
         if (recv1 < (nmsgs*3))
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostD += 100. - (recv1 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv1 *100.f) / (nmsgs*3);
         }
         if (recv2 < (nmsgs*3))
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostD += 100. - (recv2 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv2 *100.f) / (nmsgs*3);
         }
         if (recv3 < (nmsgs*3))
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostD += 100. - (recv3 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv3 *100.f) / (nmsgs*3);
         }
         if (recv4 < (nmsgs*3))
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostD += 100. - (recv4 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv4 *100.f) / (nmsgs*3);
         }
         if (recv5 < (nmsgs*3))
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostD += 100. - (recv5 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv5 *100.f) / (nmsgs*3);
         }
         lostD /= 5.;
 
@@ -653,27 +653,27 @@ TEST_F(Benchmark, String_3_5_Static)
         if (recv1 < (nmsgs*3))
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostI += 100. - (recv1 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv1 *100.f) / (nmsgs*3);
         }
         if (recv2 < (nmsgs*3))
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostI += 100. - (recv2 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv2 *100.f) / (nmsgs*3);
         }
         if (recv3 < (nmsgs*3))
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostI += 100. - (recv3 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv3 *100.f) / (nmsgs*3);
         }
         if (recv4 < (nmsgs*3))
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostI += 100. - (recv4 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv4 *100.f) / (nmsgs*3);
         }
         if (recv5 < (nmsgs*3))
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostI += 100. - (recv5 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv5 *100.f) / (nmsgs*3);
         }
         lostI /= 5.;
 
@@ -684,7 +684,7 @@ TEST_F(Benchmark, String_3_5_Static)
     std::cout << "Direct communication:  " << direct << " ms. (" << lostD << "% lost)" << std::endl;
     std::cout << "Communication with IS: " << indirect << " ms. (" << lostI << "% lost)" << std::endl;
     std::cout << "Difference: " << indirect - direct << " ms. ("
-        << (100. * (indirect - direct)) / direct << " %)" << std::endl;
+        << (100.f * (indirect - direct)) / direct << " %)" << std::endl;
 }
 
 TEST_F(Benchmark, String_3_5_Dynamic)
@@ -762,27 +762,27 @@ TEST_F(Benchmark, String_3_5_Dynamic)
         if (recv1 < (nmsgs*3))
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostD += 100. - (recv1 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv1 *100.f) / (nmsgs*3);
         }
         if (recv2 < (nmsgs*3))
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostD += 100. - (recv2 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv2 *100.f) / (nmsgs*3);
         }
         if (recv3 < (nmsgs*3))
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostD += 100. - (recv3 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv3 *100.f) / (nmsgs*3);
         }
         if (recv4 < (nmsgs*3))
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostD += 100. - (recv4 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv4 *100.f) / (nmsgs*3);
         }
         if (recv5 < (nmsgs*3))
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostD += 100. - (recv5 * 100.) / (nmsgs*3);
+            lostD += 100.f - (recv5 *100.f) / (nmsgs*3);
         }
         lostD /= 5.;
 
@@ -861,27 +861,27 @@ TEST_F(Benchmark, String_3_5_Dynamic)
         if (recv1 < (nmsgs*3))
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostI += 100. - (recv1 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv1 *100.f) / (nmsgs*3);
         }
         if (recv2 < (nmsgs*3))
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostI += 100. - (recv2 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv2 *100.f) / (nmsgs*3);
         }
         if (recv3 < (nmsgs*3))
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostI += 100. - (recv3 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv3 *100.f) / (nmsgs*3);
         }
         if (recv4 < (nmsgs*3))
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostI += 100. - (recv4 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv4 *100.f) / (nmsgs*3);
         }
         if (recv5 < (nmsgs*3))
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostI += 100. - (recv5 * 100.) / (nmsgs*3);
+            lostI += 100.f - (recv5 *100.f) / (nmsgs*3);
         }
         lostI /= 5.;
 
@@ -892,7 +892,7 @@ TEST_F(Benchmark, String_3_5_Dynamic)
     std::cout << "Direct communication:  " << direct << " ms. (" << lostD << "% lost)" << std::endl;
     std::cout << "Communication with IS: " << indirect << " ms. (" << lostI << "% lost)" << std::endl;
     std::cout << "Difference: " << indirect - direct << " ms. ("
-        << (100. * (indirect - direct)) / direct << " %)" << std::endl;
+        << (100.f * (indirect - direct)) / direct << " %)" << std::endl;
 }
 
 TEST_F(Benchmark, Data1mb_1_5_Static)
@@ -959,27 +959,27 @@ TEST_F(Benchmark, Data1mb_1_5_Static)
         if (recv1 < nmsgs)
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostD += 100. - (recv1 * 100.) / nmsgs;
+            lostD += 100.f - (recv1 *100.f) / nmsgs;
         }
         if (recv2 < nmsgs)
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostD += 100. - (recv2 * 100.) / nmsgs;
+            lostD += 100.f - (recv2 *100.f) / nmsgs;
         }
         if (recv3 < nmsgs)
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostD += 100. - (recv3 * 100.) / nmsgs;
+            lostD += 100.f - (recv3 *100.f) / nmsgs;
         }
         if (recv4 < nmsgs)
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostD += 100. - (recv4 * 100.) / nmsgs;
+            lostD += 100.f - (recv4 *100.f) / nmsgs;
         }
         if (recv5 < nmsgs)
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostD += 100. - (recv5 * 100.) / nmsgs;
+            lostD += 100.f - (recv5 *100.f) / nmsgs;
         }
         lostD /= 5.;
 
@@ -1046,27 +1046,27 @@ TEST_F(Benchmark, Data1mb_1_5_Static)
         if (recv1 < nmsgs)
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostI += 100. - (recv1 * 100.) / nmsgs;
+            lostI += 100.f - (recv1 *100.f) / nmsgs;
         }
         if (recv2 < nmsgs)
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostI += 100. - (recv2 * 100.) / nmsgs;
+            lostI += 100.f - (recv2 *100.f) / nmsgs;
         }
         if (recv3 < nmsgs)
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostI += 100. - (recv3 * 100.) / nmsgs;
+            lostI += 100.f - (recv3 *100.f) / nmsgs;
         }
         if (recv4 < nmsgs)
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostI += 100. - (recv4 * 100.) / nmsgs;
+            lostI += 100.f - (recv4 *100.f) / nmsgs;
         }
         if (recv5 < nmsgs)
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostI += 100. - (recv5 * 100.) / nmsgs;
+            lostI += 100.f - (recv5 *100.f) / nmsgs;
         }
         lostI /= 5.;
 
@@ -1077,7 +1077,7 @@ TEST_F(Benchmark, Data1mb_1_5_Static)
     std::cout << "Direct communication:  " << direct << " ms. (" << lostD << "% lost)" << std::endl;
     std::cout << "Communication with IS: " << indirect << " ms. (" << lostI << "% lost)" << std::endl;
     std::cout << "Difference: " << indirect - direct << " ms. ("
-        << (100. * (indirect - direct)) / direct << " %)" << std::endl;
+        << (100.f * (indirect - direct)) / direct << " %)" << std::endl;
 }
 
 TEST_F(Benchmark, Data1mb_3_1_Static)
@@ -1132,7 +1132,7 @@ TEST_F(Benchmark, Data1mb_3_1_Static)
         if (recv < nmsgs*3)
         {
             std::cout << "Received " << recv << " samples!!" << std::endl;
-            lostD = 100. - (recv * 100.) / (nmsgs*3);
+            lostD = 100.f - (recv *100.f) / (nmsgs*3);
         }
 
     }
@@ -1187,7 +1187,7 @@ TEST_F(Benchmark, Data1mb_3_1_Static)
         if (recv < nmsgs*3)
         {
             std::cout << "Received " << recv << " samples!!" << std::endl;
-            lostI = 100. - (recv * 100.) / (nmsgs*3);
+            lostI = 100.f - (recv *100.f) / (nmsgs*3);
         }
 
         is.stop();
@@ -1197,7 +1197,7 @@ TEST_F(Benchmark, Data1mb_3_1_Static)
     std::cout << "Direct communication:  " << direct << " ms. (" << lostD << "% lost)" << std::endl;
     std::cout << "Communication with IS: " << indirect << " ms. (" << lostI << "% lost)" << std::endl;
     std::cout << "Difference: " << indirect - direct << " ms. ("
-        << (100. * (indirect - direct)) / direct << " %)" << std::endl;
+        << (100.f * (indirect - direct)) / direct << " %)" << std::endl;
 }
 
 TEST_F(Benchmark, Data1mb_1_5_Dynamic)
@@ -1264,27 +1264,27 @@ TEST_F(Benchmark, Data1mb_1_5_Dynamic)
         if (recv1 < nmsgs)
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostD += 100. - (recv1 * 100.) / nmsgs;
+            lostD += 100.f - (recv1 *100.f) / nmsgs;
         }
         if (recv2 < nmsgs)
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostD += 100. - (recv2 * 100.) / nmsgs;
+            lostD += 100.f - (recv2 *100.f) / nmsgs;
         }
         if (recv3 < nmsgs)
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostD += 100. - (recv3 * 100.) / nmsgs;
+            lostD += 100.f - (recv3 *100.f) / nmsgs;
         }
         if (recv4 < nmsgs)
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostD += 100. - (recv4 * 100.) / nmsgs;
+            lostD += 100.f - (recv4 *100.f) / nmsgs;
         }
         if (recv5 < nmsgs)
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostD += 100. - (recv5 * 100.) / nmsgs;
+            lostD += 100.f - (recv5 *100.f) / nmsgs;
         }
         lostD /= 5.;
 
@@ -1351,27 +1351,27 @@ TEST_F(Benchmark, Data1mb_1_5_Dynamic)
         if (recv1 < nmsgs)
         {
             std::cout << "1- Received " << recv1 << " samples!!" << std::endl;
-            lostI += 100. - (recv1 * 100.) / nmsgs;
+            lostI += 100.f - (recv1 *100.f) / nmsgs;
         }
         if (recv2 < nmsgs)
         {
             std::cout << "2- Received " << recv2 << " samples!!" << std::endl;
-            lostI += 100. - (recv2 * 100.) / nmsgs;
+            lostI += 100.f - (recv2 *100.f) / nmsgs;
         }
         if (recv3 < nmsgs)
         {
             std::cout << "3- Received " << recv3 << " samples!!" << std::endl;
-            lostI += 100. - (recv3 * 100.) / nmsgs;
+            lostI += 100.f - (recv3 *100.f) / nmsgs;
         }
         if (recv4 < nmsgs)
         {
             std::cout << "4- Received " << recv4 << " samples!!" << std::endl;
-            lostI += 100. - (recv4 * 100.) / nmsgs;
+            lostI += 100.f - (recv4 *100.f) / nmsgs;
         }
         if (recv5 < nmsgs)
         {
             std::cout << "5- Received " << recv5 << " samples!!" << std::endl;
-            lostI += 100. - (recv5 * 100.) / nmsgs;
+            lostI += 100.f - (recv5 *100.f) / nmsgs;
         }
         lostI /= 5.;
 
@@ -1382,7 +1382,7 @@ TEST_F(Benchmark, Data1mb_1_5_Dynamic)
     std::cout << "Direct communication:  " << direct << " ms. (" << lostD << "% lost)" << std::endl;
     std::cout << "Communication with IS: " << indirect << " ms. (" << lostI << "% lost)" << std::endl;
     std::cout << "Difference: " << indirect - direct << " ms. ("
-        << (100. * (indirect - direct)) / direct << " %)" << std::endl;
+        << (100.f * (indirect - direct)) / direct << " %)" << std::endl;
 }
 
 TEST_F(Benchmark, Data1mb_3_1_Dynamic)
@@ -1437,7 +1437,7 @@ TEST_F(Benchmark, Data1mb_3_1_Dynamic)
         if (recv < nmsgs*3)
         {
             std::cout << "Received " << recv << " samples!!" << std::endl;
-            lostD = 100. - (recv * 100.) / (nmsgs*3);
+            lostD = 100.f - (recv *100.f) / (nmsgs*3);
         }
 
     }
@@ -1492,7 +1492,7 @@ TEST_F(Benchmark, Data1mb_3_1_Dynamic)
         if (recv < nmsgs*3)
         {
             std::cout << "Received " << recv << " samples!!" << std::endl;
-            lostI = 100. - (recv * 100.) / (nmsgs*3);
+            lostI = 100.f - (recv *100.f) / (nmsgs*3);
         }
 
         is.stop();
@@ -1502,7 +1502,7 @@ TEST_F(Benchmark, Data1mb_3_1_Dynamic)
     std::cout << "Direct communication:  " << direct << " ms. (" << lostD << "% lost)" << std::endl;
     std::cout << "Communication with IS: " << indirect << " ms. (" << lostI << "% lost)" << std::endl;
     std::cout << "Difference: " << indirect - direct << " ms. ("
-        << (100. * (indirect - direct)) / direct << " %)" << std::endl;
+        << (100.f * (indirect - direct)) / direct << " %)" << std::endl;
 }
 
 int main(int argc, char **argv)
