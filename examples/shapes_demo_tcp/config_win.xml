@@ -2,7 +2,7 @@
 <is>
     <topic_types>
         <type name="ShapeType">
-            <library>build\Debug\shapelib.dll</library>
+            <library>build\Release\shapelib.dll</library>
         </type>
     </topic_types>
 

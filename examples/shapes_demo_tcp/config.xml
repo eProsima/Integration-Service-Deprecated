@@ -2,7 +2,7 @@
 <is>
     <topic_types>
         <type name="ShapeType">
-            <library>libshapelib.so</library>
+            <library>build/libshapelib.so</library>
         </type>
     </topic_types>
 
