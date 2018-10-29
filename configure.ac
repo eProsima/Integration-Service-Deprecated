@@ -19,8 +19,8 @@
 #
 # Define variables for the Integration-Services version number.
 #
-m4_define([version_major],[0])
-m4_define([version_minor],[1])
+m4_define([version_major],[1])
+m4_define([version_minor],[0])
 m4_define([version_micro],[0])
 
 AC_INIT([integration_services], [version_major.version_minor.version_micro], [support@eprosima.com], [eProsima Integration-Services], [http://eprosima.com/])

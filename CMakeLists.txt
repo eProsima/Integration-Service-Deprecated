@@ -231,7 +231,10 @@ endif()
 install(
     FILES
         src/xmlUtils.h
+        src/ISBaseClass.h
         src/ISBridge.h
+        src/ISPublisher.h
+        src/ISSubscriber.h
         src/ISManager.h
         src/GenericPubSubTypes.h
         src/ISManager.h
@@ -254,7 +257,10 @@ if(EPROSIMA_INSTALLER)
     install(
         FILES
             src/xmlUtils.h
+            src/ISBaseClass.h
             src/ISBridge.h
+            src/ISPublisher.h
+            src/ISSubscriber.h
             src/ISManager.h
             src/GenericPubSubTypes.h
             src/ISManager.h
@@ -413,4 +419,3 @@ if(MSVC OR MSVC_IDE)
 
     set(CPACK_COMPONENT_GROUP_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries" PARENT_SCOPE)
 endif()
-
