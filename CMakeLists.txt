@@ -138,30 +138,41 @@ IF (NOT DEFINED LOG_LEVEL_ERROR)
 ENDIF()
 ADD_DEFINITIONS(-DLOG_LEVEL_ERROR=${LOG_LEVEL_ERROR})
 
-configure_file(src/log/ISLog.h.in ${PROJECT_SOURCE_DIR}/src/log/ISLog.h)
+configure_file(src/log/ISLog.h.in ${PROJECT_SOURCE_DIR}/include/log/ISLog.h)
 configure_file(${PROJECT_SOURCE_DIR}/src/config.h.in
     ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h)
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
+set(${PROJECT_NAME}_header_files
+        include/xmlUtils.h
+        include/log/ISLog.h
+        include/dynamicload/dynamicload.h
+        include/ISManager.h
+        include/ISBridge.h
+        include/RTPSBridge.h
+        include/RTPSPublisher.h
+        include/RTPSSubscriber.h
+        include/GenericPubSubTypes.h
+    )
+
 set(${PROJECT_NAME}_source_files
-        src/xmlUtils.h
-        src/dynamicload/dynamicload.cpp src/dynamicload/dynamicload.h
-        src/ISManager.cpp src/ISManager.h src/log/ISLog.h
-        src/ISBridge.h
-        src/RTPSBridge.cpp src/RTPSBridge.h
-        src/RTPSPublisher.cpp src/RTPSPublisher.h
-        src/RTPSSubscriber.cpp src/RTPSSubscriber.h
-        src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
+        src/dynamicload/dynamicload.cpp
+        src/ISManager.cpp
+        src/RTPSBridge.cpp
+        src/RTPSPublisher.cpp
+        src/RTPSSubscriber.cpp
+        src/GenericPubSubTypes.cpp
     )
 
 # Add sources to Makefile.am
 set_sources(${${PROJECT_NAME}_source_files})
 
-set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
-set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
-
+if(EPROSIMA_INSTALLER)
+    set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
+    set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers")
+endif()
 
 ###############################################################################
 # Test system configuration
@@ -191,6 +202,11 @@ elseif(NOT EPROSIMA_INSTALLER)
     add_executable(${PROJECT_NAME} src/main.cpp)
 
     add_library(${SHAREDLIB_NAME} SHARED ${${PROJECT_NAME}_source_files})
+    target_include_directories(${SHAREDLIB_NAME} PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        )
+
     target_link_libraries(${SHAREDLIB_NAME}
             fastrtps
             fastcdr
@@ -214,33 +230,33 @@ endif()
 if(UNIX AND EPROSIMA_INSTALLER)
     install(
         FILES
-            src/xmlUtils.h
-            src/ISBaseClass.h
-            src/ISBridge.h
-            src/ISPublisher.h
-            src/ISSubscriber.h
-            src/ISManager.h
-            src/GenericPubSubTypes.h
-            src/ISManager.h
-            src/ISBridge.h
-            src/RTPSBridge.h
-            src/RTPSPublisher.h
-            src/RTPSSubscriber.h
-            src/GenericPubSubTypes.h
-        COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/src)
+            include/xmlUtils.h
+            include/ISBaseClass.h
+            include/ISBridge.h
+            include/ISPublisher.h
+            include/ISSubscriber.h
+            include/ISManager.h
+            include/GenericPubSubTypes.h
+            include/ISManager.h
+            include/ISBridge.h
+            include/RTPSBridge.h
+            include/RTPSPublisher.h
+            include/RTPSSubscriber.h
+            include/GenericPubSubTypes.h
+        COMPONENT headers
+        DESTINATION ${INCLUDE_INSTALL_DIR})
 
     install(
         FILES
-            src/dynamicload/dynamicload.h
-        COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/src/dynamicload)
+            include/dynamicload/dynamicload.h
+        COMPONENT headers
+        DESTINATION ${INCLUDE_INSTALL_DIR}/dynamicload)
 
     install(
         FILES
-            src/log/ISLog.h
-        COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/src/log)
+        include/log/ISLog.h
+        COMPONENT headers
+        DESTINATION ${INCLUDE_INSTALL_DIR}/log)
 
     install(
         FILES
@@ -251,13 +267,13 @@ if(UNIX AND EPROSIMA_INSTALLER)
             src/RTPSSubscriber.cpp
             src/GenericPubSubTypes.cpp
         COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/src)
+        DESTINATION ${INCLUDE_SOURCE_DIR})
 
     install(
         FILES
             src/dynamicload/dynamicload.cpp
         COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/src/dynamicload)
+        DESTINATION ${INCLUDE_SOURCE_DIR}/dynamicload)
 
     # Install licenses
     install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
@@ -286,27 +302,33 @@ set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} example
 if(NOT EPROSIMA_INSTALLER)
     install(
         FILES
-            src/xmlUtils.h
-            src/ISBaseClass.h
-            src/ISBridge.h
-            src/ISPublisher.h
-            src/ISSubscriber.h
-            src/ISManager.h
-            src/GenericPubSubTypes.h
-            src/ISManager.h
-            src/ISBridge.h
-            src/RTPSBridge.h
-            src/RTPSPublisher.h
-            src/RTPSSubscriber.h
-            src/GenericPubSubTypes.h
+            include/xmlUtils.h
+            include/ISBaseClass.h
+            include/ISBridge.h
+            include/ISPublisher.h
+            include/ISSubscriber.h
+            include/ISManager.h
+            include/GenericPubSubTypes.h
+            include/ISManager.h
+            include/ISBridge.h
+            include/RTPSBridge.h
+            include/RTPSPublisher.h
+            include/RTPSSubscriber.h
+            include/GenericPubSubTypes.h
         COMPONENT headers
         DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME})
 
     install(
         FILES
-            src/dynamicload/dynamicload.h
+            include/dynamicload/dynamicload.h
         COMPONENT headers
         DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}/dynamicload)
+
+    install(
+        FILES
+            include/log/ISLog.h
+        COMPONENT headers
+        DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}/log)
 
     if(MSVC OR MSVC_IDE)
         install(
@@ -361,11 +383,11 @@ elseif(NOT EPROSIMA_INSTALLER)
         DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}/${PROJECT_NAME}/cmake
         COMPONENT cmake
         )
-
+else()
     string(TOUPPER "${MSVC_ARCH}" MSVC_ARCH_UPPER)
-    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}" PARENT_SCOPE)
-    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform ${MSVC_ARCH}" PARENT_SCOPE)
-    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_GROUP "Libraries" PARENT_SCOPE)
+    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}")
+    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform ${MSVC_ARCH}")
+    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_GROUP "Libraries")
 
-    set(CPACK_COMPONENT_GROUP_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries" PARENT_SCOPE)
+    set(CPACK_COMPONENT_GROUP_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries")
 endif()

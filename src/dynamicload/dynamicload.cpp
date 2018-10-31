@@ -1,6 +1,6 @@
 #include <iostream>
-#include "dynamicload.h"
-#include "../log/ISLog.h"
+#include <dynamicload/dynamicload.h>
+#include <log/ISLog.h>
 
 #ifdef _WIN32
 #include <Windows.h>

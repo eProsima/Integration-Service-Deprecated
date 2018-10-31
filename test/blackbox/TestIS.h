@@ -1,4 +1,4 @@
-#include "../../src/ISManager.h"
+#include <ISManager.h>
 #include <string>
 
 class TestIS
