@@ -20,10 +20,9 @@ lib${SHAREDLIB_NAME}_la_LDFLAGS = -version-number ${PROJECT_VERSION_AUTOTOOLS} -
 
 bin_PROGRAMS = ${PROJECT_NAME}
 ${${PROJECT_NAME}_SOURCES_BIN_AUTOTOOLS}
-${PROJECT_NAME}_LDADD = -lpthread -ldl lib${SHAREDLIB_NAME}.la -L${fastrtps_LIB_DIR} -lfastrtps -L${fastcdr_LIB_DIR} -lfastcdr
+${PROJECT_NAME}_LDADD = -lpthread -ldl lib${SHAREDLIB_NAME}.la -lfastrtps -lfastcdr
 
-AM_CPPFLAGS = -DIS_SOURCE -I../thirdparty/tinyxml2 -I${fastrtps_INCLUDE_DIR} -I${fastcdr_INCLUDE_DIR}
+AM_CPPFLAGS = -DIS_SOURCE -I../include
 
 library_includedir = $(includedir)
 nobase_library_include_HEADERS = ${${PROJECT_NAME}_PUBLIC_HEADERS_AUTOTOOLS}
-

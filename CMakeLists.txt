@@ -267,13 +267,13 @@ if(UNIX AND EPROSIMA_INSTALLER)
             src/RTPSSubscriber.cpp
             src/GenericPubSubTypes.cpp
         COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR})
+        DESTINATION ${INCLUDE_SOURCE_DIR}/src)
 
     install(
         FILES
             src/dynamicload/dynamicload.cpp
         COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/dynamicload)
+        DESTINATION ${INCLUDE_SOURCE_DIR}/src/dynamicload)
 
     # Install licenses
     install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
