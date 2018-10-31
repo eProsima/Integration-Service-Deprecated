@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 2.8.3)
 ###############################################################################
 # Version information                                                         #
 ###############################################################################
+set(IS_TOP_LEVEL TRUE)
+if(PROJECT_SOURCE_DIR)
+    set(IS_TOP_LEVEL FALSE)
+endif()
 
 #If not set, copy over product version from configure.ac
 file(STRINGS
@@ -52,10 +56,7 @@ else()
     cmake_policy(SET CMP0048 NEW)
     project("integration_services" VERSION "${LIB_VERSION_STR}" LANGUAGES C CXX)
 endif()
-#set(PROJECT_MAJOR_VERSION 0)
-#set(PROJECT_MINOR_VERSION 0)
-#set(PROJECT_VERSION_PATCH 0)
-#set(PROJECT_VERSION ${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PROJECT_MICRO_VERSION})
+
 set(PROJECT_NAME_STYLED "IntegrationServices")
 set(PROJECT_NAME_LARGE "Integration Services")
 set(PROJECT_NAME_UPPER "IS")
@@ -90,8 +91,8 @@ if(MSVC OR MSVC_IDE)
     check_msvc_arch()
 endif()
 
-find_package(fastcdr REQUIRED)
-find_package(fastrtps REQUIRED)
+eprosima_find_package(fastcdr $<$<NOT:$<BOOL:${EPROSIMA_INSTALLER}>>:REQUIRED>)
+eprosima_find_package(fastrtps $<$<NOT:$<BOOL:${EPROSIMA_INSTALLER}>>:REQUIRED>)
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
@@ -102,17 +103,17 @@ IF("${isSystemDir}" STREQUAL "-1")
    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 ENDIF("${isSystemDir}" STREQUAL "-1")
 
-# Testing
-enable_testing()
-include(CTest)
-add_subdirectory(test)
-
 set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
 set(INCLUDE_SOURCE_DIR src/ CACHE PATH "Installation directory for C++ sources")
 set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
 set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
-#set(LICENSE_INSTALL_DIR ./ CACHE PATH "Installation directory for licenses")
+
+if(WIN32 AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
+    set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
+else()
+    set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
+endif()
 
 add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS)
 add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
@@ -153,45 +154,10 @@ set(${PROJECT_NAME}_source_files
         src/RTPSPublisher.cpp src/RTPSPublisher.h
         src/RTPSSubscriber.cpp src/RTPSSubscriber.h
         src/GenericPubSubTypes.cpp src/GenericPubSubTypes.h
-        thirdparty/tinyxml2/tinyxml2.cpp thirdparty/tinyxml2/tinyxml2.h
     )
-
-add_executable(${PROJECT_NAME} src/main.cpp)
-target_include_directories(${PROJECT_NAME} PRIVATE thirdparty/tinyxml2)
-
-if(WIN32)
-    add_library(${SHAREDLIB_NAME} ${${PROJECT_NAME}_source_files})
-
-    include_directories("${fastrtps_INCLUDE_DIR}")
-    include_directories("${fastcdr_INCLUDE_DIR}")
-
-    # Made linked libraries PRIVATE to prevent local directories in Windows installer.
-    #set(PRIVACY "")
-    #if(EPROSIMA_INSTALLER_MINION)
-    #    set(PRIVACY "PRIVATE")
-    #endif()
-
-    target_link_libraries(${SHAREDLIB_NAME}
-        fastrtps
-        fastcdr
-        ${CMAKE_DL_LIBS}
-        IPHLPAPI
-        shlwapi)
-else()
-    add_library(${SHAREDLIB_NAME} SHARED ${${PROJECT_NAME}_source_files})
-
-    target_link_libraries(${SHAREDLIB_NAME}
-        fastrtps
-        fastcdr
-        -L/usr/lib/x86_64-linux-gnu
-        ${CMAKE_DL_LIBS})
-endif()
 
 # Add sources to Makefile.am
 set_sources(${${PROJECT_NAME}_source_files})
-
-target_include_directories(${SHAREDLIB_NAME} PRIVATE thirdparty/tinyxml2)
-target_link_libraries(${PROJECT_NAME} ${SHAREDLIB_NAME})
 
 set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
@@ -213,47 +179,39 @@ if(MSVC OR MSVC_IDE)
 endif()
 
 # Create libraries
-if(MSVC OR MSVC_IDE)
-    if(EPROSIMA_INSTALLER)
-        generate_msvc_libraries(${MSVC_ARCH})
-        #generate_msvc_libraries(x64Win64VS2015)
-    else()
-        set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-        set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-        set_target_properties(${SHAREDLIB_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
+    generate_msvc_libraries(${MSVC_ARCH})
+elseif(NOT EPROSIMA_INSTALLER)
+    # Testing
+    enable_testing()
+    include(CTest)
+    add_subdirectory(test)
 
-        if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-            set_target_properties(${SHAREDLIB_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
-        endif()
+    # Executable and library
+    add_executable(${PROJECT_NAME} src/main.cpp)
+
+    add_library(${SHAREDLIB_NAME} SHARED ${${PROJECT_NAME}_source_files})
+    target_link_libraries(${SHAREDLIB_NAME}
+            fastrtps
+            fastcdr
+            ${CMAKE_DL_LIBS}
+            $<$<BOOL:${WIN32}>:IPHLPAPI$<SEMICOLON>shlwapi>
+            $<$<NOT:$<BOOL:${WIN32}>>:-L/usr/lib/x86_64-linux-gnu>
+            )
+
+    target_link_libraries(${PROJECT_NAME} ${SHAREDLIB_NAME})
+
+    # Properties
+    set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+    set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+    set_target_properties(${SHAREDLIB_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+
+    if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+        set_target_properties(${SHAREDLIB_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
     endif()
 endif()
 
-install(
-    FILES
-        src/xmlUtils.h
-        src/ISBaseClass.h
-        src/ISBridge.h
-        src/ISPublisher.h
-        src/ISSubscriber.h
-        src/ISManager.h
-        src/GenericPubSubTypes.h
-        src/ISManager.h
-        src/ISBridge.h
-        src/RTPSBridge.h
-        src/RTPSPublisher.h
-        src/RTPSSubscriber.h
-        src/GenericPubSubTypes.h
-    COMPONENT headers
-    DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME})
-
-install(
-    FILES
-        src/dynamicload/dynamicload.h
-    COMPONENT headers
-    DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}/dynamicload)
-
-
-if(EPROSIMA_INSTALLER)
+if(UNIX AND EPROSIMA_INSTALLER)
     install(
         FILES
             src/xmlUtils.h
@@ -286,12 +244,6 @@ if(EPROSIMA_INSTALLER)
 
     install(
         FILES
-            thirdparty/tinyxml2/tinyxml2.h
-        COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/thirdparty/tinyxml2)
-
-    install(
-        FILES
             src/main.cpp
             src/ISManager.cpp
             src/RTPSBridge.cpp
@@ -307,15 +259,9 @@ if(EPROSIMA_INSTALLER)
         COMPONENT sources
         DESTINATION ${INCLUDE_SOURCE_DIR}/src/dynamicload)
 
-    install(
-        FILES
-            thirdparty/tinyxml2/tinyxml2.cpp
-        COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/thirdparty/tinyxml2)
-
     # Install licenses
     install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
-        DESTINATION ./
+        DESTINATION ${LICENSE_INSTALL_DIR}
         COMPONENT licenses
         )
     set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
@@ -337,85 +283,89 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
 set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
 set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
 
-if(MSVC OR MSVC_IDE)
+if(NOT EPROSIMA_INSTALLER)
     install(
-        TARGETS ${SHAREDLIB_NAME}
-        EXPORT ${PROJECT_NAME}Targets
-        COMPONENT libraries_${MSVC_ARCH}
-        DESTINATION ${LIB_INSTALL_DIR})
-else()
+        FILES
+            src/xmlUtils.h
+            src/ISBaseClass.h
+            src/ISBridge.h
+            src/ISPublisher.h
+            src/ISSubscriber.h
+            src/ISManager.h
+            src/GenericPubSubTypes.h
+            src/ISManager.h
+            src/ISBridge.h
+            src/RTPSBridge.h
+            src/RTPSPublisher.h
+            src/RTPSSubscriber.h
+            src/GenericPubSubTypes.h
+        COMPONENT headers
+        DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME})
+
     install(
+        FILES
+            src/dynamicload/dynamicload.h
+        COMPONENT headers
+        DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}/dynamicload)
+
+    if(MSVC OR MSVC_IDE)
+        install(
+            TARGETS ${SHAREDLIB_NAME}
+            EXPORT ${PROJECT_NAME}Targets
+            COMPONENT libraries_${MSVC_ARCH}
+            DESTINATION ${LIB_INSTALL_DIR})
+    else()
+        install(
+            TARGETS ${SHAREDLIB_NAME}
+            EXPORT ${PROJECT_NAME}Targets
+            COMPONENT libraries}
+            DESTINATION ${LIB_INSTALL_DIR})
+    endif()
+
+    export(
         TARGETS ${SHAREDLIB_NAME}
+        FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
+
+    install(
         EXPORT ${PROJECT_NAME}Targets
-        COMPONENT libraries}
-        DESTINATION ${LIB_INSTALL_DIR})
-endif()
+        DESTINATION lib/${PROJECT_NAME}/cmake
+        COMPONENT cmake)
 
-export(
-    TARGETS ${SHAREDLIB_NAME}
-    FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
-
-install(
-    EXPORT ${PROJECT_NAME}Targets
-    DESTINATION lib/${PROJECT_NAME}/cmake
-    COMPONENT cmake)
-
-install(
-    TARGETS ${PROJECT_NAME}
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
-    COMPONENT libraries_${MSVC_ARCH})
-
-set(CPACK_COMPONENTS_ALL headers sources licenses examples)
-
-if(MSVC OR MSVC_IDE)
-    #if(EPROSIMA_INSTALLER)
-    #    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL}
-    #        libraries_i86Win32VS2015
-    #        libraries_x64Win64VS2015
-    #        )
-    #else()
-    #    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})
-    #endif()
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})
+    install(
+        TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+        COMPONENT libraries_${MSVC_ARCH})
 else()
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries)
-endif()
+    set(CPACK_COMPONENTS_ALL headers sources licenses examples)
 
-include(${PROJECT_SOURCE_DIR}/cmake/packaging/eProsimaPackaging.cmake)
+    if(MSVC OR MSVC_IDE)
+        set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})
+    else()
+        set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries)
+    endif()
+
+    include(${PROJECT_SOURCE_DIR}/cmake/packaging/eProsimaPackaging.cmake)
+endif()
 
 # Install libraries
-if(MSVC OR MSVC_IDE)
-    if(EPROSIMA_INSTALLER)
-        #install_msvc_libraries(i86Win32VS2015)
-        #install_msvc_libraries(x64Win64VS2015)
-        install_msvc_libraries(${MSVC_ARCH})
-    else()
-        set(DIR_EXTENSION "")
-        if(EPROSIMA_INSTALLER_MINION)
-            set(DIR_EXTENSION "/${MSVC_ARCH}")
-        endif()
-
-        install(EXPORT ${PROJECT_NAME}Targets
-            DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}/${PROJECT_NAME}/cmake
-            COMPONENT cmake
-            )
-
-
-        # Install pdb files
-        #install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug/
-        #    DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}
-        #    COMPONENT libraries_${MSVC_ARCH}
-        #    CONFIGURATIONS Debug
-        #    FILES_MATCHING
-        #    PATTERN "*.pdb"
-        #    )
-
-        string(TOUPPER "${MSVC_ARCH}" MSVC_ARCH_UPPER)
-        set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform ${MSVC_ARCH}" PARENT_SCOPE)
-        set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_GROUP "Libraries" PARENT_SCOPE)
+if(MSVC OR MSVC_IDE AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
+    install_msvc_libraries(${MSVC_ARCH})
+elseif(NOT EPROSIMA_INSTALLER)
+    set(DIR_EXTENSION "")
+    if(EPROSIMA_INSTALLER_MINION)
+        set(DIR_EXTENSION "/${MSVC_ARCH}")
     endif()
+
+    install(EXPORT ${PROJECT_NAME}Targets
+        DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}/${PROJECT_NAME}/cmake
+        COMPONENT cmake
+        )
+
+    string(TOUPPER "${MSVC_ARCH}" MSVC_ARCH_UPPER)
+    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}" PARENT_SCOPE)
+    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform ${MSVC_ARCH}" PARENT_SCOPE)
+    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_GROUP "Libraries" PARENT_SCOPE)
 
     set(CPACK_COMPONENT_GROUP_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries" PARENT_SCOPE)
 endif()
