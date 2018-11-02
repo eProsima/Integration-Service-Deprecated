@@ -91,8 +91,15 @@ if(MSVC OR MSVC_IDE)
     check_msvc_arch()
 endif()
 
-eprosima_find_package(fastcdr $<$<NOT:$<BOOL:${EPROSIMA_INSTALLER}>>:REQUIRED>)
-eprosima_find_package(fastrtps $<$<NOT:$<BOOL:${EPROSIMA_INSTALLER}>>:REQUIRED>)
+eprosima_find_package(fastcdr REQUIRED)
+eprosima_find_package(fastrtps REQUIRED)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
+
+if(NOT TINYXML2_INCLUDE_DIR)
+    include(FindTinyXML2.cmake)
+    find_package(TinyXML2)
+endif()
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
@@ -115,6 +122,7 @@ else()
     set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
 endif()
 
+add_definitions(-DEPROSIMA_SHAPES_DLL_EXPORT)
 add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS)
 add_definitions(-D${PROJECT_NAME_UPPER}_SOURCE)
 
@@ -166,6 +174,14 @@ set(${PROJECT_NAME}_source_files
         src/GenericPubSubTypes.cpp
     )
 
+# External sources
+if(TINYXML2_SOURCE_DIR)
+    list(APPEND ${PROJECT_NAME}_source_files
+        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+        )
+    set_sources(${TINYXML2_SOURCE_DIR}/tinyxml2.cpp)
+endif()
+
 # Add sources to Makefile.am
 set_sources(${${PROJECT_NAME}_source_files})
 
@@ -201,21 +217,40 @@ elseif(NOT EPROSIMA_INSTALLER)
     # Executable and library
     add_executable(${PROJECT_NAME} src/main.cpp)
 
-    add_library(${SHAREDLIB_NAME} SHARED ${${PROJECT_NAME}_source_files})
+if (WIN32)
+    add_library(${SHAREDLIB_NAME} STATIC
+        ${${PROJECT_NAME}_source_files}
+        )
+else()
+    add_library(${SHAREDLIB_NAME} SHARED
+#        $<$<NOT:$<BOOL:${WIN32}>>:SHARED> 
+        ${${PROJECT_NAME}_source_files}
+        )
+endif()
+
     target_include_directories(${SHAREDLIB_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${TINYXML2_INCLUDE_DIR}>
+        $<INSTALL_INTERFACE:${TINYXML2_INCLUDE_DIR}>
         )
 
     target_link_libraries(${SHAREDLIB_NAME}
             fastrtps
             fastcdr
+            $<$<NOT:$<BOOL:${TINYXML2_INCLUDE_DIR}>>:tinyxml2>
             ${CMAKE_DL_LIBS}
             $<$<BOOL:${WIN32}>:IPHLPAPI$<SEMICOLON>shlwapi>
             $<$<NOT:$<BOOL:${WIN32}>>:-L/usr/lib/x86_64-linux-gnu>
             )
 
     target_link_libraries(${PROJECT_NAME} ${SHAREDLIB_NAME})
+
+    if(TINYXML2_LIBRARY)
+        target_link_libraries(${PROJECT_NAME} ${PRIVACY}
+            ${TINYXML2_LIBRARY}
+            )
+    endif()
 
     # Properties
     set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})

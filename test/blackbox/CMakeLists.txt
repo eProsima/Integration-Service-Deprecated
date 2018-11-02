@@ -88,6 +88,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         endif()
 
         add_definitions(
+          -DEPROSIMA_SHAPES_DLL_EXPORT
+          -DBUILD_SHARED_LIBS
           -DBOOST_ASIO_STANDALONE
           -DASIO_STANDALONE
         )
