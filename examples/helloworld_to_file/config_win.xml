@@ -18,7 +18,7 @@
     </profiles>
 
     <bridge name="file">
-        <library>C:/git/integration-services/examples/helloworld_to_file/build/debug/isfile.dll</library>
+        <library>build/Debug/isfile.dll</library>
 
         <publisher name="file_publisher">
             <property>
