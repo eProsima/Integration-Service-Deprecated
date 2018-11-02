@@ -74,7 +74,7 @@ Or these other on Windows:
 
     > mkdir build && cd build
     > cmake .. -G "Visual Studio 14 2015 Win64"
-    > cmake --build . --config Release
+    > cmake --build .
 
 
 Publisher parameters
@@ -153,3 +153,10 @@ Now, we only have to launch the HelloWorld example from FastRTPS. If this instru
     HelloWorld : 10
 
 If you execute again the example, the same content will appear again for each execution. If you modify the *append* parameter to false, the file will be reset for each execution and the content will only appear once.
+
+Note to windows users:
+^^^^^^^^^^^^^^^^^^^^^^
+
+You must use `config_win.xml <config_win.xml>`_ configuration file instead.
+By default the example will be compiled as Debug, so the file is configured in that way.
+If you compile the examples as Release, you should modify the configuration file to match the output build folder.

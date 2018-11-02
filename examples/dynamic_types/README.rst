@@ -13,3 +13,11 @@ You can modify the .xml files to change roles.
 You will notice that there is no communication between both applications.
 Run the *Integration Services* with one of the provided configuration files, and both applications will start to
 communicate.
+
+Note to windows users:
+^^^^^^^^^^^^^^^^^^^^^^
+
+You must use `dyn_dyn_config_win.xml <dyn_dyn_config_win.xml>`_ or
+`static_static_config_win.xml <static_static_config_win.xml>`_ configuration files instead.
+By default the example will be compiled as Debug, so the files are configured in that way.
+If you compile the examples as Release, you should modify the configuration files to match the output build folder.
