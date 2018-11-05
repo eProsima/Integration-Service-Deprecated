@@ -74,7 +74,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
+###############################################################################
+# eProsima build options
+###############################################################################
+option(EPROSIMA_BUILD "Activate internal building" OFF)
 
 ###############################################################################
 # Test system configuration
@@ -91,6 +94,7 @@ if(MSVC OR MSVC_IDE)
     check_msvc_arch()
 endif()
 
+include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
 eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_package(fastrtps REQUIRED)
 
@@ -98,7 +102,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 if(NOT TINYXML2_INCLUDE_DIR)
     include(${PROJECT_SOURCE_DIR}/cmake/modules/FindTinyXML2.cmake)
-    find_package(TinyXML2)
+    if(NOT THIRDPARTY)
+        set(TINYXML2_SOURCE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2)
+        set(TINYXML2_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2)
+    endif()
 endif()
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
@@ -188,21 +195,6 @@ set_sources(${${PROJECT_NAME}_source_files})
 if(EPROSIMA_INSTALLER)
     set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
     set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers")
-endif()
-
-###############################################################################
-# Test system configuration
-###############################################################################
-include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
-check_stdcxx()
-check_compile_feature()
-check_endianness()
-
-###############################################################################
-# Check MSVC architecture
-###############################################################################
-if(MSVC OR MSVC_IDE)
-    check_msvc_arch()
 endif()
 
 # Create libraries
