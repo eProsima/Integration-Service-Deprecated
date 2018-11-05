@@ -32,7 +32,7 @@ macro(add_blackbox_gtest test)
         endif()
 
         foreach(GTEST_SOURCE_FILE ${GTEST_SOURCES})
-            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_NAMES REGEX ^BLACKBOXTEST)
+            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_NAMES REGEX ^TEST)
             foreach(GTEST_NAME ${GTEST_NAMES})
                 string(REGEX REPLACE ["\) \(,"] ";" GTEST_NAME ${GTEST_NAME})
                 list(GET GTEST_NAME 1 GTEST_GROUP_NAME)
@@ -171,6 +171,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_link_libraries(BlackboxUDPTests fastrtps fastcdr islib ${GTEST_LIBRARIES})
         target_link_libraries(BlackboxKeyedTests fastrtps fastcdr islib ${GTEST_LIBRARIES})
         add_blackbox_gtest(BlackboxTCPTests SOURCES ${BLACKBOX_TCP_TESTS_SOURCE}
+            ENVIRONMENTS
             "DOMAIN0_RANDOM_NUMBER=${DOMAIN0_RANDOM_NUMBER}"
             "DOMAIN1_RANDOM_NUMBER=${DOMAIN1_RANDOM_NUMBER}"
             "DOMAIN2_RANDOM_NUMBER=${DOMAIN2_RANDOM_NUMBER}"
@@ -181,6 +182,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             "DOMAIN9_RANDOM_NUMBER=${DOMAIN9_RANDOM_NUMBER}"
             )
         add_blackbox_gtest(BlackboxUDPTests SOURCES ${BLACKBOX_UDP_TESTS_SOURCE}
+            ENVIRONMENTS
             "DOMAIN0_RANDOM_NUMBER=${DOMAIN0_RANDOM_NUMBER}"
             "DOMAIN1_RANDOM_NUMBER=${DOMAIN1_RANDOM_NUMBER}"
             "DOMAIN2_RANDOM_NUMBER=${DOMAIN2_RANDOM_NUMBER}"
@@ -191,6 +193,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             "DOMAIN9_RANDOM_NUMBER=${DOMAIN9_RANDOM_NUMBER}"
             )
         add_blackbox_gtest(BlackboxKeyedTests SOURCES ${BLACKBOX_KEYED_TESTS_SOURCE}
+            ENVIRONMENTS
             "DOMAIN0_RANDOM_NUMBER=${DOMAIN0_RANDOM_NUMBER}"
             "DOMAIN1_RANDOM_NUMBER=${DOMAIN1_RANDOM_NUMBER}"
             "DOMAIN2_RANDOM_NUMBER=${DOMAIN2_RANDOM_NUMBER}"

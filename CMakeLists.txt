@@ -97,7 +97,7 @@ eprosima_find_package(fastrtps REQUIRED)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 if(NOT TINYXML2_INCLUDE_DIR)
-    include(FindTinyXML2.cmake)
+    include(${PROJECT_SOURCE_DIR}/cmake/modules/FindTinyXML2.cmake)
     find_package(TinyXML2)
 endif()
 
@@ -210,6 +210,7 @@ if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
     generate_msvc_libraries(${MSVC_ARCH})
 elseif(NOT EPROSIMA_INSTALLER)
     # Testing
+    SET(GTEST_INDIVIDUAL TRUE)
     enable_testing()
     include(CTest)
     add_subdirectory(test)
@@ -223,7 +224,7 @@ if (WIN32)
         )
 else()
     add_library(${SHAREDLIB_NAME} SHARED
-#        $<$<NOT:$<BOOL:${WIN32}>>:SHARED> 
+#        $<$<NOT:$<BOOL:${WIN32}>>:SHARED>
         ${${PROJECT_NAME}_source_files}
         )
 endif()

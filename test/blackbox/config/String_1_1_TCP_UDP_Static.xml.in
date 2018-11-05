@@ -9,7 +9,7 @@
             </transport_descriptor>
         </transport_descriptors>
 
-        <participant profile_name="ParticipantA">
+        <participant profile_name="ParticipantA_A">
             <rtps>
                 <userTransports>
                     <transport_id>TCPClientString</transport_id>
@@ -19,7 +19,7 @@
                     <initialPeersList>
                         <locator>
                             <kind>TCPv4</kind>
-                            <address>192.168.1.41</address>
+                            <address>127.0.0.1</address>
                             <ports_>
                                 <physical_port>5100</physical_port>
                             </ports_>
@@ -30,7 +30,7 @@
             </rtps>
         </participant>
 
-        <participant profile_name="ParticipantB1">
+        <participant profile_name="ParticipantA_B1">
             <rtps>
                 <builtin>
                     <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
@@ -38,7 +38,7 @@
             </rtps>
         </participant>
 
-        <subscriber profile_name="subscriber">
+        <subscriber profile_name="subscriberA">
             <topic>
                 <name>StringTopic</name>
                 <dataType>StringType</dataType>
@@ -54,7 +54,7 @@
             </qos>
         </subscriber>
 
-        <publisher profile_name="publisher">
+        <publisher profile_name="publisherA">
             <topic>
                 <name>StringTopic</name>
                 <dataType>StringType</dataType>
@@ -72,7 +72,7 @@
     </profiles>
 
     <connector name="String_1_1_TCP_UDP_Static">
-        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB1" publisher_profile="publisher"/>
+        <subscriber participant_profile="ParticipantA_A" subscriber_profile="subscriberA"/>
+        <publisher participant_profile="ParticipantA_B1" publisher_profile="publisherA"/>
     </connector>
 </is>

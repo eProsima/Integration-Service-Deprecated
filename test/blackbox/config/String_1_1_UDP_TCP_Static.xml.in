@@ -12,7 +12,7 @@
             </transport_descriptor>
         </transport_descriptors>
 
-        <participant profile_name="ParticipantA1">
+        <participant profile_name="ParticipantB_A1">
             <rtps>
                 <builtin>
                     <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
@@ -29,7 +29,7 @@
             </rtps>
         </participant>
 
-        <participant profile_name="ParticipantB">
+        <participant profile_name="ParticipantB_B">
             <rtps>
                 <userTransports>
                     <transport_id>TCPServerString</transport_id>
@@ -50,7 +50,7 @@
             </rtps>
         </participant>
 
-        <subscriber profile_name="subscriber">
+        <subscriber profile_name="subscriberB">
             <topic>
                 <name>StringTopic</name>
                 <dataType>StringType</dataType>
@@ -66,7 +66,7 @@
             </qos>
         </subscriber>
 
-        <publisher profile_name="publisher">
+        <publisher profile_name="publisherB">
             <topic>
                 <name>StringTopic</name>
                 <dataType>StringType</dataType>
@@ -84,7 +84,7 @@
     </profiles>
 
     <connector name="String_1_1_UDP_TCP_Static">
-        <subscriber participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
+        <subscriber participant_profile="ParticipantB_A1" subscriber_profile="subscriberB"/>
+        <publisher participant_profile="ParticipantB_B" publisher_profile="publisherB"/>
     </connector>
 </is>

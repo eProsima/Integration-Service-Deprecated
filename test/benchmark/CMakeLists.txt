@@ -141,6 +141,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_include_directories(Benchmark PRIVATE ${GTEST_INCLUDE_DIRS} ${ASIO_INCLUDE_DIR})
         target_link_libraries(Benchmark fastrtps fastcdr islib ${GTEST_LIBRARIES})
         add_benchmark_gtest(Benchmark SOURCES ${BENCHMARK_SOURCE}
+            ENVIRONMENTS
             "DOMAIN0_RANDOM_NUMBER=${DOMAIN0_RANDOM_NUMBER}"
             "DOMAIN1_RANDOM_NUMBER=${DOMAIN1_RANDOM_NUMBER}"
             "DOMAIN2_RANDOM_NUMBER=${DOMAIN2_RANDOM_NUMBER}"

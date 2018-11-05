@@ -86,6 +86,8 @@ TEST(BlackBox, String_1_1_TCP_UDP_Static)
     pub.waitDiscovery(true, 30);
 
     //Log::SetVerbosity(Log::Kind::Error);
+    ASSERT_TRUE(sub1.isMatched());
+    ASSERT_TRUE(pub.isMatched());
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
@@ -108,7 +110,7 @@ TEST(BlackBox, String_1_1_UDP_TCP_Static)
     const uint16_t nmsgs = 5;
 
     //Log::SetVerbosity(Log::Kind::Info);
-    sub.init(TCP, RELIABLE_RELIABILITY_QOS, "StringTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_String", 5101, "192.168.1.41");
+    sub.init(TCP, RELIABLE_RELIABILITY_QOS, "StringTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_String", 5101, "127.0.0.1");
 
     ASSERT_TRUE(sub.isInitialized());
 
@@ -123,6 +125,8 @@ TEST(BlackBox, String_1_1_UDP_TCP_Static)
     sub.waitDiscovery(true, 30);
     //Log::SetVerbosity(Log::Kind::Error);
     pub1.waitDiscovery(true, 30);
+    ASSERT_TRUE(sub.isMatched());
+    ASSERT_TRUE(pub1.isMatched());
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
@@ -176,6 +180,13 @@ TEST(BlackBox, Data1mb_1_5_TCP_UDP_Static)
     sub5.waitDiscovery(true, 30);
     pub.waitDiscovery(true, 30);
 
+    ASSERT_TRUE(sub1.isMatched());
+    ASSERT_TRUE(sub2.isMatched());
+    ASSERT_TRUE(sub3.isMatched());
+    ASSERT_TRUE(sub4.isMatched());
+    ASSERT_TRUE(sub5.isMatched());
+    ASSERT_TRUE(pub.isMatched());
+
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
         pub.send();
@@ -212,7 +223,7 @@ TEST(BlackBox, Data1mb_3_1_UDP_TCP_Static)
     is.run();
 
     //Log::SetVerbosity(Log::Kind::Info);
-    sub.init(TCP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_Data1mb", 5103, "192.168.1.41");
+    sub.init(TCP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_Data1mb", 5103, "127.0.0.1");
 
     ASSERT_TRUE(sub.isInitialized());
 
@@ -230,6 +241,11 @@ TEST(BlackBox, Data1mb_3_1_UDP_TCP_Static)
     pub1.waitDiscovery(true, 30);
     pub2.waitDiscovery(true, 30);
     pub3.waitDiscovery(true, 30);
+
+    ASSERT_TRUE(sub.isMatched());
+    ASSERT_TRUE(pub1.isMatched());
+    ASSERT_TRUE(pub2.isMatched());
+    ASSERT_TRUE(pub3.isMatched());
 
     for(uint16_t count = 0; count < nmsgs; ++count)
     {
