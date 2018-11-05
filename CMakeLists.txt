@@ -101,11 +101,8 @@ eprosima_find_package(fastrtps REQUIRED)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 if(NOT TINYXML2_INCLUDE_DIR)
-    include(${PROJECT_SOURCE_DIR}/cmake/modules/FindTinyXML2.cmake)
-    if(NOT THIRDPARTY)
-        set(TINYXML2_SOURCE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2)
-        set(TINYXML2_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/thirdparty/tinyxml2)
-    endif()
+    set(THIRDPARTY_TinyXML2 ON)
+    eprosima_find_thirdparty(TinyXML2 tinyxml2)    
 endif()
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
