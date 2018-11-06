@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
+    <is_types>
         <type name="ShapeType">
             <library>build\Debug\shapelib.dll</library>
         </type>
-    </topic_types>
+    </is_types>
 
     <profiles>
         <transport_descriptors>

@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
+    <is_types>
         <type name="HelloWorld">
-            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_static_static_lib.dll</library>
+            <library>build\Debug\keyhelloworld_static_static_lib.dll</library>
         </type>
         <type name="sample">
-            <library>C:\git\integration-services\examples\dynamic_types\build\Debug\keyhelloworld_static_static_lib.dll</library>
+            <library>build\Debug\keyhelloworld_static_static_lib.dll</library>
         </type>
-    </topic_types>
+    </is_types>
 
     <profiles>
         <participant profile_name="HelloWorldParticipant">
@@ -58,7 +58,7 @@
                 <kind>WITH_KEY</kind>
             </topic>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-        </publisher>        
+        </publisher>
     </profiles>
 
     <connector name="HW_to_Key">

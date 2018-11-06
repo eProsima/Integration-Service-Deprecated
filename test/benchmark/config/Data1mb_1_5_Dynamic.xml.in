@@ -1,18 +1,10 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
+    <is_types>
         <type name="Data1mb">
             <library>libTypesBench.so</library>
-            <participants>
-                <participant name="ParticipantA"/>
-                <participant name="ParticipantB1"/>
-                <participant name="ParticipantB2"/>
-                <participant name="ParticipantB3"/>
-                <participant name="ParticipantB4"/>
-                <participant name="ParticipantB5"/>
-            </participants>
         </type>
-    </topic_types>
+    </is_types>
 
     <profiles>
         <participant profile_name="ParticipantA">

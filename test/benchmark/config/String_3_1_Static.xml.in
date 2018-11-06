@@ -1,16 +1,5 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
-        <type name="StringType">
-            <participants>
-                <participant name="ParticipantA1"/>
-                <participant name="ParticipantA2"/>
-                <participant name="ParticipantA3"/>
-                <participant name="ParticipantB"/>
-            </participants>
-        </type>
-    </topic_types>
-
     <profiles>
         <participant profile_name="ParticipantA1">
             <rtps>

@@ -1,17 +1,13 @@
 
 <is>
-    <topic_types>
+    <is_types>
         <type name="ShapeType">
             <library>libshapelib.so</library> <!-- Library for ShapeType -->
-            <participants> <!-- Participants who will register it -->
-                <participant name="2Dshapes"/>
-                <participant name="3Dshapes"/>
-            </participants>
         </type>
         <type name="Unused type"/>
         <!-- Can be used to pack types or types without their own library -->
-        <types_library>libotherlib.so</types_library> 
-    </topic_types>
+        <types_library>libotherlib.so</types_library>
+    </is_types>
 
     <profiles>
         <participant profile_name="2Dshapes">

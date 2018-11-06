@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
+    <is_types>
         <type name="HelloWorld">
             <library>build/libkeyhelloworld_static_static_lib.so</library>
         </type>
         <type name="sample">
             <library>build/libkeyhelloworld_static_static_lib.so</library>
         </type>
-    </topic_types>
+    </is_types>
 
     <profiles>
         <participant profile_name="HelloWorldParticipant">
@@ -58,7 +58,7 @@
                 <kind>WITH_KEY</kind>
             </topic>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
-        </publisher>        
+        </publisher>
     </profiles>
 
     <connector name="HW_to_Key">

@@ -1,33 +1,32 @@
 <?xml version="1.0"?>
 <is>
-    <types>
-        <type>
-            <struct name="sample">
-                <octet name="index"/>
-                <octet name="key_value" key="true"/>
-            </struct>
-        </type>
+    <is_types>
+        <types>
+            <!--
+            struct HelloWorld
+            {
+                unsigned long index;
+                string message;
+            };
+            <type>
+                <struct name="HelloWorld">
+                    <unsignedlong name="index"/>
+                    <string name="message"/>
+                </struct>
+            </type>
+            -->
+            <type>
+                <struct name="sample">
+                    <octet name="index"/>
+                    <octet name="key_value" key="true"/>
+                </struct>
+            </type>
+        </types>
 
-        <!--
-        struct HelloWorld
-        {
-            unsigned long index;
-            string message;
-        };
-        <type>
-            <struct name="HelloWorld">
-                <unsignedlong name="index"/>
-                <string name="message"/>
-            </struct>
-        </type>
-        -->
-    </types>
-
-    <topic_types>
         <type name="HelloWorld">
             <library>build\Debug\keyhelloworld_dyn_dyn_lib.dll</library>
         </type>
-    </topic_types>
+    </is_types>
 
     <profiles>
         <participant profile_name="HelloWorldParticipant">

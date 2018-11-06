@@ -23,8 +23,6 @@
 // String literals
 static const std::string s_sIS("is");
 static const std::string s_sProfiles("profiles");
-static const std::string s_sParticipant("participant");
-static const std::string s_sParticipants("participants");
 static const std::string s_sBridge("bridge");
 static const std::string s_sConnector("connector");
 static const std::string s_sName("name");
@@ -61,7 +59,7 @@ static const std::string s_sLogicalInitialPeerPort("logicalInitialPeerPort");
 static const std::string s_sLogicalMetadataPort("logicalMetadataPort");
 static const std::string s_sLogicalUserPort("logicalUserPort");
 // Topic types libraries
-static const std::string s_sTopicTypes("topic_types");
+static const std::string s_sISTypes("is_types");
 static const std::string s_sTypesLibrary("types_library");
 
 
@@ -83,17 +81,10 @@ ISManager::ISManager(const std::string &xml_file_path)
             child != nullptr; child = child->NextSiblingElement(s_sIS.c_str()))
         {
 
-            tinyxml2::XMLElement *types = child->FirstChildElement(s_sTypes.c_str());
-            if (types)
-            {
-                //loadDynamicTypes(types);
-                loadDynamicTypes(child);
-            }
-
-            tinyxml2::XMLElement *topic_types = child->FirstChildElement(s_sTopicTypes.c_str());
+            tinyxml2::XMLElement *topic_types = child->FirstChildElement(s_sISTypes.c_str());
             if (topic_types)
             {
-                loadTopicTypes(topic_types);
+                loadISTypes(topic_types);
             }
 
             tinyxml2::XMLElement *profiles = child->FirstChildElement(s_sProfiles.c_str());
@@ -197,17 +188,17 @@ void ISManager::loadDynamicTypes(tinyxml2::XMLElement *types)
     }
 }
 
-void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
+void ISManager::loadISTypes(tinyxml2::XMLElement *is_types_element)
 {
     try
     {
-        tinyxml2::XMLElement *type = topic_types_element->FirstChildElement(s_sType.c_str());
-        if (!type)
+        tinyxml2::XMLElement *types = is_types_element->FirstChildElement(s_sTypes.c_str());
+        if (types)
         {
-            LOG("No types found in topic_types");
-            throw 0;
+            loadDynamicTypes(is_types_element);
         }
 
+        tinyxml2::XMLElement *type = is_types_element->FirstChildElement(s_sType.c_str());
         while (type)
         {
             const char* type_name = type->Attribute(s_sName.c_str());
@@ -225,21 +216,10 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
                 }
             }
 
-            element = _assignOptionalElement(type, s_sParticipants);
-            if (element != nullptr)
-            {
-                for (tinyxml2::XMLElement *part = element->FirstChildElement(s_sParticipant.c_str());
-                    part != nullptr; part = part->NextSiblingElement(s_sParticipant.c_str()) )
-                {
-                    const char* partName = part->Attribute(s_sName.c_str());
-                    to_register_types.emplace_back(partName, type_name);
-                }
-            }
-
             type = type->NextSiblingElement(s_sType.c_str());
         }
 
-        tinyxml2::XMLElement *typesLib = topic_types_element->FirstChildElement(s_sTypesLibrary.c_str());
+        tinyxml2::XMLElement *typesLib = is_types_element->FirstChildElement(s_sTypesLibrary.c_str());
         while (typesLib)
         {
             const char* lib = (typesLib->GetText() == nullptr) ? nullptr : typesLib->GetText();
@@ -250,12 +230,6 @@ void ISManager::loadTopicTypes(tinyxml2::XMLElement *topic_types_element)
                 defaultTypesLibs.emplace_back(function);
                 typesLib = typesLib->NextSiblingElement(s_sTypesLibrary.c_str());
             }
-        }
-
-        for(auto &pair : to_register_types)
-        {
-            TopicDataType* type = getTopicDataType(pair.second);
-            data_types[pair] = type;
         }
     }
     catch (int e_code)
@@ -532,16 +506,6 @@ Participant* ISManager::getParticipant(const std::string &name)
         {
             participant = Domain::createParticipant(name, nullptr); // Use profile name as participant name
             rtps_participants[name] = participant;
-
-            // Register its types
-            for (auto &pair : to_register_types)
-            {
-                if (pair.first == name)
-                {
-                    TopicDataType* type = data_types[pair];
-                    Domain::registerType(participant, type);
-                }
-            }
         }
     }
     return participant;

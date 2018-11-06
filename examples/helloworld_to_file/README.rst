@@ -85,14 +85,6 @@ The next step is to set the *config.xml* file with the specific parameters of ou
 .. code-block:: xml
 
     <is>
-        <topic_types>
-            <type name="HelloWorld">
-                <participants>
-                    <participant name="rtps"/>
-                </participants>
-            </type>
-        </topic_types>
-
         <profiles>
             <participant profile_name="rtps">
                 <rtps>

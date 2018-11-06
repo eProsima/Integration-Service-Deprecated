@@ -1,17 +1,10 @@
 <?xml version="1.0"?>
 <is>
-    <topic_types>
+    <is_types>
         <type name="StringType">
             <library>libTypes.so</library>
-            <participants>
-                <participant name="ParticipantA1"/>
-                <participant name="ParticipantA2"/>
-                <participant name="ParticipantA3"/>
-                <participant name="ParticipantB"/>
-            </participants>
-            <!--<dynamic_type>true</dynamic_type>-->
         </type>
-    </topic_types>
+    </is_types>
 
     <profiles>
         <participant profile_name="ParticipantA1">
