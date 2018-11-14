@@ -13,7 +13,12 @@
 # limitations under the License.
 
 cmake_minimum_required(VERSION 2.8.12)
-project("DomainExample")
+
+if(NOT CMAKE_VERSION VERSION_LESS 3.0)
+    cmake_policy(SET CMP0048 NEW)
+endif()
+
+project("domain_change")
 
 find_package(fastcdr REQUIRED)
 find_package(fastrtps REQUIRED)
@@ -38,6 +43,12 @@ add_definitions(-DBUILD_SHARED_LIBS -Dintegrationservices_EXPORTS)
 add_executable(DomainExample ${DOMAINEXAMPLE_SOURCES})
 target_include_directories(DomainExample PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries(DomainExample fastrtps fastcdr ${Boost_LIBRARIES})
+
 install(TARGETS DomainExample
-    RUNTIME DESTINATION examples/C++/DomainExample/${BIN_INSTALL_DIR}
+    RUNTIME DESTINATION examples/${PROJECT_NAME}
+    )
+
+install(FILES
+    config.xml
+    DESTINATION examples/${PROJECT_NAME}
     )

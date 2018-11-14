@@ -1,4 +1,4 @@
-project(helloworldlib)
+project(dynamic_types)
 cmake_minimum_required(VERSION 2.9)
 
 include(CheckCXXCompilerFlag)
@@ -40,3 +40,15 @@ if(WIN32)
 endif()
 target_link_libraries(keyhelloworld_dyn_dyn_lib fastrtps fastcdr ${CMAKE_DL_LIBS})
 
+install(TARGETS keyhelloworld_dyn_dyn_lib
+    LIBRARY DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
+    )
+
+install(TARGETS keyhelloworld_static_static_lib
+    LIBRARY DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
+    )
+
+install(FILES
+    dyn_dyn_config$<$<BOOL:${WIN32}>:_win>.xml
+    DESTINATION examples/${PROJECT_NAME}
+    )

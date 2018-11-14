@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file HelloWorld.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -59,7 +59,7 @@ HelloWorld& HelloWorld::operator=(const HelloWorld &x)
 {
     m_index = x.m_index;
     m_message = x.m_message;
-    
+
     return *this;
 }
 
@@ -67,14 +67,14 @@ HelloWorld& HelloWorld::operator=(HelloWorld &&x)
 {
     m_index = x.m_index;
     m_message = std::move(x.m_message);
-    
+
     return *this;
 }
 
 size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
@@ -86,7 +86,7 @@ size_t HelloWorld::getMaxCdrSerializedSize(size_t current_alignment)
 size_t HelloWorld::getCdrSerializedSize(const HelloWorld& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
@@ -110,7 +110,7 @@ void HelloWorld::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t HelloWorld::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
 
 
 
@@ -122,8 +122,8 @@ bool HelloWorld::isKeyDefined()
     return false;
 }
 
-void HelloWorld::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void HelloWorld::serializeKey(eprosima::fastcdr::Cdr &) const
 {
-	 
-	 
+
+
 }

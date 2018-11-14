@@ -1,4 +1,4 @@
-project(shapelib)
+project(shapes_demo_tcp)
 cmake_minimum_required(VERSION 2.9)
 
 include(CheckCXXCompilerFlag)
@@ -29,3 +29,22 @@ if(WIN32)
 endif()
 
 target_link_libraries(shapelib fastrtps fastcdr ${CMAKE_DL_LIBS})
+
+install(TARGETS shapelib
+    LIBRARY DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
+    )
+
+install(FILES
+    config$<$<BOOL:${WIN32}>:_win>.xml
+    DESTINATION examples/${PROJECT_NAME}
+    )
+
+install(FILES
+    config_server$<$<BOOL:${WIN32}>:_win>.xml
+    DESTINATION examples/${PROJECT_NAME}
+    )
+
+install(FILES
+    config_client$<$<BOOL:${WIN32}>:_win>.xml
+    DESTINATION examples/${PROJECT_NAME}
+    )

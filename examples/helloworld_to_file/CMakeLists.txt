@@ -1,4 +1,4 @@
-project(isfile)
+project(helloworld_to_file)
 cmake_minimum_required(VERSION 2.9)
 
 include(CheckCXXCompilerFlag)
@@ -31,4 +31,16 @@ add_library(isfile SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP}
     FilePublisher.cpp
     isfile.cpp)
 
+target_include_directories(isfile PRIVATE ../../include)
+
 target_link_libraries(isfile fastrtps fastcdr ${liblist} ${CMAKE_DL_LIBS})
+
+
+install(TARGETS isfile
+    LIBRARY DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
+    )
+
+install(FILES
+    config$<$<BOOL:${WIN32}>:_win>.xml
+    DESTINATION examples/${PROJECT_NAME}
+    )

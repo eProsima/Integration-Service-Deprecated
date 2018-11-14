@@ -29,6 +29,7 @@ public:
     std::function<uint32_t()> getSerializedSizeProvider(void* data);
 	void* createData() { return 0; }
 	void deleteData(void*){ }
+	bool getKey(void*, rtps::InstanceHandle_t*, bool) { return false; }
 	MD5 m_md5;
 	unsigned char* m_keyBuffer;
 };

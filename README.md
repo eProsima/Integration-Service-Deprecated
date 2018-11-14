@@ -1,13 +1,12 @@
-# eProsima Integration Services
+# eProsima Integration Service
 ![http://www.eprosima.com](https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ)
 
-*eProsima Integration Services* is a library and an utility based on *Fast RTPS* for making 
+*eProsima Integration Service* is a library based on *Fast RTPS* for creating parameterized 
 communication bridges between different systems, services and protocols. 
-With *Integration Services* the user can create parameterized communication bridges between applications. 
-At the same time, it is able to perform some transformations over the messages such as 
-customized routing, mapping between input and output attributes or data modification.
+Also it is able to perform some transformations over the messages such as customized routing, 
+mapping between input and output attributes or data modification.
 
-Some of the possibilities offered by *Integration Services* are:
+Some of the possibilities offered by *Integration Service* are:
 
 -   Connects two different domains.
 -   Mapping between different data types.
@@ -29,15 +28,15 @@ Some of the possibilities offered by *Integration Services* are:
 
 #### Installation
 
-Before compiling *eProsima Integration Services* you need to have installed *Fast RTPS* as described 
+Before compiling *eProsima Integration Service* you need to have installed *Fast RTPS* as described 
 in its [documentation](http://eprosima-fast-rtps.readthedocs.io/en/latest/binaries.html). 
 For cloning this project execute:
 
 ```bash
-    $ git clone --recursive https://github.com/eProsima/integration-services
+    $ git clone --recursive https://github.com/eProsima/integration-service
 ```
 
-IMPORTANT: *eProsima Integration Services* is using new features that aren't released 
+IMPORTANT: *eProsima Integration Service* is using new features that aren't released 
 on the master branch of FastRTPS yet. 
 To compile it you must swith to the *Develop* branch.
 
@@ -57,7 +56,7 @@ If you are on Windows choose your version of Visual Studio:
     > cmake --build .
 ```
 
-If you want to compile *eProsima Integration Services* without an installed version of *Fast RTPS* you can add 
+If you want to compile *eProsima Integration Service* without an installed version of *Fast RTPS* you can add 
 an additional parameter that downloads it as a third party library.
 
 If you are on Linux execute:

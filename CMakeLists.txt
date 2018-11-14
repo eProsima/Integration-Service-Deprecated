@@ -47,18 +47,18 @@ set(LIB_VERSION_STR "${LIB_MAJOR_VERSION}.${LIB_MINOR_VERSION}.${LIB_PATCH_VERSI
 # Project                                                                     #
 ###############################################################################
 if(CMAKE_VERSION VERSION_LESS 3.0)
-    project("integration_services" C CXX)
+    project("integration_service" C CXX)
     set(PROJECT_VERSION_MAJOR "${LIB_MAJOR_VERSION}")
     set(PROJECT_VERSION_MINOR "${LIB_MINOR_VERSION}")
     set(PROJECT_VERSION_PATCH "${LIB_PATCH_VERSION}")
     set(PROJECT_VERSION "${LIB_VERSION_STR}")
 else()
     cmake_policy(SET CMP0048 NEW)
-    project("integration_services" VERSION "${LIB_VERSION_STR}" LANGUAGES C CXX)
+    project("integration_service" VERSION "${LIB_VERSION_STR}" LANGUAGES C CXX)
 endif()
 
-set(PROJECT_NAME_STYLED "IntegrationServices")
-set(PROJECT_NAME_LARGE "Integration Services")
+set(PROJECT_NAME_STYLED "IntegrationService")
+set(PROJECT_NAME_LARGE "Integration Service")
 set(PROJECT_NAME_UPPER "IS")
 set(SHAREDLIB_NAME "islib")
 
@@ -102,7 +102,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 if(NOT TINYXML2_INCLUDE_DIR)
     set(THIRDPARTY_TinyXML2 ON)
-    eprosima_find_thirdparty(TinyXML2 tinyxml2)    
+    eprosima_find_thirdparty(TinyXML2 tinyxml2)
 endif()
 
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
@@ -199,10 +199,22 @@ if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
     generate_msvc_libraries(${MSVC_ARCH})
 elseif(NOT EPROSIMA_INSTALLER)
     # Testing
-    SET(GTEST_INDIVIDUAL TRUE)
-    enable_testing()
-    include(CTest)
-    add_subdirectory(test)
+    option(BUILD_TESTS "Build tests" ON)
+    if(BUILD_TESTS)
+        SET(GTEST_INDIVIDUAL TRUE)
+        enable_testing()
+        include(CTest)
+        add_subdirectory(test)
+    endif()
+
+    # Examples
+    option(COMPILE_EXAMPLES "Build example" OFF)
+    if(COMPILE_EXAMPLES)
+        if(NOT CMAKE_BUILD_TYPE)
+            set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+        endif()
+        add_subdirectory(examples)
+    endif()
 
     # Executable and library
     add_executable(${PROJECT_NAME} src/main.cpp)
@@ -315,12 +327,6 @@ if(UNIX AND EPROSIMA_INSTALLER)
         )
 endif()
 
-# Install examples
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples
-    DESTINATION ./
-    COMPONENT examples
-    PATTERN "examples/CMakeLists.txt" EXCLUDE
-    )
 set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
 set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
 

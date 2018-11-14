@@ -62,7 +62,7 @@ bool TextSubscriber::init()
 	return true;
 }
 
-void TextSubscriber::SubListener::onSubscriptionMatched(Subscriber* sub, rtps::MatchingInfo& info)
+void TextSubscriber::SubListener::onSubscriptionMatched(Subscriber*, rtps::MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{
@@ -98,4 +98,3 @@ void TextSubscriber::run()
 	std::cin.ignore();
 	std::cout << "Shutting down the Subscriber." << std::endl;
 }
-

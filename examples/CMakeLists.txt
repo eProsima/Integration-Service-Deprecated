@@ -12,14 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-get_filename_component(FILE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/../../" ABSOLUTE)
-
-if(MSVC14)
-    if(CMAKE_CL_64)
-        include("${FILE_PREFIX_DIR}/x64Win64VS2015/integration_service/cmake/integration_servicesConfig.cmake")
-    else()
-        include("${FILE_PREFIX_DIR}/i86Win32VS2015/integration_service/cmake/integration_servicesConfig.cmake")
-    endif()
-else()
-    message(FATAL_ERROR "Not supported version of Visual Studio")
-endif()
+add_subdirectory(domain_change)
+add_subdirectory(dynamic_types)
+add_subdirectory(helloworld_to_file)
+add_subdirectory(shapes_demo_tcp)

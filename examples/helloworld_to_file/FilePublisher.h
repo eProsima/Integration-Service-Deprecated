@@ -16,7 +16,7 @@
 #ifndef _FILE_PUBLISHER_H_
 #define _FILE_PUBLISHER_H_
 
-#include "../../src/ISBridge.h"
+#include "ISBridge.h"
 #include <iostream>
 #include <fstream>
 

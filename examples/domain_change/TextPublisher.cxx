@@ -67,7 +67,7 @@ bool TextPublisher::init()
 	return true;
 }
 
-void TextPublisher::PubListener::onPublicationMatched(Publisher* pub, rtps::MatchingInfo& info)
+void TextPublisher::PubListener::onPublicationMatched(Publisher*, rtps::MatchingInfo& info)
 {
 	if (info.status == MATCHED_MATCHING)
 	{
