@@ -76,7 +76,7 @@
                     <initialPeersList>
                         <locator>
                             <kind>TCPv4</kind>
-                            <address>192.168.1.41</address>
+                            <address>127.0.0.1</address>
                             <ports_>
                                 <physical_port>5100</physical_port>
                                 <logical_port>0</logical_port>
