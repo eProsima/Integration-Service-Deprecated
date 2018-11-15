@@ -45,11 +45,11 @@ We'll use the builtin RTPS Subscriber and a Generic Bridge.
 We rename our *templatebridgelib.cpp* to *isfile.cpp*.
 Now we can change *create_reader* to just return nullptr, as never will be called by Integration-Service.
 *create_bridge* will return *new ISBridge(name)* instead.
-Finally, *create_writer* will return our "not yet implemented" FilePublisher: *new FilePublisher(name, config)*.
+Finally, *create_writer* will return our "not yet implemented" FileWriter: *new FileWriter(name, config)*.
 
-Let's create the class FilePublisher now. We need to create both .h and .cpp FilePublisher files.
+Let's create the class FileWriter now. We need to create both .h and .cpp FileWriter files.
 Take as example the already existing files.
-Our FilePublisher will read the Publisher's configuration (filename, format and append) and will open a *std::ofstream* applying the parsed parameters on each constructor.
+Our FileWriter will read the Publisher's configuration (filename, format and append) and will open a *std::ofstream* applying the parsed parameters on each constructor.
 Then will override the *publish* method to just deserialize the SerializedPayload and write its contens to the opened file.
 On the destructor the file is closed.
 
@@ -106,7 +106,7 @@ The next step is to set the *config.xml* file with the specific parameters of ou
         <bridge name="file">
             <library>build/libisfile.so</library> <!-- Path to the NGSIv2 library -->
 
-            <writer name="file_publisher">
+            <writer name="file_writer">
                 <property>
                     <name>filename</name>
                     <value>output</value>
@@ -124,7 +124,7 @@ The next step is to set the *config.xml* file with the specific parameters of ou
 
         <connector name="dump_to_file">
             <reader participant_profile="rtps" subscriber_profile="fastrtps_subscriber"/>
-            <writer bridge_name="file" writer_name="file_publisher"/>
+            <writer bridge_name="file" writer_name="file_writer"/>
         </connector>
     </is>
 

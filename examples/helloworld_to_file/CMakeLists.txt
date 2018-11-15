@@ -28,7 +28,7 @@ endif()
 file(GLOB USER_LIB_SOURCES_CXX "*.cxx")
 
 add_library(isfile SHARED ${USER_LIB_SOURCES_CXX} ${USER_LIB_SOURCES_CPP}
-    FilePublisher.cpp
+    FileWriter.cpp
     isfile.cpp)
 
 target_include_directories(isfile PRIVATE ../../include)
