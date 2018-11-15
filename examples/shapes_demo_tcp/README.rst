@@ -13,9 +13,9 @@ You will notice that there is no communication between both applications.
 Run the *Integration Service* with the provided `config.xml <config.xml>`_ file, and both applications will start to communicate.
 
 Another two configuration files are provided, `config_server.xml <config_server.xml>`_ and `config_client.xml <config_client.xml>`_. You can modify them to configure IP addresses and ports correctly.
-These config files will allow communicate two shapesdemo instances with the same configuration, but in different machines, including behind NAT if properly configured.
+These config files will allow communicating two shapesdemo instances with the same configuration, but in different machines, including behind NAT if properly configured.
 
-Note to windows users:
+Note to Windows users:
 ^^^^^^^^^^^^^^^^^^^^^^
 
 You must use `config_win.xml <config_win.xml>`_ or
