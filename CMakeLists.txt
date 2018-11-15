@@ -270,8 +270,8 @@ if(UNIX AND EPROSIMA_INSTALLER)
             include/xmlUtils.h
             include/ISBaseClass.h
             include/ISBridge.h
-            include/ISPublisher.h
-            include/ISSubscriber.h
+            include/ISWriter.h
+            include/ISReader.h
             include/ISManager.h
             include/GenericPubSubTypes.h
             include/ISManager.h
@@ -336,8 +336,8 @@ if(NOT EPROSIMA_INSTALLER)
             include/xmlUtils.h
             include/ISBaseClass.h
             include/ISBridge.h
-            include/ISPublisher.h
-            include/ISSubscriber.h
+            include/ISWriter.h
+            include/ISReader.h
             include/ISManager.h
             include/GenericPubSubTypes.h
             include/ISManager.h

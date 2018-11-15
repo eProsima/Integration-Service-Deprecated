@@ -43,9 +43,9 @@ For our Bridge we only need to implement a custom Publisher.
 We'll use the builtin RTPS Subscriber and a Generic Bridge.
 
 We rename our *templatebridgelib.cpp* to *isfile.cpp*.
-Now we can change *create_subscriber* to just return nullptr, as never will be called by Integration-Service.
+Now we can change *create_reader* to just return nullptr, as never will be called by Integration-Service.
 *create_bridge* will return *new ISBridge(name)* instead.
-Finally, *create_publisher* will return our "not yet implemented" FilePublisher: *new FilePublisher(name, config)*.
+Finally, *create_writer* will return our "not yet implemented" FilePublisher: *new FilePublisher(name, config)*.
 
 Let's create the class FilePublisher now. We need to create both .h and .cpp FilePublisher files.
 Take as example the already existing files.
@@ -106,7 +106,7 @@ The next step is to set the *config.xml* file with the specific parameters of ou
         <bridge name="file">
             <library>build/libisfile.so</library> <!-- Path to the NGSIv2 library -->
 
-            <publisher name="file_publisher">
+            <writer name="file_publisher">
                 <property>
                     <name>filename</name>
                     <value>output</value>
@@ -119,12 +119,12 @@ The next step is to set the *config.xml* file with the specific parameters of ou
                     <name>append</name>
                     <value>true</value>
                 </property>
-            </publisher>
+            </writer>
         </bridge>
 
         <connector name="dump_to_file">
-            <subscriber participant_profile="rtps" subscriber_profile="fastrtps_subscriber"/>
-            <publisher bridge_name="file" publisher_name="file_publisher"/>
+            <reader participant_profile="rtps" subscriber_profile="fastrtps_subscriber"/>
+            <writer bridge_name="file" writer_name="file_publisher"/>
         </connector>
     </is>
 

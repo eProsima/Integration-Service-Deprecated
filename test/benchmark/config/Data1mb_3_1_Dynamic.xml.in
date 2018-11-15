@@ -85,17 +85,17 @@
     </profiles>
 
     <connector name="Data1mb_1_1_Dynamic">
-        <subscriber participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_2_1_Dynamic">
-        <subscriber participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_3_1_Dynamic">
-        <subscriber participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB" publisher_profile="publisher"/>
     </connector>
 </is>

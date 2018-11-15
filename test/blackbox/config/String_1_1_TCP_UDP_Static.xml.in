@@ -72,7 +72,7 @@
     </profiles>
 
     <connector name="String_1_1_TCP_UDP_Static">
-        <subscriber participant_profile="ParticipantA_A" subscriber_profile="subscriberA"/>
-        <publisher participant_profile="ParticipantA_B1" publisher_profile="publisherA"/>
+        <reader participant_profile="ParticipantA_A" subscriber_profile="subscriberA"/>
+        <writer participant_profile="ParticipantA_B1" publisher_profile="publisherA"/>
     </connector>
 </is>

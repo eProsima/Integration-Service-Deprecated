@@ -20,7 +20,7 @@
 #include <iostream>
 #include <fstream>
 
-class FilePublisher : public ISPublisher
+class FilePublisher : public ISWriter
 {
 private:
     std::string url;
@@ -33,8 +33,8 @@ public:
     FilePublisher(const std::string &name, const std::vector<std::pair<std::string, std::string>> *config);
     ~FilePublisher() override;
 
-    bool publish(SerializedPayload_t*) override;
-    bool publish(eprosima::fastrtps::types::DynamicData*) override { return false; };
+    bool write(SerializedPayload_t*) override;
+    bool write(eprosima::fastrtps::types::DynamicData*) override { return false; };
 };
 
 #endif // _FILE_PUBLISHER_H_

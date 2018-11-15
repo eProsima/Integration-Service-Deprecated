@@ -31,7 +31,7 @@ FilePublisher::~FilePublisher()
 }
 
 FilePublisher::FilePublisher(const std::string &name)
-    : ISPublisher(name)
+    : ISWriter(name)
     , outputFile("output.txt")
     , fileFormat(s_sTxt)
     , append(false)
@@ -40,7 +40,7 @@ FilePublisher::FilePublisher(const std::string &name)
 }
 
 FilePublisher::FilePublisher(const std::string &name, const std::vector<std::pair<std::string, std::string>> *config)
-    : ISPublisher(name)
+    : ISWriter(name)
     , outputFile("output.txt")
     , fileFormat(s_sTxt)
     , append(false)
@@ -85,7 +85,7 @@ FilePublisher::FilePublisher(const std::string &name, const std::vector<std::pai
     }
 }
 
-bool FilePublisher::publish(SerializedPayload_t* payload)
+bool FilePublisher::write(SerializedPayload_t* payload)
 {
     HelloWorldPubSubType hello_pst;
     HelloWorld hello;

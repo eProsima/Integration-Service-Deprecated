@@ -23,7 +23,7 @@
 using eprosima::fastcdr::Cdr;
 
 RTPSSubscriber::RTPSSubscriber(const std::string &name)
-    : ISSubscriber(name)
+    : ISReader(name)
     , ms_participant(nullptr)
     , ms_subscriber(nullptr)
     , m_dynData(nullptr)

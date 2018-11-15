@@ -33,7 +33,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class RTPSPublisher : public PublisherListener, public ISPublisher
+// ISWriter for RTPS protocol (known as publisher)
+class RTPSPublisher : public PublisherListener, public ISWriter
 {
 private:
     Publisher *mp_publisher;
@@ -42,8 +43,8 @@ private:
     std::mutex m_bufferMutex;
 public:
     RTPSPublisher(const std::string &name);
-    virtual bool publish(SerializedPayload_t * data) override;
-    virtual bool publish(DynamicData * data) override;
+    virtual bool write(SerializedPayload_t * data) override;
+    virtual bool write(DynamicData * data) override;
     ~RTPSPublisher() override;
     void onPublicationMatched(Publisher* pub, MatchingInfo& info) override;
     void setParticipant(Participant* part);
@@ -54,4 +55,4 @@ public:
     Publisher* getRTPSPublisher() { return mp_publisher; }
 };
 
-#endif // _Header__SUBSCRIBER_H_
+#endif // _ISBRIDGERTPS_PUBLISHER_H_

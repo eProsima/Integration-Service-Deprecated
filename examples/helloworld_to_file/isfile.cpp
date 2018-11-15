@@ -23,13 +23,13 @@ extern "C" USER_LIB_EXPORT ISBridge* create_bridge(const char*,
     return nullptr; // Not implemented
 }
 
-extern "C" USER_LIB_EXPORT ISSubscriber* create_subscriber(ISBridge*, const char*,
+extern "C" USER_LIB_EXPORT ISReader* create_reader(ISBridge*, const char*,
     const std::vector<std::pair<std::string, std::string>>*)
 {
     return nullptr; // Not implemented
 }
 
-extern "C" USER_LIB_EXPORT ISPublisher* create_publisher(ISBridge*, const char* name,
+extern "C" USER_LIB_EXPORT ISWriter* create_writer(ISBridge*, const char* name,
     const std::vector<std::pair<std::string, std::string>> *config)
 {
     return loadFilePublisher(name, config);

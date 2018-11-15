@@ -18,7 +18,7 @@
 
 
 RTPSPublisher::RTPSPublisher(const std::string &name)
-    : ISPublisher(name)
+    : ISWriter(name)
     , m_buffer(nullptr)
 {
 }
@@ -45,7 +45,7 @@ void RTPSPublisher::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
     }
 }
 
-bool RTPSPublisher::publish(SerializedPayload_t *data)
+bool RTPSPublisher::write(SerializedPayload_t *data)
 {
     if (dynamic_cast<GenericPubSubType*>(output_type) != nullptr)
     {
@@ -64,7 +64,7 @@ bool RTPSPublisher::publish(SerializedPayload_t *data)
     }
 }
 
-bool RTPSPublisher::publish(DynamicData *data)
+bool RTPSPublisher::write(DynamicData *data)
 {
     return mp_publisher->write(data);
 }

@@ -118,17 +118,17 @@
     </profiles>
 
     <connector name="String_1_1_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantD_A1" subscriber_profile="subscriberD"/>
-        <publisher participant_profile="ParticipantD_B" publisher_profile="publisherD"/>
+        <reader participant_profile="ParticipantD_A1" subscriber_profile="subscriberD"/>
+        <writer participant_profile="ParticipantD_B" publisher_profile="publisherD"/>
     </connector>
 
     <connector name="String_2_1_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantD_A2" subscriber_profile="subscriberD"/>
-        <publisher participant_profile="ParticipantD_B" publisher_profile="publisherD"/>
+        <reader participant_profile="ParticipantD_A2" subscriber_profile="subscriberD"/>
+        <writer participant_profile="ParticipantD_B" publisher_profile="publisherD"/>
     </connector>
 
     <connector name="String_3_1_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantD_A3" subscriber_profile="subscriberD"/>
-        <publisher participant_profile="ParticipantD_B" publisher_profile="publisherD"/>
+        <reader participant_profile="ParticipantD_A3" subscriber_profile="subscriberD"/>
+        <writer participant_profile="ParticipantD_B" publisher_profile="publisherD"/>
     </connector>
 </is>

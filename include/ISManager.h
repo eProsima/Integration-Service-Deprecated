@@ -54,8 +54,8 @@ public:
 class ISManager
 {
     std::map<std::string, ISBridge*> bridges;
-    std::map<std::string, ISSubscriber*> subscribers;
-    std::map<std::string, ISPublisher*> publishers;
+    std::map<std::string, ISReader*> readers;
+    std::map<std::string, ISWriter*> writers;
     std::map<std::string, void*> handles;
     std::map<std::string, typef_t> typesLibs;
     std::map<std::string, Participant*> rtps_participants;
@@ -71,17 +71,16 @@ public:
     ~ISManager();
     bool isActive();
     void addBridge(ISBridge* b);
-    void addPublisher(ISPublisher* p);
-    void addSubscriber(ISSubscriber* s);
-    void addPublisher(const std::string &part_name, ISPublisher* p);
-    void addSubscriber(const std::string &part_name, ISSubscriber* s);
+    void addWriter(ISWriter* p);
+    void addReader(ISReader* s);
+    void addWriter(const std::string &part_name, ISWriter* p);
+    void addReader(const std::string &part_name, ISReader* s);
     void loadISTypes(tinyxml2::XMLElement *is_types_element);
     void loadProfiles(tinyxml2::XMLElement *profiles);
     void loadDynamicTypes(tinyxml2::XMLElement *types);
-    //void loadParticipant(tinyxml2::XMLElement *participant_element);
     Participant* getParticipant(const std::string &name);
-    void createSubscriber(Participant* participant, const std::string &participant_profile, const std::string &name);
-    void createPublisher(Participant* participant, const std::string &participant_profile, const std::string &name);
+    void createReader(Participant* participant, const std::string &participant_profile, const std::string &name);
+    void createWriter(Participant* participant, const std::string &participant_profile, const std::string &name);
     void loadBridge(tinyxml2::XMLElement *bridge_element);
     void loadConnector(tinyxml2::XMLElement *connector_element);
     void onTerminate();

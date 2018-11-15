@@ -101,27 +101,27 @@
     </profiles>
 
     <connector name="Data1mb_1_1_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB1" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_1_2_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB2" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_1_3_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB3" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_1_4_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB4" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
     </connector>
 
     <connector name="Data1mb_1_5_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB5" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
     </connector>
 </is>

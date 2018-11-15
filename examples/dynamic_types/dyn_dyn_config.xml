@@ -81,14 +81,14 @@
     </profiles>
 
     <connector name="HW_to_Key">
-        <subscriber participant_profile="HelloWorldParticipant" subscriber_profile="subHW"/>
-        <publisher participant_profile="KeysParticipant" publisher_profile="pubK"/>
+        <reader participant_profile="HelloWorldParticipant" subscriber_profile="subHW"/>
+        <writer participant_profile="KeysParticipant" publisher_profile="pubK"/>
         <transformation file="build/libkeyhelloworld_dyn_dyn_lib.so" function="HelloWorldToKey"/>
     </connector>
 <!--
     <connector name="Key_to_HW">
-        <subscriber participant_profile="KeysParticipant" subscriber_profile="subK"/>
-        <publisher participant_profile="HelloWorldParticipant" publisher_profile="pubHW"/>
+        <reader participant_profile="KeysParticipant" subscriber_profile="subK"/>
+        <writer participant_profile="HelloWorldParticipant" publisher_profile="pubHW"/>
     <transformation file="build/libkeyhelloworld_dyn_dyn_lib.so" function="KeyToHelloWorld"/>
     </connector>
 -->

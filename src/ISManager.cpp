@@ -38,13 +38,15 @@ static const std::string s_sLibrary("library");
 static const std::string s_sProperties("properties");
 static const std::string s_sProperty("property");
 static const std::string s_sFuncCreateBridge("create_bridge");
-static const std::string s_sFuncCreateSubscriber("create_subscriber");
-static const std::string s_sFuncCreatePublisher("create_publisher");
+static const std::string s_sFuncCreateReader("create_reader");
+static const std::string s_sFuncCreateWriter("create_writer");
 static const std::string s_sTransformation("transformation");
 static const std::string s_sParticipantProfile("participant_profile");
 static const std::string s_sBridgeName("bridge_name");
-static const std::string s_sSubscriberName("subscriber_name");
-static const std::string s_sPublisherName("publisher_name");
+static const std::string s_sReaderName("reader_name");
+static const std::string s_sWriterName("writer_name");
+static const std::string s_sReader("reader");
+static const std::string s_sWriter("writer");
 static const std::string s_sSubscriberProfile("subscriber_profile");
 static const std::string s_sPublisherProfile("publisher_profile");
 static const std::string s_sFile("file");
@@ -140,24 +142,24 @@ void ISManager::addBridge(ISBridge* b)
     active = true;
 }
 
-void ISManager::addSubscriber(ISSubscriber* s)
+void ISManager::addReader(ISReader* s)
 {
-    subscribers[s->getName()] = s;
+    readers[s->getName()] = s;
 }
 
-void ISManager::addPublisher(ISPublisher* p)
+void ISManager::addWriter(ISWriter* p)
 {
-    publishers[p->getName()] = p;
+    writers[p->getName()] = p;
 }
 
-void ISManager::addSubscriber(const std::string &part_name, ISSubscriber* s)
+void ISManager::addReader(const std::string &part_name, ISReader* s)
 {
-    subscribers[getEndPointName(part_name, s->getName())] = s;
+    readers[getEndPointName(part_name, s->getName())] = s;
 }
 
-void ISManager::addPublisher(const std::string &part_name, ISPublisher* p)
+void ISManager::addWriter(const std::string &part_name, ISWriter* p)
 {
-    publishers[getEndPointName(part_name, p->getName())] = p;
+    writers[getEndPointName(part_name, p->getName())] = p;
 }
 
 void ISManager::loadProfiles(tinyxml2::XMLElement *profiles)
@@ -299,13 +301,13 @@ TopicDataType* ISManager::getTopicDataType(const std::string &name)
     return type;
 }
 
-void ISManager::createSubscriber(Participant* participant, const std::string &participant_profile, const std::string &name)
+void ISManager::createReader(Participant* participant, const std::string &participant_profile, const std::string &name)
 {
     RTPSSubscriber* listener = new RTPSSubscriber(getEndPointName(participant_profile, name));
     listener->setParticipant(participant);
     if(!listener->hasParticipant())
     {
-        LOG_ERROR("Error creating subscriber");
+        LOG_ERROR("Error creating RTPS subscriber");
         return;
     }
 
@@ -334,7 +336,7 @@ void ISManager::createSubscriber(Participant* participant, const std::string &pa
     }
     else
     {
-        LOG_WARN("Cannot get subscriber attributes: The subscriber " << name << " creation probably will fail.");
+        LOG_WARN("Cannot get RTPS subscriber attributes: The subscriber " << name << " creation probably will fail.");
     }
 
     // Create Subscriber
@@ -345,7 +347,7 @@ void ISManager::createSubscriber(Participant* participant, const std::string &pa
 
     if(!listener->hasRTPSSubscriber())
     {
-        LOG_ERROR("Error creating subscriber");
+        LOG_ERROR("Error creating RTPS subscriber");
         return;
     }
 
@@ -356,12 +358,12 @@ void ISManager::createSubscriber(Participant* participant, const std::string &pa
     listener->input_type = data_types[idx];
     listener->input_type->setName(typeName.c_str());
 
-    addSubscriber(listener);
-    LOG_INFO("Added subscriber " << listener->getName() << "[" << topic_name << ":"
+    addReader(listener);
+    LOG_INFO("Added RTPS subscriber " << listener->getName() << "[" << topic_name << ":"
         << participant->getAttributes().rtps.builtin.domainId << "]");
 }
 
-void ISManager::createPublisher(Participant* participant, const std::string &participant_profile, const std::string &name)
+void ISManager::createWriter(Participant* participant, const std::string &participant_profile, const std::string &name)
 {
     RTPSPublisher* publisher = new RTPSPublisher(getEndPointName(participant_profile, name));
 
@@ -370,7 +372,7 @@ void ISManager::createPublisher(Participant* participant, const std::string &par
     if(!publisher->hasParticipant())
     {
         delete publisher;
-        LOG_ERROR("Error creating publisher");
+        LOG_ERROR("Error creating RTPS publisher");
         return;
     }
 
@@ -399,7 +401,7 @@ void ISManager::createPublisher(Participant* participant, const std::string &par
     }
     else
     {
-        LOG_WARN("Cannot get publisher attributes: The publisher " << name << " creation probably will fail.");
+        LOG_WARN("Cannot get RTPS publisher attributes: The publisher " << name << " creation probably will fail.");
     }
 
     //Create publisher
@@ -414,17 +416,17 @@ void ISManager::createPublisher(Participant* participant, const std::string &par
     publisher->output_type->setName(typeName.c_str());
 
     //Create publisher
-    //publisher->setRTPSPublisher(Domain::createPublisher(publisher->getParticipant(), name,
+    //publisher->setRTPSPublisher(Domain::createWriter(publisher->getParticipant(), name,
     //                            (PublisherListener*)publisher));
     if(!publisher->hasRTPSPublisher())
     {
         delete publisher;
-        LOG_ERROR("Error creating publisher");
+        LOG_ERROR("Error creating RTPS publisher");
         return;
     }
 
-    addPublisher(publisher);
-    LOG_INFO("Added publisher " << publisher->getName()<< "[" << topic_name << ":"
+    addWriter(publisher);
+    LOG_INFO("Added RTPS publisher " << publisher->getName()<< "[" << topic_name << ":"
         << participant->getAttributes().rtps.builtin.domainId << "]");
 }
 
@@ -438,8 +440,8 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
         tinyxml2::XMLElement *properties = _assignOptionalElement(bridge_element, s_sProperties);
         void *handle = getLibraryHandle(library);
         createBridgef_t create_bridge = (createBridgef_t)eProsimaGetProcAddress(handle, s_sFuncCreateBridge.c_str());
-        createSubf_t create_subscriber = (createSubf_t)eProsimaGetProcAddress(handle, s_sFuncCreateSubscriber.c_str());
-        createPubf_t create_publisher = (createPubf_t)eProsimaGetProcAddress(handle, s_sFuncCreatePublisher.c_str());
+        createSubf_t create_reader = (createSubf_t)eProsimaGetProcAddress(handle, s_sFuncCreateReader.c_str());
+        createPubf_t create_writer = (createPubf_t)eProsimaGetProcAddress(handle, s_sFuncCreateWriter.c_str());
 
         ISBridge *bridge = nullptr;
         if (create_bridge != nullptr)
@@ -464,26 +466,26 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
 
         addBridge(bridge);
 
-        tinyxml2::XMLElement *subscribers = bridge_element->FirstChildElement(s_sSubscriber.c_str());
-        while (subscribers)
+        tinyxml2::XMLElement *readers = bridge_element->FirstChildElement(s_sReader.c_str());
+        while (readers)
         {
-            const char* sub_name = subscribers->Attribute(s_sName.c_str());
+            const char* sub_name = readers->Attribute(s_sName.c_str());
             std::vector<std::pair<std::string, std::string>> configuration;
-            parseProperties(subscribers, configuration);
-            ISSubscriber* sub = create_subscriber(bridge, sub_name, &configuration);
-            addSubscriber(bridge->getName(), sub);
-            subscribers = subscribers->NextSiblingElement(s_sSubscriber.c_str());
+            parseProperties(readers, configuration);
+            ISReader* sub = create_reader(bridge, sub_name, &configuration);
+            addReader(bridge->getName(), sub);
+            readers = readers->NextSiblingElement(s_sReader.c_str());
         }
 
-        tinyxml2::XMLElement *publishers = bridge_element->FirstChildElement(s_sPublisher.c_str());
-        while (publishers)
+        tinyxml2::XMLElement *writers = bridge_element->FirstChildElement(s_sWriter.c_str());
+        while (writers)
         {
-            const char* pub_name = publishers->Attribute(s_sName.c_str());
+            const char* pub_name = writers->Attribute(s_sName.c_str());
             std::vector<std::pair<std::string, std::string>> configuration;
-            parseProperties(publishers, configuration);
-            ISPublisher* pub = create_publisher(bridge, pub_name, &configuration);
-            addPublisher(bridge->getName(), pub);
-            publishers = publishers->NextSiblingElement(s_sPublisher.c_str());
+            parseProperties(writers, configuration);
+            ISWriter* pub = create_writer(bridge, pub_name, &configuration);
+            addWriter(bridge->getName(), pub);
+            writers = writers->NextSiblingElement(s_sWriter.c_str());
         }
     }
     catch (int e_code)
@@ -516,64 +518,66 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
     try
     {
         const char* connector_name = connector_element->Attribute(s_sName.c_str());
-        tinyxml2::XMLElement *sub_el = _assignNextElement(connector_element, s_sSubscriber);
-        tinyxml2::XMLElement *pub_el = _assignNextElement(connector_element, s_sPublisher);
+        tinyxml2::XMLElement *sub_el = _assignNextElement(connector_element, s_sReader);
+        tinyxml2::XMLElement *pub_el = _assignNextElement(connector_element, s_sWriter);
         tinyxml2::XMLElement *trans_el = _assignOptionalElement(connector_element, s_sTransformation);
 
         const char* sub_part   = sub_el->Attribute(s_sParticipantProfile.c_str());
         const char* sub_bridge = sub_el->Attribute(s_sBridgeName.c_str());
-        const char* sub_name = sub_el->Attribute(s_sSubscriberName.c_str());
+        const char* sub_name = sub_el->Attribute(s_sReaderName.c_str());
         const char* sub_profile_name = sub_el->Attribute(s_sSubscriberProfile.c_str());
         const char* pub_part   = pub_el->Attribute(s_sParticipantProfile.c_str());
         const char* pub_bridge = pub_el->Attribute(s_sBridgeName.c_str());
-        const char* pub_name = pub_el->Attribute(s_sPublisherName.c_str());
+        const char* pub_name = pub_el->Attribute(s_sWriterName.c_str());
         const char* pub_profile_name = pub_el->Attribute(s_sPublisherProfile.c_str());
 
         if (sub_part == nullptr && sub_bridge == nullptr)
         {
-            LOG_ERROR("Neither subscriber's participant or bridge are defined in connector " << connector_name << ".");
+            LOG_ERROR("Neither reader's participant or bridge are defined in connector " << connector_name << ".");
             throw 0;
         }
 
         if (sub_part != nullptr && sub_bridge != nullptr)
         {
-            LOG_ERROR("Both subscriber's participant and bridge are defined in connector " << connector_name << ".");
+            LOG_ERROR("Both reader's participant and bridge are defined in connector " << connector_name << ".");
             throw 0;
         }
 
         if (pub_part == nullptr && pub_bridge == nullptr)
         {
-            LOG_ERROR("Neither publisher's participant or bridge are defined in connector " << connector_name << ".");
+            LOG_ERROR("Neither writer's participant or bridge are defined in connector " << connector_name << ".");
             throw 0;
         }
 
         if (pub_part != nullptr && pub_bridge != nullptr)
         {
-            LOG_ERROR("Both publisher's participant and bridge are defined in connector " << connector_name << ".");
+            LOG_ERROR("Both writer's participant and bridge are defined in connector " << connector_name << ".");
             throw 0;
         }
 
         if (pub_part != nullptr && pub_profile_name == nullptr)
         {
-            LOG_ERROR("A Publisher participant needs a " << s_sPublisherProfile << " in connector " << connector_name << ".");
+            LOG_ERROR("A RTPS Publisher participant needs a " << s_sPublisherProfile << " in connector "
+                << connector_name << ".");
             throw 0;
         }
 
         if (sub_part != nullptr && sub_profile_name == nullptr)
         {
-            LOG_ERROR("A Subscriber participant needs a " << s_sSubscriberProfile << " in connector " << connector_name << ".");
+            LOG_ERROR("A RTPS Subscriber participant needs a " << s_sSubscriberProfile << " in connector "
+                << connector_name << ".");
             throw 0;
         }
 
         if (pub_bridge != nullptr && pub_name == nullptr)
         {
-            LOG_ERROR("A Publisher bridge needs a " << s_sPublisherName << " in connector " << connector_name << ".");
+            LOG_ERROR("A Writer bridge needs a " << s_sWriterName << " in connector " << connector_name << ".");
             throw 0;
         }
 
         if (sub_bridge != nullptr && sub_name == nullptr)
         {
-            LOG_ERROR("A Subscriber bridge needs a " << s_sSubscriberName << " in connector " << connector_name << ".");
+            LOG_ERROR("A Reader bridge needs a " << s_sReaderName << " in connector " << connector_name << ".");
             throw 0;
         }
 
@@ -584,7 +588,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
             Participant* participant_subscriber = getParticipant(sub_part);
             if (participant_subscriber != nullptr)
             {
-                createSubscriber(participant_subscriber, sub_part, sub_profile_name);
+                createReader(participant_subscriber, sub_part, sub_profile_name);
                 subName = getEndPointName(sub_part, sub_profile_name);
             }
         }
@@ -599,7 +603,7 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
             Participant* participant_publisher = getParticipant(pub_part);
             if (participant_publisher != nullptr)
             {
-                createPublisher(participant_publisher, pub_part, pub_profile_name);
+                createWriter(participant_publisher, pub_part, pub_profile_name);
                 pubName = getEndPointName(pub_part, pub_profile_name);
             }
         }
@@ -609,22 +613,22 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
             pubName = getEndPointName(pub_bridge, pub_name);
         }
 
-        auto its = subscribers.find(subName);
-        if (its == subscribers.end())
+        auto its = readers.find(subName);
+        if (its == readers.end())
         {
-            LOG_ERROR("Subscriber " << sub_name << " of participant " << sub_part << " cannot be found.");
+            LOG_ERROR("Reader " << sub_name << " of participant " << sub_part << " cannot be found.");
             throw 0;
         }
 
-        auto itp = publishers.find(pubName);
-        if (itp == publishers.end())
+        auto itp = writers.find(pubName);
+        if (itp == writers.end())
         {
-            LOG_ERROR("Publisher " << pub_name << " of participant " << pub_part << " cannot be found.");
+            LOG_ERROR("Writer " << pub_name << " of participant " << pub_part << " cannot be found.");
             throw 0;
         }
 
-        ISSubscriber* sub = its->second;
-        ISPublisher* pub = itp->second;
+        ISReader* sub = its->second;
+        ISWriter* pub = itp->second;
 
         std::string function_name;
         userf_t function = nullptr;
@@ -667,17 +671,17 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         }
         else if(itsb != bridges.end())
         {
-            // Subscriber has the custom bridge
+            // Reader has the custom bridge
             bridge = itsb->second;
         }
         else // itpb != bridges.end()
         {
-            // Publisher has the custom bridge
+            // Writer has the custom bridge
             bridge = itpb->second;
         }
 
-        bridge->addSubscriber(sub);
-        bridge->addPublisher(sub->getName(), function_name, pub);
+        bridge->addReader(sub);
+        bridge->addWriter(sub->getName(), function_name, pub);
         if (dynFunction == nullptr)
         {
             bridge->addFunction(sub->getName(), function_name, function);
@@ -774,8 +778,8 @@ ISManager::~ISManager()
         delete b;
     }
     bridges.clear();
-    subscribers.clear();
-    publishers.clear();
+    readers.clear();
+    writers.clear();
 
     for (auto it = data_types.begin(); it != data_types.end(); ++it)
     {

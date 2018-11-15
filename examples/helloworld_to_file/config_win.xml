@@ -20,7 +20,7 @@
     <bridge name="file">
         <library>build/Debug/isfile.dll</library>
 
-        <publisher name="file_publisher">
+        <writer name="file_publisher">
             <property>
                 <name>filename</name>
                 <value>output.txt</value>
@@ -33,11 +33,11 @@
                 <name>append</name>
                 <value>true</value>
             </property>
-        </publisher>
+        </writer>
     </bridge>
 
     <connector name="dump_to_file">
-        <subscriber participant_profile="rtps" subscriber_profile="fastrtps_subscriber"/>
-        <publisher bridge_name="file" publisher_name="file_publisher"/>
+        <reader participant_profile="rtps" subscriber_profile="fastrtps_subscriber"/>
+        <writer bridge_name="file" writer_name="file_publisher"/>
     </connector>
 </is>

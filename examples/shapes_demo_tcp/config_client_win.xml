@@ -199,17 +199,17 @@
     </profiles>
 
     <connector name="TCP_Local_SQUARES">
-        <subscriber participant_profile="TCPShapes" subscriber_profile="subscriberSquare"/>
-        <publisher participant_profile="LocalShapes" publisher_profile="publisherSquare"/>
+        <reader participant_profile="TCPShapes" subscriber_profile="subscriberSquare"/>
+        <writer participant_profile="LocalShapes" publisher_profile="publisherSquare"/>
     </connector>
 
     <connector name="TCP_Local_TRIANGLES">
-        <subscriber participant_profile="TCPShapes" subscriber_profile="subscriberTriangle"/>
-        <publisher participant_profile="LocalShapes" publisher_profile="publisherTriangle"/>
+        <reader participant_profile="TCPShapes" subscriber_profile="subscriberTriangle"/>
+        <writer participant_profile="LocalShapes" publisher_profile="publisherTriangle"/>
     </connector>
 
     <connector name="TCP_Local_CIRCLES">
-        <subscriber participant_profile="TCPShapes" subscriber_profile="subscriberCircle"/>
-        <publisher participant_profile="LocalShapes" publisher_profile="publisherCircle"/>
+        <reader participant_profile="TCPShapes" subscriber_profile="subscriberCircle"/>
+        <writer participant_profile="LocalShapes" publisher_profile="publisherCircle"/>
     </connector>
 </is>

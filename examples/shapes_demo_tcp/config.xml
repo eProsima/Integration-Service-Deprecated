@@ -261,65 +261,65 @@
     </profiles>
 
     <connector name="UDP_TCP_SQUARES">
-        <subscriber participant_profile="UDPParticipant1" subscriber_profile="subscriberSquare"/>
-        <publisher participant_profile="TCPServer" publisher_profile="publisherSquare"/>
+        <reader participant_profile="UDPParticipant1" subscriber_profile="subscriberSquare"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherSquare"/>
     </connector>
 
     <connector name="TCP_UDP_SQUARES">
-        <subscriber participant_profile="TCPClient" subscriber_profile="subscriberSquare"/>
-        <publisher participant_profile="UDPParticipant0" publisher_profile="publisherSquare"/>
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberSquare"/>
+        <writer participant_profile="UDPParticipant0" publisher_profile="publisherSquare"/>
     </connector>
 
     <connector name="UDP_TCP_TRIANGLES">
-        <subscriber participant_profile="UDPParticipant1" subscriber_profile="subscriberTriangle"/>
-        <publisher participant_profile="TCPServer" publisher_profile="publisherTriangle"/>
+        <reader participant_profile="UDPParticipant1" subscriber_profile="subscriberTriangle"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherTriangle"/>
     </connector>
 
     <connector name="TCP_UDP_TRIANGLES">
-        <subscriber participant_profile="TCPClient" subscriber_profile="subscriberTriangle"/>
-        <publisher participant_profile="UDPParticipant0" publisher_profile="publisherTriangle"/>
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberTriangle"/>
+        <writer participant_profile="UDPParticipant0" publisher_profile="publisherTriangle"/>
     </connector>
 
     <connector name="UDP_TCP_CIRCLES">
-        <subscriber participant_profile="UDPParticipant1" subscriber_profile="subscriberCircle"/>
-        <publisher participant_profile="TCPServer" publisher_profile="publisherCircle"/>
+        <reader participant_profile="UDPParticipant1" subscriber_profile="subscriberCircle"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherCircle"/>
     </connector>
 
     <connector name="TCP_UDP_CIRCLES">
-        <subscriber participant_profile="TCPClient" subscriber_profile="subscriberCircle"/>
-        <publisher participant_profile="UDPParticipant0" publisher_profile="publisherCircle"/>
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberCircle"/>
+        <writer participant_profile="UDPParticipant0" publisher_profile="publisherCircle"/>
     </connector>
 
 <!--
     <connector name="Local_TCP_SQUARES">
-        <subscriber participant_profile="TCPClient" subscriber_profile="subscriberSquare"/>
-        <publisher participant_profile="TCPServer" publisher_profile="publisherSquare"/>
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberSquare"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherSquare"/>
     </connector>
 
     <connector name="Local_TCP_TRIANGLES">
-        <subscriber participant_profile="TCPClient" subscriber_profile="subscriberTriangle"/>
-        <publisher participant_profile="TCPServer" publisher_profile="publisherTriangle"/>
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberTriangle"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherTriangle"/>
     </connector>
 
     <connector name="Local_TCP_CIRCLES">
-        <subscriber participant_profile="TCPClient" subscriber_profile="subscriberCircle"/>
-        <publisher participant_profile="TCPServer" publisher_profile="publisherCircle"/>
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberCircle"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherCircle"/>
     </connector>
 -->
 <!--
     <connector name="TCP_Local_SQUARES">
-        <subscriber participant_profile="TCPServer" subscriber_profile="subscriberSquare"/>
-        <publisher participant_profile="TCPClient" publisher_profile="publisherSquare"/>
+        <reader participant_profile="TCPServer" subscriber_profile="subscriberSquare"/>
+        <writer participant_profile="TCPClient" publisher_profile="publisherSquare"/>
     </connector>
 
     <connector name="TCP_Local_TRIANGLES">
-        <subscriber participant_profile="TCPServer" subscriber_profile="subscriberTriangle"/>
-        <publisher participant_profile="TCPClient" publisher_profile="publisherTriangle"/>
+        <reader participant_profile="TCPServer" subscriber_profile="subscriberTriangle"/>
+        <writer participant_profile="TCPClient" publisher_profile="publisherTriangle"/>
     </connector>
 
     <connector name="TCP_Local_CIRCLES">
-        <subscriber participant_profile="TCPServer" subscriber_profile="subscriberCircle"/>
-        <publisher participant_profile="TCPClient" publisher_profile="publisherCircle"/>
+        <reader participant_profile="TCPServer" subscriber_profile="subscriberCircle"/>
+        <writer participant_profile="TCPClient" publisher_profile="publisherCircle"/>
     </connector>
 -->
 </is>

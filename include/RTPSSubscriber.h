@@ -32,7 +32,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class RTPSSubscriber : public SubscriberListener, public ISSubscriber
+// ISReader for RTPS protocol (known as subscriber)
+class RTPSSubscriber : public SubscriberListener, public ISReader
 {
 private:
     SampleInfo_t m_info;
@@ -54,4 +55,4 @@ public:
     Subscriber* getRTPSSubscriber() { return ms_subscriber; }
 };
 
-#endif // _Header__SUBSCRIBER_H_
+#endif // _ISBRIDGERTPS_SUBSCRIBER_H_

@@ -44,7 +44,7 @@
             </property>
         </properties>
 
-        <publisher name="protocol_publisher">
+        <writer name="protocol_publisher">
             <property>
                 <name>property1</name>
                 <value>value1</value>
@@ -53,9 +53,9 @@
                 <name>property2</name>
                 <value>value2</value>
             </property>
-        </publisher>
+        </writer>
 
-        <subscriber name="protocol_subscriber">
+        <reader name="protocol_subscriber">
             <property>
                 <name>property1</name>
                 <value>value1</value>
@@ -64,30 +64,30 @@
                 <name>property2</name>
                 <value>value2</value>
             </property>
-        </subscriber>
+        </reader>
     </bridge>
 
     <connector name="shapes_projection">
-    <subscriber participant_profile="3Dshapes" subscriber_profile="3d_subscriber"/>
-    <publisher participant_profile="2Dshapes" publisher_profile="2d_publisher"/>
+    <reader participant_profile="3Dshapes" subscriber_profile="3d_subscriber"/>
+    <writer participant_profile="2Dshapes" publisher_profile="2d_publisher"/>
     <transformation file="/path/to/transform/libuserlib.so" function="transform3D_to_2D"/>
     </connector>
 
     <connector name="shapes_stereo">
-    <subscriber participant_profile="2Dshapes" subscriber_profile="2d_subscriber"/>
-    <publisher participant_profile="3Dshapes" publisher_profile="3d_publisher"/>
+    <reader participant_profile="2Dshapes" subscriber_profile="2d_subscriber"/>
+    <writer participant_profile="3Dshapes" publisher_profile="3d_publisher"/>
     <transformation file="/path/to/transform/libuserlib.so" function="transform2D_to_3D"/>
     </connector>
 
     <connector name="shapes_protocol">
-    <subscriber participant_profile="2Dshapes" subscriber_profile="2d_subscriber"/>
-    <publisher bridge_name="protocol" publisher_name="protocol_publisher"/>
+    <reader participant_profile="2Dshapes" subscriber_profile="2d_subscriber"/>
+    <writer bridge_name="protocol" writer_name="protocol_publisher"/>
     <transformation file="/path/to/transform/libprotocoltransf.so" function="transformFrom2D"/>
     </connector>
 
     <connector name="protocol_shapes">
-    <subscriber participant_profile="protocol" subscriber_profile="protocol_subscriber"/>
-    <publisher bridge_name="2Dshapes" publisher_name="2d_publisher"/>
+    <reader bridge_name="protocol" reader_name="protocol_subscriber"/>
+    <writer participant_profile="2Dshapes" publisher_profile="2d_publisher"/>
     <transformation file="/path/to/transform/libprotocoltransf.so" function="transformTo2D"/>
     </connector>
 </is>

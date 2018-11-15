@@ -119,27 +119,27 @@
     </profiles>
 
     <connector name="Data1mb_1_1_TCP_UDP_Static">
-        <subscriber participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
-        <publisher participant_profile="ParticipantC_B1" publisher_profile="publisherC"/>
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B1" publisher_profile="publisherC"/>
     </connector>
 
     <connector name="Data1mb_1_2_TCP_UDP_Static">
-        <subscriber participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
-        <publisher participant_profile="ParticipantC_B2" publisher_profile="publisherC"/>
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B2" publisher_profile="publisherC"/>
     </connector>
 
     <connector name="Data1mb_1_3_TCP_UDP_Static">
-        <subscriber participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
-        <publisher participant_profile="ParticipantC_B3" publisher_profile="publisherC"/>
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B3" publisher_profile="publisherC"/>
     </connector>
 
     <connector name="Data1mb_1_4_TCP_UDP_Static">
-        <subscriber participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
-        <publisher participant_profile="ParticipantC_B4" publisher_profile="publisherC"/>
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B4" publisher_profile="publisherC"/>
     </connector>
 
     <connector name="Data1mb_1_5_TCP_UDP_Static">
-        <subscriber participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
-        <publisher participant_profile="ParticipantC_B5" publisher_profile="publisherC"/>
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B5" publisher_profile="publisherC"/>
     </connector>
 </is>

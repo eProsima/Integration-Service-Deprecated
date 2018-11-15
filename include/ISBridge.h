@@ -20,8 +20,8 @@
 #include <map>
 #include <string>
 #include "ISBaseClass.h"
-#include "ISPublisher.h"
-#include "ISSubscriber.h"
+#include "ISWriter.h"
+#include "ISReader.h"
 
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -34,19 +34,19 @@ using namespace eprosima::fastrtps::types;
 class ISBridge : public ISBaseClass
 {
 protected:
-    std::vector<ISSubscriber*> mv_subscriber;
+    std::vector<ISReader*> mv_reader;
     std::map<std::string, userf_t> mm_functionsNames;
     std::map<std::string, userdynf_t> mm_dynFunctionsNames;
     std::map<std::string, std::vector<std::string>> mm_functions;
     std::map<std::string, std::vector<std::string>> mm_dynFunctions;
-    std::map<std::string, std::vector<ISPublisher*>> mm_publisher;
-    std::map<ISPublisher*, std::string> mm_inv_publisher;
+    std::map<std::string, std::vector<ISWriter*>> mm_writer;
+    std::map<ISWriter*, std::string> mm_inv_writer;
     std::unordered_set<ISBaseClass*> ms_subpubs;
-    std::map<std::string, SerializedPayload_t*> mm_staticPayload; // Key is the publisher
-    std::map<std::string, DynamicData*> mm_dynamicData; // Key is the publisher
-    std::map<std::string, std::mutex*> mm_mutex; // Key is the publisher
+    std::map<std::string, SerializedPayload_t*> mm_staticPayload; // Key is the writer
+    std::map<std::string, DynamicData*> mm_dynamicData; // Key is the writer
+    std::map<std::string, std::mutex*> mm_mutex; // Key is the writer
 
-    static std::string generateKeyPublisher(const std::string &sub, const std::string &funct)
+    static std::string generateKeyWriter(const std::string &sub, const std::string &funct)
     {
         return sub + "@" + funct;
     }
@@ -79,14 +79,14 @@ public:
      */
     virtual void onTerminate()
     {
-        for (ISSubscriber* sub : mv_subscriber)
+        for (ISReader* sub : mv_reader)
         {
             sub->onTerminate();
         }
 
-        for (auto pub_pair : mm_publisher)
+        for (auto pub_pair : mm_writer)
         {
-            for (ISPublisher* pub : pub_pair.second)
+            for (ISWriter* pub : pub_pair.second)
             {
                 pub->onTerminate();
             }
@@ -98,9 +98,9 @@ public:
         }
     }
 
-    virtual void addSubscriber(ISSubscriber *sub)
+    virtual void addReader(ISReader *sub)
     {
-        mv_subscriber.emplace_back(sub);
+        mv_reader.emplace_back(sub);
         ms_subpubs.emplace(sub);
         sub->addBridge(this);
     }
@@ -119,21 +119,21 @@ public:
         fnames.push_back(fname);
     }
 
-    virtual void addPublisher(const std::string &sub, const std::string &funcName, ISPublisher* pub)
+    virtual void addWriter(const std::string &sub, const std::string &funcName, ISWriter* pub)
     {
-        std::string key = generateKeyPublisher(sub, funcName);
-        std::vector<ISPublisher*> &pubs = mm_publisher[key];
+        std::string key = generateKeyWriter(sub, funcName);
+        std::vector<ISWriter*> &pubs = mm_writer[key];
         pubs.emplace_back(pub);
-        mm_inv_publisher[pub] = key;
+        mm_inv_writer[pub] = key;
         ms_subpubs.emplace(pub);
         pub->setBridge(this);
     }
 
-    virtual ISPublisher* removePublisher(ISPublisher* pub)
+    virtual ISWriter* removeWriter(ISWriter* pub)
     {
-        std::string key = mm_inv_publisher[pub];
-        mm_inv_publisher.erase(pub);
-        std::vector<ISPublisher*> pubs = mm_publisher[key];
+        std::string key = mm_inv_writer[pub];
+        mm_inv_writer.erase(pub);
+        std::vector<ISWriter*> pubs = mm_writer[key];
         for (auto it = pubs.begin(); it != pubs.end(); it++)
         {
             if (*it == pub)
@@ -146,12 +146,12 @@ public:
         return pub;
     }
 
-    virtual void on_received_data(const ISSubscriber *sub, SerializedPayload_t *data)
+    virtual void on_received_data(const ISReader *sub, SerializedPayload_t *data)
     {
         std::vector<std::string> funcNames = mm_functions[sub->getName()];
         for (std::string fName : funcNames)
         {
-            std::string keyPub = generateKeyPublisher(sub->getName(), fName);
+            std::string keyPub = generateKeyWriter(sub->getName(), fName);
             userf_t function = mm_functionsNames[fName];
 
             if (function)
@@ -171,42 +171,42 @@ public:
                 }
 
                 function(data, output);
-                std::vector<ISPublisher*> pubs = mm_publisher[keyPub];
-                for (ISPublisher* pub : pubs)
+                std::vector<ISWriter*> pubs = mm_writer[keyPub];
+                for (ISWriter* pub : pubs)
                 {
                     if (!pub->isTerminating())
                     {
-                        pub->publish(output);
+                        pub->write(output);
                     }
                 }
             }
             else
             {
                 //output.copy(data, false);
-                std::vector<ISPublisher*> pubs = mm_publisher[keyPub];
-                for (ISPublisher* pub : pubs)
+                std::vector<ISWriter*> pubs = mm_writer[keyPub];
+                for (ISWriter* pub : pubs)
                 {
                     if (!pub->isTerminating())
                     {
-                        pub->publish(data);
+                        pub->write(data);
                     }
                 }
             }
         }
     }
 
-    virtual void on_received_data(const ISSubscriber *sub, DynamicData *data)
+    virtual void on_received_data(const ISReader *sub, DynamicData *data)
     {
         std::vector<std::string> funcNames = mm_dynFunctions[sub->getName()];
         if (funcNames.empty())
         {
-            std::string keyPub = generateKeyPublisher(sub->getName(), "");
-            std::vector<ISPublisher*> pubs = mm_publisher[keyPub];
-            for (ISPublisher* pub : pubs)
+            std::string keyPub = generateKeyWriter(sub->getName(), "");
+            std::vector<ISWriter*> pubs = mm_writer[keyPub];
+            for (ISWriter* pub : pubs)
             {
                 if (!pub->isTerminating())
                 {
-                    pub->publish(data);
+                    pub->write(data);
                     /*
                     DynamicData* output = mm_dynamicData[keyPub];
                     if (output == nullptr)
@@ -214,7 +214,7 @@ public:
                         output = DynamicDataFactory::GetInstance()->CreateCopy(data);
                         mm_dynamicData[keyPub] = output;
                     }
-                    pub->publish(output);
+                    pub->write(output);
                     //DynamicDataFactory::GetInstance()->DeleteData(output);
                     */
                 }
@@ -224,9 +224,9 @@ public:
         {
             for (std::string fName : funcNames)
             {
-                std::string keyPub = generateKeyPublisher(sub->getName(), fName);
-                std::vector<ISPublisher*> pubs = mm_publisher[keyPub];
-                for (ISPublisher* pub : pubs)
+                std::string keyPub = generateKeyWriter(sub->getName(), fName);
+                std::vector<ISWriter*> pubs = mm_writer[keyPub];
+                for (ISWriter* pub : pubs)
                 {
                     if (pub->isTerminating()) continue;
 
@@ -258,7 +258,7 @@ public:
                                 mm_dynamicData[keyPub] = output;
                             }
                             function(data, output);
-                            pub->publish(output);
+                            pub->write(output);
                             //DynamicDataFactory::GetInstance()->DeleteData(output);
                         }
                     }
@@ -266,7 +266,7 @@ public:
                     {
                         //output = DynamicDataFactory::GetInstance()->CreateCopy(data);
                         //output->copy(data, false);
-                        pub->publish(data);
+                        pub->write(data);
                     }
                 }
             }
@@ -281,11 +281,11 @@ public:
 typedef ISBridge* (*createBridgef_t)(const char* name, const std::vector<std::pair<std::string, std::string>> *config);
 
 
-inline void ISSubscriber::addBridge(ISBridge* bridge){
+inline void ISReader::addBridge(ISBridge* bridge){
     mv_bridges.push_back(bridge);
 }
 
-inline void ISSubscriber::on_received_data(SerializedPayload_t* payload)
+inline void ISReader::on_received_data(SerializedPayload_t* payload)
 {
     for (ISBridge* bridge : mv_bridges)
     {
@@ -296,7 +296,7 @@ inline void ISSubscriber::on_received_data(SerializedPayload_t* payload)
     }
 }
 
-inline void ISSubscriber::on_received_data(DynamicData* data)
+inline void ISReader::on_received_data(DynamicData* data)
 {
     for (ISBridge* bridge : mv_bridges)
     {
@@ -307,13 +307,13 @@ inline void ISSubscriber::on_received_data(DynamicData* data)
     }
 }
 
-inline ISBridge* ISPublisher::setBridge(ISBridge *bridge)
+inline ISBridge* ISWriter::setBridge(ISBridge *bridge)
 {
     ISBridge *old = mb_bridge;
     mb_bridge = bridge;
     if (old != nullptr && old != bridge)
     {
-        old->removePublisher(this);
+        old->removeWriter(this);
     }
     return old;
 }

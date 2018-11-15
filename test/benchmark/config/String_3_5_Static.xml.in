@@ -123,77 +123,77 @@
     </profiles>
 
     <connector name="String_1_1_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB1" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_2_1_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB1" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_3_1_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB1" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_1_2_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB2" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_2_2_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB2" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_3_2_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB2" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_1_3_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB3" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_2_3_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB3" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_3_3_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB3" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_1_4_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB4" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_2_4_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB4" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_3_4_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB4" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_1_5_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB5" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_2_5_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB5" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
     </connector>
 
     <connector name="String_3_5_UDP_UDP_Static">
-        <subscriber participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
-        <publisher participant_profile="ParticipantB5" publisher_profile="publisher"/>
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
     </connector>
 </is>
