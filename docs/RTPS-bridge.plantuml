@@ -1,0 +1,24 @@
+@startuml
+
+hide empty members
+
+package "RTPS" as A <<Cloud>> {
+    class Publisher
+}
+
+package "Integration Services" <<Rectangle>> {
+    class TransformationLibrary
+    {
+        Pub_t transform(Sub_t);
+    }
+}
+
+package "RTPS" as B <<Cloud>> {
+    class Subscriber
+}
+
+Publisher -right-> TransformationLibrary
+TransformationLibrary -right-> Subscriber
+
+
+@enduml
