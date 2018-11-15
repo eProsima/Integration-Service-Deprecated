@@ -3,7 +3,7 @@
 
 *eProsima Integration Service* is a library based on *Fast RTPS* for creating parameterized 
 communication bridges between different systems, services and protocols. 
-Also it is able to perform transformations over the messages such as customized routing and
+It is also able to perform transformations over the messages such as customized routing and
 mapping between input and output attributes or data modification.
 
 The main features of *Integration Service* are:
@@ -36,11 +36,11 @@ To clone this project, just execute:
     $ git clone --recursive https://github.com/eProsima/integration-service
 ```
 
-IMPORTANT: *eProsima Integration Service* is using new features that aren't released 
+IMPORTANT: *eProsima Integration Service* uses new features that aren't released 
 on the master branch of FastRTPS yet. 
-To compile it you must swith to the *Develop* branch.
+To compile it you must switch to the *Develop* branch.
 
-Now, for compiling, if you are on Linux execute:
+Now, for compiling, if you are on Linux you must execute:
 
 ```bash
     $ mkdir build && cd build
@@ -59,7 +59,7 @@ If you are on Windows you must choose a version of Visual Studio:
 If you want to compile *eProsima Integration Service* without an installed version of *Fast RTPS* you can add 
 an additional parameter that downloads it as a third party library.
 
-If you are on Linux execute:
+If you are on Linux you must execute:
 
 ```bash
     $ mkdir build && cd build
@@ -67,7 +67,7 @@ If you are on Linux execute:
     $ make
 ```
 
-If you are on Windows choose your version of Visual Studio:
+If you are on Windows you must choose your version of Visual Studio:
 
 ```bash
     > mkdir build && cd build
@@ -79,7 +79,7 @@ If you are on Windows choose your version of Visual Studio:
 
 ## Documentation
 
-You can access the documentation online, which is hosted on [Read the Docs](http://eprosima-fast-rtps.readthedocs.io).
+You can access the documentation online, which is hosted on [Read the Docs](https://integration-services.readthedocs.io).
 
 <hr></hr>
 
