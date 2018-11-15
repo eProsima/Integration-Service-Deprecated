@@ -1,5 +1,5 @@
 #include <iostream>
-#include "FilePublisher.h"
+#include "FileWriter.h"
 #include "../../src/log/ISLog.h"
 
 #if defined(_WIN32) && defined (BUILD_SHARED_LIBS)
@@ -15,7 +15,7 @@
   #define USER_LIB_EXPORT
 #endif
 
-FilePublisher* loadFilePublisher(const char* name, const std::vector<std::pair<std::string, std::string>> *config);
+FileWriter* loadFilePublisher(const char* name, const std::vector<std::pair<std::string, std::string>> *config);
 
 extern "C" USER_LIB_EXPORT ISBridge* create_bridge(const char*,
     const std::vector<std::pair<std::string, std::string>>*)
@@ -35,13 +35,13 @@ extern "C" USER_LIB_EXPORT ISWriter* create_writer(ISBridge*, const char* name,
     return loadFilePublisher(name, config);
 }
 
-FilePublisher* loadFilePublisher(const char* name, const std::vector<std::pair<std::string, std::string>> *config)
+FileWriter* loadFilePublisher(const char* name, const std::vector<std::pair<std::string, std::string>> *config)
 {
     if (!config)
     {
         return nullptr;
     }
 
-    FilePublisher* publisher = new FilePublisher(name, config);
+    FileWriter* publisher = new FileWriter(name, config);
     return publisher;
 }

@@ -20,7 +20,7 @@
 #include <iostream>
 #include <fstream>
 
-class FilePublisher : public ISWriter
+class FileWriter : public ISWriter
 {
 private:
     std::string url;
@@ -29,9 +29,9 @@ private:
     bool append;
     std::ofstream file;
 public:
-    FilePublisher(const std::string &name);
-    FilePublisher(const std::string &name, const std::vector<std::pair<std::string, std::string>> *config);
-    ~FilePublisher() override;
+    FileWriter(const std::string &name);
+    FileWriter(const std::string &name, const std::vector<std::pair<std::string, std::string>> *config);
+    ~FileWriter() override;
 
     bool write(SerializedPayload_t*) override;
     bool write(eprosima::fastrtps::types::DynamicData*) override { return false; };

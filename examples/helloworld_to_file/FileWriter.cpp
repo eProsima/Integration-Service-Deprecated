@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "FilePublisher.h"
+#include "FileWriter.h"
 #include "../../src/log/ISLog.h"
 #include "HelloWorldPubSubTypes.h"
 
@@ -25,12 +25,12 @@ static const std::string s_sAppend("append");
 static const std::string s_sTrue("true");
 static const std::string s_sFalse("false");
 
-FilePublisher::~FilePublisher()
+FileWriter::~FileWriter()
 {
     file.close();
 }
 
-FilePublisher::FilePublisher(const std::string &name)
+FileWriter::FileWriter(const std::string &name)
     : ISWriter(name)
     , outputFile("output.txt")
     , fileFormat(s_sTxt)
@@ -39,7 +39,7 @@ FilePublisher::FilePublisher(const std::string &name)
     file.open(outputFile, std::ios::out);
 }
 
-FilePublisher::FilePublisher(const std::string &name, const std::vector<std::pair<std::string, std::string>> *config)
+FileWriter::FileWriter(const std::string &name, const std::vector<std::pair<std::string, std::string>> *config)
     : ISWriter(name)
     , outputFile("output.txt")
     , fileFormat(s_sTxt)
@@ -85,7 +85,7 @@ FilePublisher::FilePublisher(const std::string &name, const std::vector<std::pai
     }
 }
 
-bool FilePublisher::write(SerializedPayload_t* payload)
+bool FileWriter::write(SerializedPayload_t* payload)
 {
     HelloWorldPubSubType hello_pst;
     HelloWorld hello;
