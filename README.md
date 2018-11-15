@@ -3,15 +3,15 @@
 
 *eProsima Integration Service* is a library based on *Fast RTPS* for creating parameterized 
 communication bridges between different systems, services and protocols. 
-Also it is able to perform some transformations over the messages such as customized routing, 
+Also it is able to perform transformations over the messages such as customized routing and
 mapping between input and output attributes or data modification.
 
-Some of the possibilities offered by *Integration Service* are:
+The main features of *Integration Service* are:
 
 -   Connects two different domains.
 -   Mapping between different data types.
--   User-defined operations over the circulating messages.
--   Communication with others environments, as *ROS2*.
+-   User-defined operations over the received messages.
+-   Communication with others environments, like *ROS2*.
 
 <p align="center"> <img src="docs/IS-main.png" alt="Default behaviour"/> </p>
 
@@ -30,7 +30,7 @@ Some of the possibilities offered by *Integration Service* are:
 
 Before compiling *eProsima Integration Service* you need to have installed *Fast RTPS* as described 
 in its [documentation](http://eprosima-fast-rtps.readthedocs.io/en/latest/binaries.html). 
-For cloning this project execute:
+To clone this project, just execute:
 
 ```bash
     $ git clone --recursive https://github.com/eProsima/integration-service
@@ -48,7 +48,7 @@ Now, for compiling, if you are on Linux execute:
     $ make
 ```
 
-If you are on Windows choose your version of Visual Studio:
+If you are on Windows you must choose a version of Visual Studio:
 
 ```bash
     > mkdir build && cd build
