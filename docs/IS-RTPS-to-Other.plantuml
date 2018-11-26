@@ -1,0 +1,25 @@
+@startuml
+
+hide empty members
+
+package "Other Protocol" <<Cloud>> {
+    class OtherReader
+}
+
+package "Integration Services" <<Rectangle>> {
+    class TransformationLibrary
+    {
+        Other_t transform(RTPS_t);
+        RTPS_t transformFromA(Other_t)
+    }
+}
+
+package "RTPS" <<Cloud>> {
+    class Publisher
+}
+
+Publisher -right-> TransformationLibrary
+TransformationLibrary -right-> OtherReader
+
+
+@enduml

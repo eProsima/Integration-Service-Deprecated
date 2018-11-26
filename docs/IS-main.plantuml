@@ -1,0 +1,27 @@
+@startuml
+
+hide empty members
+
+package "RTPS" <<Cloud>> {
+    class Publisher
+}
+
+package "Integration Services" <<Rectangle>> {
+    package "Connector" <<Rectangle>> {
+        class ISReader
+        class TransformationLibrary
+        class ISWriter
+    }
+}
+
+package "Other Protocol" <<Cloud>> {
+    class OtherReader
+}
+
+Publisher -right-> ISReader
+ISReader -right-> TransformationLibrary
+TransformationLibrary -right-> ISWriter
+
+OtherReader <- ISWriter
+
+@enduml

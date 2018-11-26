@@ -1,0 +1,21 @@
+@startuml
+
+hide empty members
+
+package "Other Protocol" <<Cloud>> {
+    class OtherProtocol
+}
+
+package "Integration Services" <<Rectangle>> {
+    class Connector
+}
+
+package "RTPS" <<Cloud>> {
+    class Participant
+}
+
+Participant <-> Connector
+Connector <-> OtherProtocol
+
+
+@enduml

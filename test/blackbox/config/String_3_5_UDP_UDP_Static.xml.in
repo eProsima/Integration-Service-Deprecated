@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<is>
+    <profiles>
+        <participant profile_name="ParticipantA1">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA2">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN1_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA3">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN2_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB1">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB2">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN6_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB3">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN7_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB4">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN8_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB5">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN9_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriber">
+            <topic>
+                <name>StringType</name>
+                <dataType>StringType</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <publisher profile_name="publisher">
+            <topic>
+                <name>StringType</name>
+                <dataType>StringType</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </publisher>
+    </profiles>
+
+    <connector name="String_1_1_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_2_1_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_3_1_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_1_2_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_2_2_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_3_2_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_1_3_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_2_3_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_3_3_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_1_4_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_2_4_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_3_4_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_1_5_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_2_5_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="String_3_5_UDP_UDP_Static">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
+    </connector>
+</is>

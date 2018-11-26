@@ -1,18 +1,41 @@
 <?xml version="1.0"?>
 <is>
-	<bridge>
-		<subscriber>
-			<participant>rs_subscriber</participant>
-			<domain>0</domain>
-			<topic>TextPubSubTopic</topic>
-			<type>Text</type>
-		</subscriber>
-		<publisher>
-			<participant>rs_publisher</participant>
-			<domain>5</domain>
-			<topic>TextPubSubTopic</topic>
-			<type>Text</type>
-		</publisher>
-		<transformation></transformation>
-	</bridge>
+    <profiles>
+        <participant profile_name="domain0">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="is_subscriber">
+            <topic>
+                <name>TextPubSubTopic</name>
+                <dataType>Text</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <participant profile_name="domain5">
+            <rtps>
+                <builtin>
+                    <domainId>5</domainId>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <publisher profile_name="is_publisher">
+            <topic>
+                <name>TextPubSubTopic</name>
+                <dataType>Text</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+    </profiles>
+
+    <connector name="domain_change">
+        <reader participant_profile="domain0" subscriber_profile="is_subscriber"/>
+        <writer participant_profile="domain5" publisher_profile="is_publisher"/>
+    </connector>
 </is>

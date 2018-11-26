@@ -17,30 +17,38 @@
 
 #include "GenericPubSubTypes.h"
 
-GenericPubSubType::GenericPubSubType() {
+GenericPubSubType::GenericPubSubType()
+{
 	m_typeSize = 1;
 	m_keyBuffer = (unsigned char*)malloc(16);
 }
 
-GenericPubSubType::~GenericPubSubType() {
-	if(m_keyBuffer!=nullptr)
-		free(m_keyBuffer);
+GenericPubSubType::~GenericPubSubType()
+{
+    if (m_keyBuffer != nullptr)
+    {
+        free(m_keyBuffer);
+    }
 }
 
-bool GenericPubSubType::serialize(void *data, SerializedPayload_t *payload) {
+bool GenericPubSubType::serialize(void *data, SerializedPayload_t *payload)
+{
 	SerializedPayload_t* p_type = (SerializedPayload_t*) data;
 	payload->copy(p_type, false);
 	return true;
 }
 
-bool GenericPubSubType::deserialize(SerializedPayload_t* payload, void* data) {
+bool GenericPubSubType::deserialize(SerializedPayload_t* payload, void* data)
+{
 	SerializedPayload_t* p_type = (SerializedPayload_t*) data;
 	p_type->copy(payload, false);
 	return true;
 }
 
-std::function<uint32_t()> GenericPubSubType::getSerializedSizeProvider(void* data) {
-	return [data]() -> uint32_t {
+std::function<uint32_t()> GenericPubSubType::getSerializedSizeProvider(void* data)
+{
+	return [data]() -> uint32_t
+    {
 		SerializedPayload_t* p_type = (SerializedPayload_t*) data;
 		return p_type->length;
 	};

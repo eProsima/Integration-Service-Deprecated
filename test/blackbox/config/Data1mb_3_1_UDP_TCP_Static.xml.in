@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<is>
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>TCPServer</transport_id>
+                <type>TCPv4</type>
+                <listening_ports>
+                    <port>5103</port>
+                </listening_ports>
+                <wait_negotiation>false</wait_negotiation>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="ParticipantD_A1">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantD_A2">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN1_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantD_A3">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN2_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantD_B">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPServer</transport_id>
+                </userTransports>
+                <builtin>
+                    <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriberD">
+            <topic>
+                <name>Data1mbTopic</name>
+                <dataType>Data1mb</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <publisher profile_name="publisherD">
+            <topic>
+                <name>Data1mbTopic</name>
+                <dataType>Data1mb</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </publisher>
+    </profiles>
+
+    <connector name="String_1_1_UDP_UDP_Static">
+        <reader participant_profile="ParticipantD_A1" subscriber_profile="subscriberD"/>
+        <writer participant_profile="ParticipantD_B" publisher_profile="publisherD"/>
+    </connector>
+
+    <connector name="String_2_1_UDP_UDP_Static">
+        <reader participant_profile="ParticipantD_A2" subscriber_profile="subscriberD"/>
+        <writer participant_profile="ParticipantD_B" publisher_profile="publisherD"/>
+    </connector>
+
+    <connector name="String_3_1_UDP_UDP_Static">
+        <reader participant_profile="ParticipantD_A3" subscriber_profile="subscriberD"/>
+        <writer participant_profile="ParticipantD_B" publisher_profile="publisherD"/>
+    </connector>
+</is>
