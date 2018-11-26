@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<is>
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>TCPClient</transport_id>
+                <type>TCPv4</type>
+                <wait_negotiation>false</wait_negotiation>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="ParticipantC_A">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPClient</transport_id>
+                </userTransports>
+                <builtin>
+                    <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>5102</physical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantC_B1">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantC_B2">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN6_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantC_B3">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN7_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantC_B4">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN8_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantC_B5">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN9_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriberC">
+            <topic>
+                <name>Data1mbTopic</name>
+                <dataType>Data1mb</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <publisher profile_name="publisherC">
+            <topic>
+                <name>Data1mbTopic</name>
+                <dataType>Data1mb</dataType>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </publisher>
+    </profiles>
+
+    <connector name="Data1mb_1_1_TCP_UDP_Static">
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B1" publisher_profile="publisherC"/>
+    </connector>
+
+    <connector name="Data1mb_1_2_TCP_UDP_Static">
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B2" publisher_profile="publisherC"/>
+    </connector>
+
+    <connector name="Data1mb_1_3_TCP_UDP_Static">
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B3" publisher_profile="publisherC"/>
+    </connector>
+
+    <connector name="Data1mb_1_4_TCP_UDP_Static">
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B4" publisher_profile="publisherC"/>
+    </connector>
+
+    <connector name="Data1mb_1_5_TCP_UDP_Static">
+        <reader participant_profile="ParticipantC_A" subscriber_profile="subscriberC"/>
+        <writer participant_profile="ParticipantC_B5" publisher_profile="publisherC"/>
+    </connector>
+</is>

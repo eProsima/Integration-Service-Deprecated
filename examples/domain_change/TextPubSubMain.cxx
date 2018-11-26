@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file TextPubSubMain.cpp
  * This file acts as a main entry point to the application.
  *
@@ -31,7 +31,7 @@ using namespace eprosima::fastrtps;
 
 int main(int argc, char** argv)
 {
-	cout << "Starting " << endl;
+	std::cout << "Starting " << std::endl;
 	int type = 1;
 	if (argc > 1)
 	{
@@ -46,13 +46,13 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		cout << "publisher OR subscriber argument needed" << endl;
+		std::cout << "publisher OR subscriber argument needed" << std::endl;
 		return 0;
 	}
-	
+
 	// Register the type being used
-	
-	
+
+
 	switch(type)
 	{
 		case 1:
@@ -74,6 +74,6 @@ int main(int argc, char** argv)
 			break;
 		}
 	}
-	
+
 	return 0;
 }

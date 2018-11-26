@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<is>
+    <is_types>
+        <types>
+            <!--
+            struct HelloWorld
+            {
+                unsigned long index;
+                string message;
+            };
+            <type>
+                <struct name="HelloWorld">
+                    <unsignedlong name="index"/>
+                    <string name="message"/>
+                </struct>
+            </type>
+            -->
+            <type>
+                <struct name="sample">
+                    <octet name="index"/>
+                    <octet name="key_value" key="true"/>
+                </struct>
+            </type>
+        </types>
+
+        <type name="HelloWorld">
+            <library>build\Debug\keyhelloworld_dyn_dyn_lib.dll</library>
+        </type>
+    </is_types>
+
+    <profiles>
+        <participant profile_name="HelloWorldParticipant">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subHW">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <publisher profile_name="pubHW">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+
+        <participant profile_name="KeysParticipant">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subK">
+            <topic>
+                <name>samplePubSubTopic</name>
+                <dataType>sample</dataType>
+                <kind>WITH_KEY</kind>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <publisher profile_name="pubK">
+            <topic>
+                <name>samplePubSubTopic</name>
+                <dataType>sample</dataType>
+                <kind>WITH_KEY</kind>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+    </profiles>
+
+    <connector name="HW_to_Key">
+        <reader participant_profile="HelloWorldParticipant" subscriber_profile="subHW"/>
+        <writer participant_profile="KeysParticipant" publisher_profile="pubK"/>
+        <transformation file="build\Debug\keyhelloworld_dyn_dyn_lib.dll" function="HelloWorldToKey"/>
+    </connector>
+<!--
+    <connector name="Key_to_HW">
+        <reader participant_profile="KeysParticipant" subscriber_profile="subK"/>
+        <writer participant_profile="HelloWorldParticipant" publisher_profile="pubHW"/>
+    <transformation file="build\Debug\keyhelloworld_dyn_dyn_lib.dll" function="KeyToHelloWorld"/>
+    </connector>
+-->
+</is>

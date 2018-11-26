@@ -46,7 +46,7 @@ private:
 	public:
 		PubListener() : n_matched(0){};
 		~PubListener(){};
-		void onPublicationMatched(Publisher* pub,MatchingInfo& info);
+		void onPublicationMatched(Publisher* pub, rtps::MatchingInfo& info);
 		int n_matched;
 	} m_listener;
 	TextPubSubType myType;

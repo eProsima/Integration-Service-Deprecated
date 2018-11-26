@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file Text.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -54,21 +54,21 @@ Text::Text(Text &&x)
 Text& Text::operator=(const Text &x)
 {
     m_message = x.m_message;
-    
+
     return *this;
 }
 
 Text& Text::operator=(Text &&x)
 {
     m_message = std::move(x.m_message);
-    
+
     return *this;
 }
 
 size_t Text::getMaxCdrSerializedSize(size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
 
     return current_alignment - initial_alignment;
@@ -77,7 +77,7 @@ size_t Text::getMaxCdrSerializedSize(size_t current_alignment)
 size_t Text::getCdrSerializedSize(const Text& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
-            
+
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
     return current_alignment - initial_alignment;
@@ -85,10 +85,7 @@ size_t Text::getCdrSerializedSize(const Text& data, size_t current_alignment)
 
 void Text::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    if(m_message.length() <= 255)
     scdr << m_message;
-    else
-        throw eprosima::fastcdr::exception::BadParamException("message field exceeds the maximum length");
 }
 
 void Text::deserialize(eprosima::fastcdr::Cdr &dcdr)
@@ -99,7 +96,7 @@ void Text::deserialize(eprosima::fastcdr::Cdr &dcdr)
 size_t Text::getKeyMaxCdrSerializedSize(size_t current_alignment)
 {
 	size_t current_align = current_alignment;
-            
+
 
     return current_align;
 }
@@ -109,7 +106,7 @@ bool Text::isKeyDefined()
     return false;
 }
 
-void Text::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void Text::serializeKey(eprosima::fastcdr::Cdr &) const
 {
-	 
+
 }

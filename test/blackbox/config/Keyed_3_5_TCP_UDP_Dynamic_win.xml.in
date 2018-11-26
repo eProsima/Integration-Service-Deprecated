@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+<is>
+    <is_types>
+        <type name="Keyed">
+            <library>Types.dll</library>
+        </type>
+    </is_types>
+
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>TCPClient</transport_id>
+                <type>TCPv4</type>
+                <wait_negotiation>false</wait_negotiation>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="ParticipantA1">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPClient</transport_id>
+                </userTransports>
+                <builtin>
+                    <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>6200</physical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA2">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPClient</transport_id>
+                </userTransports>
+                <builtin>
+                    <domainId>@DOMAIN1_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>6201</physical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantA3">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPClient</transport_id>
+                </userTransports>
+                <builtin>
+                    <domainId>@DOMAIN2_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>6202</physical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB1">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB2">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN6_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB3">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN7_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB4">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN8_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ParticipantB5">
+            <rtps>
+                <builtin>
+                    <domainId>@DOMAIN9_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriber">
+            <topic>
+                <name>KeyedTopic</name>
+                <dataType>Keyed</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+
+        <publisher profile_name="publisher">
+            <topic>
+                <name>KeyedTopic</name>
+                <dataType>Keyed</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+        </publisher>
+    </profiles>
+
+    <connector name="Keyed_1_1_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_1_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_1_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB1" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_1_2_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_2_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_2_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB2" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_1_3_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_3_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_3_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB3" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_1_4_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_4_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_4_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB4" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_1_5_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA1" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_2_5_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA2" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
+    </connector>
+
+    <connector name="Keyed_3_5_TCP_UDP_Dynamic">
+        <reader participant_profile="ParticipantA3" subscriber_profile="subscriber"/>
+        <writer participant_profile="ParticipantB5" publisher_profile="publisher"/>
+    </connector>
+</is>

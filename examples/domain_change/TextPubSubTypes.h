@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file TextPubSubTypes.h
  * This header file contains the declaration of the serialization functions.
  *
@@ -25,24 +25,22 @@
 
 #include <fastrtps/TopicDataType.h>
 
-using namespace eprosima::fastrtps;
-
 #include "Text.h"
 
 /*!
  * @brief This class represents the TopicDataType of the type Text defined by the user in the IDL file.
  * @ingroup TEXT
  */
-class TextPubSubType : public TopicDataType {
+class TextPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef Text type;
 
 	TextPubSubType();
 	virtual ~TextPubSubType();
-	bool serialize(void *data, SerializedPayload_t *payload);
-	bool deserialize(SerializedPayload_t *payload, void *data);
+	bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
+	bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
         std::function<uint32_t()> getSerializedSizeProvider(void* data);
-	bool getKey(void *data, InstanceHandle_t *ihandle);
+	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5 = false);
 	void* createData();
 	void deleteData(void * data);
 	MD5 m_md5;

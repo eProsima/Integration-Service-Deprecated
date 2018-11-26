@@ -1,78 +1,93 @@
-<?xml version="1.0"?>
-<!-- Complete <bridge> node will be sent to each bridge_library to be parsed by itself. -->
+
 <is>
-    <!-- Generic bridges -->
-    <bridge>
-        <bridge_type>unidirectional</bridge_type>
-        <subscriber> <!-- subscriber node may change depending of bridge_library implementation -->
-            <!-- CUSTOM subscriber parameters -->
+    <is_types>
+        <type name="ShapeType">
+            <library>libshapelib.so</library> <!-- Library for ShapeType -->
+        </type>
+        <type name="Unused type"/>
+        <!-- Can be used to pack types or types without their own library -->
+        <types_library>libotherlib.so</types_library>
+    </is_types>
+
+    <profiles>
+        <participant profile_name="2Dshapes">
+            <!-- RTPS participant attributes -->
+        </participant>
+
+        <participant profile_name="3Dshapes">
+            <!-- RTPS participant attributes -->
+        </participant>
+
+        <subscriber profile_name="2d_subscriber">
+            <!-- RTPS subscriber attributes -->
         </subscriber>
-        <publisher> <!-- publisher node may change depending of bridge_library implementation -->
-            <!-- CUSTOM publisher parameters -->
-        </publisher>
-        <transformation>/path/to/transformation/library</transformation> <!-- must define transform function -->
-        <bridge_library>/path/to/bridge/library</bridge_library> <!-- must load tranform function as well -->
-    </bridge>
-    <bridge>
-        <bridge_type>bidirectional</bridge_type>
-        <nodeA>
-            <!-- CUSTOM nodeA parameters -->
-        </nodeA>
-        <nodeB>
-            <!-- CUSTOM nodeB parameters -->
-        </nodeB>
-        <transformation>/path/to/transformation/library</transformation> <!-- must implement both ways. Bridge_library must know what functions to search -->
-        <bridge_library_nodeA>/path/to/bridge/library_1</bridge_library_nodeA> <!-- nodeA -> nodeB logic -->
-        <bridge_library_nodeB>/path/to/bridge/library_2</bridge_library_nodeB> <!-- nodeB -> nodeA logic -->
-    </bridge>
-    <!-- Builtin bridges -->
-    <bridge>
-        <bridge_type>fastrtps</bridge_type>
-        <subscriber>
-            <participant>subscriber_participant_name</participant>
-            <domain>subscriber_domain</domain>
-            <topic>subscriber_topic_name</topic>
-            <type>subscriber_type_name</type>
-            <partition>subscriber_partition</partition>  <!-- optional -->
+
+        <subscriber profile_name="3d_subscriber">
+            <!-- RTPS subscriber attributes -->
         </subscriber>
-        <publisher>
-            <participant>publisher_participant_name</participant>
-            <domain>subscriber_domain</domain>
-            <topic>publisher_topic_name</topic>
-            <type>publisher_type_name</type>
-            <partition>publisher_partition</partition>  <!-- optional -->
+
+        <publisher profile_name="2d_publisher">
+            <!-- RTPS publisher attributes -->
         </publisher>
-        <transformation>/path/to/transformation/library</transformation>
-        <bridge_library>/path/to/bridge/library</bridge_library> <!-- optional -->
+
+        <publisher profile_name="3d_publisher">
+            <!-- RTPS publisher attributes -->
+        </publisher>
+    </profiles>
+
+    <bridge name="protocol">
+        <library>/path/to/bridge/library/libprotocol.so</library>
+        <properties>
+            <property>
+                <name>property1</name>
+                <value>value1</value>
+            </property>
+        </properties>
+
+        <writer name="protocol_publisher">
+            <property>
+                <name>property1</name>
+                <value>value1</value>
+            </property>
+            <property>
+                <name>property2</name>
+                <value>value2</value>
+            </property>
+        </writer>
+
+        <reader name="protocol_subscriber">
+            <property>
+                <name>property1</name>
+                <value>value1</value>
+            </property>
+            <property>
+                <name>property2</name>
+                <value>value2</value>
+            </property>
+        </reader>
     </bridge>
-    <bridge>
-        <bridge_type>ngsiv2</bridge_type>
-        <ros2>
-            <participant>ros2_participant_name</participant>
-            <domain>0</domain>
-            <topic>ros2_topic_name</topic>
-            <type>ros2_type_name</type>
-            <partition>ros2_partition</partition>
-        </ros2>
-        <ngsiv2>
-            <participant>ngsiv2_participant_name</participant>
-            <id>ngsiv2_entity_id</id>
-            <host>ngsiv2_host</host>
-            <port>ngsiv2_port</port>
-            <subscription>
-                <type>ngsiv2_entity_type</type> <!-- optional -->
-                <attrs>ngsiv2_condition_attrs_list</attrs> <!-- optional, comma separated -->
-                <expression>ngsiv2_condition_expression</expression> <!-- optional -->
-                <notifs>ngsiv2_notification_attrs_list</notifs> <!-- comma separated -->
-                <listener_host>listener_host</listener_host>
-                <listener_port>listener_port</listener_port>
-                <expiration>ngsiv2_expiration_time</expiration> <!-- optional -->
-                <throttling>ngsiv2_throttling</throttling> <!-- optional -->
-                <description>ngsiv2_description</description> <!-- optional -->
-            </subscription>
-        </ngsiv2>
-        <transformation>/path/to/transformation/library</transformation>
-        <bridge_library_ros2>/path/to/bridge/library_1</bridge_library_ros2>
-        <bridge_library_ngsiv2>/path/to/bridge/library_2</bridge_library_ngsiv2>
-    </bridge>
+
+    <connector name="shapes_projection">
+    <reader participant_profile="3Dshapes" subscriber_profile="3d_subscriber"/>
+    <writer participant_profile="2Dshapes" publisher_profile="2d_publisher"/>
+    <transformation file="/path/to/transform/libuserlib.so" function="transform3D_to_2D"/>
+    </connector>
+
+    <connector name="shapes_stereo">
+    <reader participant_profile="2Dshapes" subscriber_profile="2d_subscriber"/>
+    <writer participant_profile="3Dshapes" publisher_profile="3d_publisher"/>
+    <transformation file="/path/to/transform/libuserlib.so" function="transform2D_to_3D"/>
+    </connector>
+
+    <connector name="shapes_protocol">
+    <reader participant_profile="2Dshapes" subscriber_profile="2d_subscriber"/>
+    <writer bridge_name="protocol" writer_name="protocol_publisher"/>
+    <transformation file="/path/to/transform/libprotocoltransf.so" function="transformFrom2D"/>
+    </connector>
+
+    <connector name="protocol_shapes">
+    <reader bridge_name="protocol" reader_name="protocol_subscriber"/>
+    <writer participant_profile="2Dshapes" publisher_profile="2d_publisher"/>
+    <transformation file="/path/to/transform/libprotocoltransf.so" function="transformTo2D"/>
+    </connector>
 </is>

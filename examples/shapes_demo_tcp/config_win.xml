@@ -1,0 +1,325 @@
+<?xml version="1.0"?>
+<is>
+    <is_types>
+        <type name="ShapeType">
+            <library>build\Debug\shapelib.dll</library>
+        </type>
+    </is_types>
+
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>TCPv4_Server</transport_id>
+                <type>TCPv4</type>
+                <wait_negotiation>false</wait_negotiation>
+                <listening_ports>
+                    <port>5100</port>
+                </listening_ports>
+            </transport_descriptor>
+            <transport_descriptor>
+                <transport_id>TCPv4_Client</transport_id>
+                <wait_negotiation>false</wait_negotiation>
+                <type>TCPv4</type>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="UDPParticipant1">
+            <rtps>
+                <builtin>
+                    <domainId>1</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="UDPParticipant0">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="TCPClient">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPv4_Client</transport_id>
+                </userTransports>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>5100</physical_port>
+                                <logical_port>0</logical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <participant profile_name="TCPServer">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPv4_Server</transport_id>
+                </userTransports>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
+                </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="subscriberSquare">
+            <topic>
+                <name>Square</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>6</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <subscriber profile_name="subscriberTriangle">
+            <topic>
+                <name>Triangle</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>6</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <subscriber profile_name="subscriberCircle">
+            <topic>
+                <name>Circle</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>6</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </subscriber>
+
+        <publisher profile_name="publisherSquare">
+            <topic>
+                <name>Square</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+
+        <publisher profile_name="publisherTriangle">
+            <topic>
+                <name>Triangle</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+
+        <publisher profile_name="publisherCircle">
+            <topic>
+                <name>Circle</name>
+                <dataType>ShapeType</dataType>
+                <kind>WITH_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>INFINITE</lease_duration>
+                </liveliness>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
+    </profiles>
+
+    <connector name="UDP_TCP_SQUARES">
+        <reader participant_profile="UDPParticipant1" subscriber_profile="subscriberSquare"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherSquare"/>
+    </connector>
+
+    <connector name="TCP_UDP_SQUARES">
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberSquare"/>
+        <writer participant_profile="UDPParticipant0" publisher_profile="publisherSquare"/>
+    </connector>
+
+    <connector name="UDP_TCP_TRIANGLES">
+        <reader participant_profile="UDPParticipant1" subscriber_profile="subscriberTriangle"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherTriangle"/>
+    </connector>
+
+    <connector name="TCP_UDP_TRIANGLES">
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberTriangle"/>
+        <writer participant_profile="UDPParticipant0" publisher_profile="publisherTriangle"/>
+    </connector>
+
+    <connector name="UDP_TCP_CIRCLES">
+        <reader participant_profile="UDPParticipant1" subscriber_profile="subscriberCircle"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherCircle"/>
+    </connector>
+
+    <connector name="TCP_UDP_CIRCLES">
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberCircle"/>
+        <writer participant_profile="UDPParticipant0" publisher_profile="publisherCircle"/>
+    </connector>
+
+<!--
+    <connector name="Local_TCP_SQUARES">
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberSquare"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherSquare"/>
+    </connector>
+
+    <connector name="Local_TCP_TRIANGLES">
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberTriangle"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherTriangle"/>
+    </connector>
+
+    <connector name="Local_TCP_CIRCLES">
+        <reader participant_profile="TCPClient" subscriber_profile="subscriberCircle"/>
+        <writer participant_profile="TCPServer" publisher_profile="publisherCircle"/>
+    </connector>
+-->
+<!--
+    <connector name="TCP_Local_SQUARES">
+        <reader participant_profile="TCPServer" subscriber_profile="subscriberSquare"/>
+        <writer participant_profile="TCPClient" publisher_profile="publisherSquare"/>
+    </connector>
+
+    <connector name="TCP_Local_TRIANGLES">
+        <reader participant_profile="TCPServer" subscriber_profile="subscriberTriangle"/>
+        <writer participant_profile="TCPClient" publisher_profile="publisherTriangle"/>
+    </connector>
+
+    <connector name="TCP_Local_CIRCLES">
+        <reader participant_profile="TCPServer" subscriber_profile="subscriberCircle"/>
+        <writer participant_profile="TCPClient" publisher_profile="publisherCircle"/>
+    </connector>
+-->
+</is>
