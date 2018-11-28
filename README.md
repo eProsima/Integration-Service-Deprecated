@@ -102,7 +102,8 @@ to know more about how to configure *Integration Service*.
 
 We will use
 [domain_change](<https://github.com/eProsima/Integration-Service/tree/master/examples/domain_change>) as example.
-In this example, we have generated a *Fast RTPS* example application using *fastrtpsgen* and then configured
+In this example, we have generated a *Fast RTPS* example application using
+[FastRTPSGen](https://eprosima-fast-rtps.readthedocs.io/en/latest/geninfo.html) and then configured
 the publisher participant in domain **0**, and the subscriber participant in domain **5**.
 This means that if a subscriber and a publisher are executed, there will be no communication between them,
 even having the same topic and type.
