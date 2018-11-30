@@ -32,21 +32,21 @@ class MyParticipantListener : public ParticipantListener
 public:
     virtual void onParticipantDiscovery(Participant* /*p*/, ParticipantDiscoveryInfo info)
     {
-        if (info.rtps.m_status == DISCOVERY_STATUS::DISCOVERED_RTPSPARTICIPANT)
+        if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
-            LOG_INFO("Participant discovered " << info.rtps.m_RTPSParticipantName);
+            LOG_INFO("Participant discovered " << info.info.m_participantName);
         }
-        else if (info.rtps.m_status == DISCOVERY_STATUS::REMOVED_RTPSPARTICIPANT)
+        else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
         {
-            LOG_INFO("Participant removed " << info.rtps.m_RTPSParticipantName);
+            LOG_INFO("Participant removed " << info.info.m_participantName);
         }
-        else if (info.rtps.m_status == DISCOVERY_STATUS::DROPPED_RTPSPARTICIPANT)
+        else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
         {
-            LOG_INFO("Participant dropped " << info.rtps.m_RTPSParticipantName);
+            LOG_INFO("Participant dropped " << info.info.m_participantName);
         }
-        else if (info.rtps.m_status == DISCOVERY_STATUS::CHANGED_QOS_RTPSPARTICIPANT)
+        else if (info.status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
         {
-            LOG_INFO("Participant changed QOS " << info.rtps.m_RTPSParticipantName);
+            LOG_INFO("Participant changed QOS " << info.info.m_participantName);
         }
     }
 };
