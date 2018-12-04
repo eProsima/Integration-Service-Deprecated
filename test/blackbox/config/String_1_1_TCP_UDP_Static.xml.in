@@ -25,6 +25,15 @@
                             </ports_>
                         </locator>
                     </initialPeersList>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
                 <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
@@ -34,6 +43,15 @@
             <rtps>
                 <builtin>
                     <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
             </rtps>
         </participant>

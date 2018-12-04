@@ -48,7 +48,7 @@ class BlackBox : public ::testing::Test
 
         BlackBox()
         {
-            Log::SetVerbosity(Log::Info);
+            //Log::SetVerbosity(Log::Info);
             //Log::SetCategoryFilter(std::regex("(SECURITY)"));
         }
 
