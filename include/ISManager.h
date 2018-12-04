@@ -30,7 +30,7 @@ typedef ISBridge* (*loadbridgef_t)(const char *config);
 class MyParticipantListener : public ParticipantListener
 {
 public:
-    virtual void onParticipantDiscovery(Participant* /*p*/, ParticipantDiscoveryInfo info)
+    virtual void onParticipantDiscovery(Participant* /*p*/, ParticipantDiscoveryInfo&& info) override
     {
         if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
