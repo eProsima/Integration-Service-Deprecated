@@ -77,9 +77,9 @@ TEST_F(BlackBox, Keyed_3_5_TCP_UDP_Dynamic)
 #endif
     const uint16_t nmsgs = 5;
 
-    pub1.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "KeyedTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_Keyed", 6200);
-    pub2.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "KeyedTopic", @DOMAIN1_RANDOM_NUMBER@, &type, "Pub2_Keyed", 6201);
-    pub3.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "KeyedTopic", @DOMAIN2_RANDOM_NUMBER@, &type, "Pub3_Keyed", 6202);
+    pub1.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "KeyedTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_Keyed", @PORT_RANDOM_NUMBER_5@);
+    pub2.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "KeyedTopic", @DOMAIN1_RANDOM_NUMBER@, &type, "Pub2_Keyed", @PORT_RANDOM_NUMBER_6@);
+    pub3.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "KeyedTopic", @DOMAIN2_RANDOM_NUMBER@, &type, "Pub3_Keyed", @PORT_RANDOM_NUMBER_7@);
 
     ASSERT_TRUE(pub1.isInitialized());
     ASSERT_TRUE(pub2.isInitialized());
