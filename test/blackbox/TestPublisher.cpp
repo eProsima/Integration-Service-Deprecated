@@ -215,13 +215,13 @@ bool TestPublisher::publish()
         if (mp_publisher->write(m_Data))
         {
             ++m_sentSamples;
-            std::cout << m_Name << " sent a total of " << m_sentSamples << " samples." << std::endl;
+            //std::cout << m_Name << " sent a total of " << m_sentSamples << " samples." << std::endl;
             return true;
         }
-        else
-        {
-            std::cout << m_Name << " failed to send " << (m_sentSamples + 1) << " sample." << std::endl;
-        }
+        //else
+        //{
+        //    std::cout << m_Name << " failed to send " << (m_sentSamples + 1) << " sample." << std::endl;
+        //}
     }
     return false;
 }
