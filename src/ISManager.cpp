@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <tinyxml2.h>
 #include "ISManager.h"
 #include "RTPSBridge.h"
 #include "RTPSPublisher.h"

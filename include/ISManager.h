@@ -18,7 +18,6 @@
 
 #include <map>
 #include <iostream>
-#include <tinyxml2.h>
 #include "log/ISLog.h"
 #include "ISBridge.h"
 #include "dynamicload/dynamicload.h"
@@ -26,6 +25,11 @@
 #include <fastrtps/participant/ParticipantListener.h>
 
 typedef ISBridge* (*loadbridgef_t)(const char *config);
+
+namespace tinyxml2
+{
+    class XMLElement;
+};
 
 class MyParticipantListener : public ParticipantListener
 {

@@ -199,7 +199,7 @@ if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
     generate_msvc_libraries(${MSVC_ARCH})
 elseif(NOT EPROSIMA_INSTALLER)
     # Testing
-    option(BUILD_TESTS "Build tests" ON)
+    option(BUILD_TESTS "Build tests" OFF)
     if(BUILD_TESTS)
         SET(GTEST_INDIVIDUAL TRUE)
         enable_testing()
@@ -233,8 +233,10 @@ endif()
     target_include_directories(${SHAREDLIB_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${TINYXML2_INCLUDE_DIR}>
-        $<INSTALL_INTERFACE:${TINYXML2_INCLUDE_DIR}>
+        )
+
+	target_include_directories(${SHAREDLIB_NAME} PRIVATE
+		$<BUILD_INTERFACE:${TINYXML2_INCLUDE_DIR}>
         )
 
     target_link_libraries(${SHAREDLIB_NAME}
