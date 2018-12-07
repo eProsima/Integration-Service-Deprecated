@@ -43,10 +43,6 @@ To clone this project, just execute:
     $ git clone --recursive https://github.com/eProsima/integration-service
 ```
 
-IMPORTANT: *eProsima Integration Service* uses new features that aren't released
-on the master branch of FastRTPS yet.
-To compile it you must switch to the *Develop* branch.
-
 Now, for compiling, if you are on Linux you must execute:
 
 ```bash
