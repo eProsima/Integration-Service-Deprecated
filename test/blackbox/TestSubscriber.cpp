@@ -197,7 +197,7 @@ void TestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
         {
             ++n_samples;
             mParent->cv_.notify_one();
-            std::cout << mParent->m_Name << " received a total of " << n_samples << " samples." << std::endl;
+            //std::cout << mParent->m_Name << " received a total of " << n_samples << " samples." << std::endl;
         }
     }
 }

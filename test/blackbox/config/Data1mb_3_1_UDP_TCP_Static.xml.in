@@ -6,7 +6,7 @@
                 <transport_id>TCPServer</transport_id>
                 <type>TCPv4</type>
                 <listening_ports>
-                    <port>5103</port>
+                    <port>@PORT_RANDOM_NUMBER_4@</port>
                 </listening_ports>
                 <wait_negotiation>false</wait_negotiation>
             </transport_descriptor>

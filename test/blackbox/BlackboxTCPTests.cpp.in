@@ -48,7 +48,7 @@ class BlackBox : public ::testing::Test
 
         BlackBox()
         {
-            Log::SetVerbosity(Log::Info);
+            //Log::SetVerbosity(Log::Info);
             //Log::SetCategoryFilter(std::regex("(SECURITY)"));
         }
 
@@ -70,7 +70,7 @@ TEST(BlackBox, String_1_1_TCP_UDP_Static)
 
     //Log::SetVerbosity(Log::Kind::Info);
 
-    pub.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_String", 5100);
+    pub.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_String", @PORT_RANDOM_NUMBER_1@);
 
     ASSERT_TRUE(pub.isInitialized());
 
@@ -110,7 +110,7 @@ TEST(BlackBox, String_1_1_UDP_TCP_Static)
     const uint16_t nmsgs = 5;
 
     //Log::SetVerbosity(Log::Kind::Info);
-    sub.init(TCP, RELIABLE_RELIABILITY_QOS, "StringTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_String", 5101, "127.0.0.1");
+    sub.init(TCP, RELIABLE_RELIABILITY_QOS, "StringTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_String", @PORT_RANDOM_NUMBER_2@, "127.0.0.1");
 
     ASSERT_TRUE(sub.isInitialized());
 
@@ -153,7 +153,7 @@ TEST(BlackBox, Data1mb_1_5_TCP_UDP_Static)
     TestIS is("config/Data1mb_1_5_TCP_UDP_Static.xml");
     const uint16_t nmsgs = 5;
 
-    pub.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_Data1mb", 5102);
+    pub.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_Data1mb", @PORT_RANDOM_NUMBER_3@);
 
     ASSERT_TRUE(pub.isInitialized());
 
@@ -223,7 +223,7 @@ TEST(BlackBox, Data1mb_3_1_UDP_TCP_Static)
     is.run();
 
     //Log::SetVerbosity(Log::Kind::Info);
-    sub.init(TCP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_Data1mb", 5103, "127.0.0.1");
+    sub.init(TCP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_Data1mb", @PORT_RANDOM_NUMBER_4@, "127.0.0.1");
 
     ASSERT_TRUE(sub.isInitialized());
 

@@ -18,7 +18,6 @@
 
 #include <map>
 #include <iostream>
-#include <tinyxml2.h>
 #include "log/ISLog.h"
 #include "ISBridge.h"
 #include "dynamicload/dynamicload.h"
@@ -27,10 +26,15 @@
 
 typedef ISBridge* (*loadbridgef_t)(const char *config);
 
+namespace tinyxml2
+{
+    class XMLElement;
+}
+
 class MyParticipantListener : public ParticipantListener
 {
 public:
-    virtual void onParticipantDiscovery(Participant* /*p*/, ParticipantDiscoveryInfo info)
+    virtual void onParticipantDiscovery(Participant* /*p*/, ParticipantDiscoveryInfo&& info) override
     {
         if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {

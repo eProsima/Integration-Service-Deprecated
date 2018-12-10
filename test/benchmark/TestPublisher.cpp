@@ -175,7 +175,7 @@ void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)
 
     if (expectMatch)
     {
-        ASSERT_GE(m_pubListener.n_matched, 1u);
+        ASSERT_GE(m_pubListener.n_matched, 1);
     }
     else
     {

@@ -21,10 +21,19 @@
                             <kind>TCPv4</kind>
                             <address>127.0.0.1</address>
                             <ports_>
-                                <physical_port>5102</physical_port>
+                                <physical_port>@PORT_RANDOM_NUMBER_3@</physical_port>
                             </ports_>
                         </locator>
                     </initialPeersList>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
                 <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
@@ -37,6 +46,15 @@
                     <leaseDuration>
                         <durationbyname>INFINITE</durationbyname>
                     </leaseDuration>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <durationbyval>
+                            <seconds>1</seconds>
+                            <fraction>0</fraction>
+                        </durationbyval>
+                    </leaseAnnouncement>
                 </builtin>
             </rtps>
         </participant>
