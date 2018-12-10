@@ -181,7 +181,7 @@ void TestSubscriber::waitDiscovery(bool expectMatch, int maxWait)
 
     if (expectMatch)
     {
-        ASSERT_GE(m_subListener.n_matched, 1u);
+        ASSERT_GE(m_subListener.n_matched, 1);
     }
     else
     {
