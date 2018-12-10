@@ -200,6 +200,11 @@ if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
 elseif(NOT EPROSIMA_INSTALLER)
     # Testing
     option(BUILD_TESTS "Build tests" OFF)
+	
+	if(EPROSIMA_BUILD)
+		SET(BUILD_TESTS ON)
+    endif()
+
     if(BUILD_TESTS)
         SET(GTEST_INDIVIDUAL TRUE)
         enable_testing()
