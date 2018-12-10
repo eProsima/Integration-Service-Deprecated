@@ -1,0 +1,1 @@
+for /f %%i in ('powershell -Command gc -TotalCount 1 .\build\Testing\TAG') do copy .\build\Testing\%%i\Test.xml .\build\CTestResults.xml
