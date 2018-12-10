@@ -29,7 +29,7 @@ typedef ISBridge* (*loadbridgef_t)(const char *config);
 namespace tinyxml2
 {
     class XMLElement;
-};
+}
 
 class MyParticipantListener : public ParticipantListener
 {
