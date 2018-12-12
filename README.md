@@ -49,6 +49,7 @@ Now, for compiling, if you are on Linux you must execute:
     $ mkdir build && cd build
     $ cmake ..
     $ make
+    $ sudo make install
 ```
 
 If you are on Windows you must choose a version of Visual Studio:
@@ -56,7 +57,7 @@ If you are on Windows you must choose a version of Visual Studio:
 ```bash
     > mkdir build && cd build
     > cmake ..  -G "Visual Studio 14 2015 Win64"
-    > cmake --build .
+    > cmake --build . --target install
 ```
 
 If you want to compile *eProsima Integration Service* without an installed version of *Fast RTPS* you can add
@@ -69,6 +70,7 @@ If you are on Linux you must execute:
     $ mkdir build && cd build
     $ cmake -DTHIRDPARTY=ON ..
     $ make
+    $ sudo make install
 ```
 
 If you are on Windows you must choose your version of Visual Studio:
@@ -76,7 +78,7 @@ If you are on Windows you must choose your version of Visual Studio:
 ```bash
     > mkdir build && cd build
     > cmake ..  -G "Visual Studio 14 2015 Win64" -DTHIRDPARTY=ON
-    > cmake --build .
+    > cmake --build . --target install
 ```
 
 <hr></hr>
