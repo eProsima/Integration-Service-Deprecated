@@ -201,7 +201,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     # Testing
     option(BUILD_TESTS "Build tests" OFF)
 	
-	if(EPROSIMA_BUILD)
+    if(EPROSIMA_BUILD)
 		SET(BUILD_TESTS ON)
     endif()
 
