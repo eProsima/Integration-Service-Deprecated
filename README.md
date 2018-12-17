@@ -26,8 +26,8 @@ The main features of *Integration Service* are:
 
 ## Supported platforms
 
-* Linux [![Linux Build Status](http://jenkins.eprosima.com:8080/job/IS%20Manual%20Linux/badge/icon)](http://jenkins.eprosima.com:8080/job/IS%20Manual%20Linux/)
-* Windows [![Windows Build Status](http://jenkins.eprosima.com:8080/job/IS%20Manual%20Windows/badge/icon)](http://jenkins.eprosima.com:8080/job/IS%20Manual%20Windows/)
+* Linux [![Linux Build Status](http://jenkins.eprosima.com:8080/job/Integration-Service%20Manual%20Linux/badge/icon)](http://jenkins.eprosima.com:8080/job/Integration-Service%20Manual%20Linux/)
+* Windows [![Windows Build Status](http://jenkins.eprosima.com:8080/job/Integration-Service%20Manual%20Windows/badge/icon)](http://jenkins.eprosima.com:8080/job/Integration-Service%20Manual%20Windows/)
 
 ### **Table Of Contents**
 
