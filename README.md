@@ -1,4 +1,10 @@
 # eProsima Integration Service
+[![Releases](https://img.shields.io/github/release/eProsima/Integration-Service.svg)](https://github.com/eProsima/Integration-Service/releases)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Issues](https://img.shields.io/github/issues/eProsima/Integration-Service.svg)](https://github.com/eProsima/Integration-Service/issues)
+[![Forks](https://img.shields.io/github/forks/eProsima/Integration-Service.svg)](https://github.com/eProsima/Integration-Service/network/members)
+[![Stars](https://img.shields.io/github/stars/eProsima/Integration-Service.svg)](https://github.com/eProsima/Integration-Service/stargazers)
+
 ![http://www.eprosima.com](https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ)
 
 *eProsima Integration Service* is a library based on *Fast RTPS* for creating parameterized
@@ -17,6 +23,11 @@ The main features of *Integration Service* are:
 <p align="center"> <img src="docs/RTPS_other_connector.png" alt="Default behaviour"/> </p>
 
 <hr></hr>
+
+## Supported platforms
+
+* Linux [![Linux Build Status](http://jenkins.eprosima.com:8080/job/Integration-Service%20Manual%20Linux/badge/icon)](http://jenkins.eprosima.com:8080/job/Integration-Service%20Manual%20Linux/)
+* Windows [![Windows Build Status](http://jenkins.eprosima.com:8080/job/Integration-Service%20Manual%20Windows/badge/icon)](http://jenkins.eprosima.com:8080/job/Integration-Service%20Manual%20Windows/)
 
 ### **Table Of Contents**
 
