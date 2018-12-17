@@ -36,7 +36,7 @@
                             <kind>TCPv4</kind>
                             <address>127.0.0.1</address>
                             <ports_>
-                                <physical_port>6200</physical_port>
+                                <physical_port>@PORT_RANDOM_NUMBER_5@</physical_port>
                             </ports_>
                         </locator>
                     </initialPeersList>
@@ -66,7 +66,7 @@
                             <kind>TCPv4</kind>
                             <address>127.0.0.1</address>
                             <ports_>
-                                <physical_port>6201</physical_port>
+                                <physical_port>@PORT_RANDOM_NUMBER_6@</physical_port>
                             </ports_>
                         </locator>
                     </initialPeersList>
@@ -96,7 +96,7 @@
                             <kind>TCPv4</kind>
                             <address>127.0.0.1</address>
                             <ports_>
-                                <physical_port>6202</physical_port>
+                                <physical_port>@PORT_RANDOM_NUMBER_7@</physical_port>
                             </ports_>
                         </locator>
                     </initialPeersList>
