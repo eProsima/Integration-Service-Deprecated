@@ -28,7 +28,6 @@ The main features of *Integration Service* are:
 
 * Linux [![Linux Build Status](http://jenkins.eprosima.com:8080/job/IS%20Manual%20Linux/badge/icon)](http://jenkins.eprosima.com:8080/job/IS%20Manual%20Linux/)
 * Windows [![Windows Build Status](http://jenkins.eprosima.com:8080/job/IS%20Manual%20Windows/badge/icon)](http://jenkins.eprosima.com:8080/job/IS%20Manual%20Windows/)
-[//]: # (* Mac [![Mac Build Status](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Mac/badge/icon)](http://jenkins.eprosima.com:8080/job/FastRTPS%20Nightly%20Master%20Security%20Mac))
 
 ### **Table Of Contents**
 
