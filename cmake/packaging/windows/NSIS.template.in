@@ -569,7 +569,7 @@ FunctionEnd
 @CPACK_NSIS_COMPONENT_SECTIONS@
 
 ;Include page for set environment variables
-  !include "EnvVarPage.nsh"
+!include "EnvVarPage.nsh"
 
 ;Include installation of redistributable files.
 ;  !include InstallRedistributables.nsh
@@ -611,7 +611,7 @@ FunctionEnd
 
   @CPACK_NSIS_PAGE_COMPONENTS@
 
-  Page custom VariablesEntornoPage
+  ;Page custom VariablesEntornoPage
   !insertmacro MUI_PAGE_INSTFILES
   ;!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\Readme.html
   ;!define MUI_PAGE_CUSTOMFUNCTION_SHOW DisableReadme
