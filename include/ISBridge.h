@@ -287,22 +287,28 @@ inline void ISReader::addBridge(ISBridge* bridge){
 
 inline void ISReader::on_received_data(SerializedPayload_t* payload)
 {
-    for (ISBridge* bridge : mv_bridges)
+    if (!isTerminating())
     {
-        if (!bridge->isTerminating())
+        for (ISBridge* bridge : mv_bridges)
         {
-            bridge->on_received_data(this, payload);
+            if (!bridge->isTerminating())
+            {
+                bridge->on_received_data(this, payload);
+            }
         }
     }
 }
 
 inline void ISReader::on_received_data(DynamicData* data)
 {
-    for (ISBridge* bridge : mv_bridges)
+    if (!isTerminating())
     {
-        if (!bridge->isTerminating())
+        for (ISBridge* bridge : mv_bridges)
         {
-            bridge->on_received_data(this, data);
+            if (!bridge->isTerminating())
+            {
+                bridge->on_received_data(this, data);
+            }
         }
     }
 }

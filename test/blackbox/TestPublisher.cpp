@@ -73,6 +73,8 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
         descriptor->sendBufferSize = 8912896; // 8.5Mb
         descriptor->receiveBufferSize = 8912896; // 8.5Mb
         descriptor->wait_for_tcp_negotiation = false;
+        descriptor->keep_alive_frequency_ms = 1000;
+        descriptor->keep_alive_timeout_ms = 5000;
         descriptor->add_listener_port(port);
         PParam.rtps.userTransports.push_back(descriptor);
     }
