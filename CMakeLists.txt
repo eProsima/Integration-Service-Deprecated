@@ -203,9 +203,9 @@ endif()
 # Examples
 option(COMPILE_EXAMPLES "Build example" OFF)
 if(COMPILE_EXAMPLES)
-    if(NOT CMAKE_BUILD_TYPE)
-        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
-    endif()
+#    if(NOT CMAKE_BUILD_TYPE)
+#        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+#    endif()
     add_subdirectory(examples)
 endif()
 
