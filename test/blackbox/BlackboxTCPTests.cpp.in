@@ -111,6 +111,9 @@ TEST(BlackBox, String_1_1_UDP_TCP_Static)
     TestIS is("config/String_1_1_UDP_TCP_Static.xml");
     const uint16_t nmsgs = 5;
 
+    // Launch IS, they will discover each other
+    is.run();
+
     //Log::SetVerbosity(Log::Kind::Info);
     sub.init(TCP, RELIABLE_RELIABILITY_QOS, "StringTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub_String", @PORT_RANDOM_NUMBER_2@, "127.0.0.1");
 
@@ -119,9 +122,6 @@ TEST(BlackBox, String_1_1_UDP_TCP_Static)
     pub1.init(UDP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub1_String");
 
     ASSERT_TRUE(pub1.isInitialized());
-
-    // Launch IS, they will discover each other
-    is.run();
 
     // Wait for discovery.
     sub.waitDiscovery(true, 30);
