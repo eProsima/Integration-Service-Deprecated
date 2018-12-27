@@ -23,7 +23,9 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/log/Log.h>
 
+#include <mutex>
 #include <thread>
 #include <memory>
 #include <cstdlib>
