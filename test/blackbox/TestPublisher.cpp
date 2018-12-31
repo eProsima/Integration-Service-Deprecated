@@ -30,6 +30,7 @@
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
+#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
