@@ -27,6 +27,7 @@
 #include <fastrtps/TopicDataType.h>
 #include <condition_variable>
 #include <string>
+#include <mutex>
 
 class TestPublisher {
 public:

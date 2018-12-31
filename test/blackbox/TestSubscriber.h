@@ -25,6 +25,7 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/TopicDataType.h>
+#include <mutex>
 
 class TestSubscriber
 {
