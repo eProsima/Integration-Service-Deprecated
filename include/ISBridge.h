@@ -79,6 +79,8 @@ public:
      */
     virtual void onTerminate()
     {
+        ISBaseClass::onTerminate();
+
         for (ISReader* sub : mv_reader)
         {
             sub->onTerminate();
