@@ -55,7 +55,7 @@ class BlackBox : public ::testing::Test
 
         ~BlackBox()
         {
-            //Log::Reset();
+            Log::Reset();
             Log::KillThread();
             eprosima::fastrtps::Domain::stopAll();
         }

@@ -126,11 +126,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             )
 
         # Prepare static discovery xml file for blackbox tests.
-        string(RANDOM LENGTH 4 ALPHABET 0123456789 PORT_RANDOM_NUMBER_0)
-        math(EXPR PORT_RANDOM_NUMBER_0 "${PORT_RANDOM_NUMBER_0} + 0") # Remove extra leading 0s.
-        if(PORT_RANDOM_NUMBER_0 LESS 10000)
-            math(EXPR PORT_RANDOM_NUMBER_0 "${PORT_RANDOM_NUMBER_0} + 10000") # Remove extra leading 0s.
-        endif()
+        string(RANDOM LENGTH 3 ALPHABET 0123456789 PORT_RANDOM_NUMBER_0)
+        math(EXPR PORT_RANDOM_NUMBER_0 "${PORT_RANDOM_NUMBER_0} + 8000")
         math(EXPR PORT_RANDOM_NUMBER_1 "${PORT_RANDOM_NUMBER_0} + 1")
         math(EXPR PORT_RANDOM_NUMBER_2 "${PORT_RANDOM_NUMBER_0} + 2")
         math(EXPR PORT_RANDOM_NUMBER_3 "${PORT_RANDOM_NUMBER_0} + 3")

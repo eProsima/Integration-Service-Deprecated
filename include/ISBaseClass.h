@@ -23,7 +23,7 @@ public:
     virtual const std::string& getName() const { return name; }
     virtual void onTerminate() { m_bTerminating = true; }
     virtual ~ISBaseClass() = default;
-    bool isTerminating() const { return m_bTerminating; }
+    inline bool isTerminating() const { return m_bTerminating; }
 };
 
 #endif //_IS_BASE_CLASS_H_

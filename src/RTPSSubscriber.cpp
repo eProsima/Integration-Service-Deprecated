@@ -63,59 +63,62 @@ void RTPSSubscriber::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& in
 
 void RTPSSubscriber::onNewDataMessage(Subscriber* sub)
 {
-    if (dynamic_cast<GenericPubSubType*>(input_type) != nullptr)
+    if (!isTerminating())
     {
-        if (m_payload == nullptr)
+        if (dynamic_cast<GenericPubSubType*>(input_type) != nullptr)
         {
-            m_payload = new SerializedPayload_t();
+            if (m_payload == nullptr)
+            {
+                m_payload = new SerializedPayload_t();
+            }
+
+            bool taken = sub->takeNextData(m_payload, &m_info);
+
+            if (taken && m_info.sampleKind == ALIVE)
+            {
+                on_received_data(m_payload);
+            }
         }
-
-        bool taken = sub->takeNextData(m_payload, &m_info);
-
-        if (taken && m_info.sampleKind == ALIVE)
+        else if (dynamic_cast<DynamicPubSubType*>(input_type) != nullptr)
         {
-            on_received_data(m_payload);
-        }
-    }
-    else if (dynamic_cast<DynamicPubSubType*>(input_type) != nullptr)
-    {
-        DynamicPubSubType *pst = dynamic_cast<DynamicPubSubType*>(input_type);
+            DynamicPubSubType *pst = dynamic_cast<DynamicPubSubType*>(input_type);
 
-        if (m_dynData == nullptr)
-        {
-            m_dynData = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
+            if (m_dynData == nullptr)
+            {
+                m_dynData = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
+            }
+            else
+            {
+                m_dynData->ClearAllValues();
+            }
+            bool taken = sub->takeNextData(m_dynData, &m_info);
+
+            if (taken && m_info.sampleKind == ALIVE)
+            {
+                on_received_data(m_dynData);
+            }
         }
         else
         {
-            m_dynData->ClearAllValues();
-        }
-        bool taken = sub->takeNextData(m_dynData, &m_info);
+            // Provided type
+            if (m_buffer == nullptr)
+            {
+                m_buffer = input_type->createData();
+            }
 
-        if (taken && m_info.sampleKind == ALIVE)
-        {
-            on_received_data(m_dynData);
-        }
-    }
-    else
-    {
-        // Provided type
-        if (m_buffer == nullptr)
-        {
-            m_buffer = input_type->createData();
-        }
+            bool taken = sub->takeNextData(m_buffer, &m_info);
 
-        bool taken = sub->takeNextData(m_buffer, &m_info);
+            if (m_payload == nullptr)
+            {
+                m_payload = new SerializedPayload_t(input_type->m_typeSize);
+            }
 
-        if (m_payload == nullptr)
-        {
-            m_payload = new SerializedPayload_t(input_type->m_typeSize);
-        }
+            input_type->serialize(m_buffer, m_payload);
 
-        input_type->serialize(m_buffer, m_payload);
-
-        if (taken && m_info.sampleKind == ALIVE)
-        {
-            on_received_data(m_payload);
+            if (taken && m_info.sampleKind == ALIVE)
+            {
+                on_received_data(m_payload);
+            }
         }
     }
 }
