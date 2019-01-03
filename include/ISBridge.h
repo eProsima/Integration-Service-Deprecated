@@ -88,6 +88,9 @@ public:
 
         for (auto pub_pair : mm_writer)
         {
+            const std::string& keyPub = pub_pair.first;
+            std::mutex* mutex = mm_mutex[keyPub];
+            std::unique_lock<std::mutex> scopedLock(*mutex);
             for (ISWriter* pub : pub_pair.second)
             {
                 pub->onTerminate();
@@ -125,6 +128,12 @@ public:
     {
         std::string key = generateKeyWriter(sub, funcName);
         std::vector<ISWriter*> &pubs = mm_writer[key];
+        std::mutex* mutex = mm_mutex[key];
+        if (mutex == nullptr)
+        {
+            mutex = new std::mutex();
+            mm_mutex[key] = mutex;
+        }
         pubs.emplace_back(pub);
         mm_inv_writer[pub] = key;
         ms_subpubs.emplace(pub);
@@ -161,11 +170,6 @@ public:
                 if (function)
                 {
                     std::mutex* mutex = mm_mutex[keyPub];
-                    if (mutex == nullptr)
-                    {
-                        mutex = new std::mutex();
-                        mm_mutex[keyPub] = mutex;
-                    }
                     std::unique_lock<std::mutex> scopedLock(*mutex);
                     SerializedPayload_t* output = mm_staticPayload[keyPub];
                     if (output == nullptr)
@@ -192,6 +196,8 @@ public:
                     {
                         if (!pub->isTerminating())
                         {
+                            std::mutex* mutex = mm_mutex[keyPub];
+                            std::unique_lock<std::mutex> scopedLock(*mutex);
                             pub->write(data);
                         }
                     }
@@ -213,17 +219,9 @@ public:
                 {
                     if (!pub->isTerminating())
                     {
+                        std::mutex* mutex = mm_mutex[keyPub];
+                        std::unique_lock<std::mutex> scopedLock(*mutex);
                         pub->write(data);
-                        /*
-                        DynamicData* output = mm_dynamicData[keyPub];
-                        if (output == nullptr)
-                        {
-                            output = DynamicDataFactory::GetInstance()->CreateCopy(data);
-                            mm_dynamicData[keyPub] = output;
-                        }
-                        pub->write(output);
-                        //DynamicDataFactory::GetInstance()->DeleteData(output);
-                        */
                     }
                 }
             }
@@ -252,11 +250,6 @@ public:
                             else
                             {
                                 std::mutex* mutex = mm_mutex[keyPub];
-                                if (mutex == nullptr)
-                                {
-                                    mutex = new std::mutex();
-                                    mm_mutex[keyPub] = mutex;
-                                }
                                 std::unique_lock<std::mutex> scopedLock(*mutex);
                                 DynamicData* output = mm_dynamicData[keyPub];
                                 if (output == nullptr)
@@ -273,6 +266,8 @@ public:
                         {
                             //output = DynamicDataFactory::GetInstance()->CreateCopy(data);
                             //output->copy(data, false);
+                            std::mutex* mutex = mm_mutex[keyPub];
+                            std::unique_lock<std::mutex> scopedLock(*mutex);
                             pub->write(data);
                         }
                     }
