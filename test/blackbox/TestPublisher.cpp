@@ -63,7 +63,10 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
 
     if (transport == 1)
     {
-        PParam.rtps.useBuiltinTransports = true;
+        PParam.rtps.useBuiltinTransports = false;
+        std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        descriptor->maxInitialPeersRange = 20;
+        PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 2)
     {
@@ -77,6 +80,7 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
         descriptor->keep_alive_frequency_ms = 1000;
         descriptor->keep_alive_timeout_ms = 5000;
         descriptor->add_listener_port(port);
+        descriptor->maxInitialPeersRange = 20;
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 3)
@@ -84,6 +88,7 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
         //uint32_t kind = LOCATOR_KIND_UDPv6;
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<UDPv6TransportDescriptor> descriptor = std::make_shared<UDPv6TransportDescriptor>();
+        descriptor->maxInitialPeersRange = 20;
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 4)
@@ -110,6 +115,7 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
         descriptor->keep_alive_frequency_ms = 1000;
         descriptor->keep_alive_timeout_ms = 5000;
         descriptor->add_listener_port(port);
+        descriptor->maxInitialPeersRange = 20;
         PParam.rtps.userTransports.push_back(descriptor);
     }
 
@@ -192,7 +198,7 @@ void TestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Matchin
     }
     else
     {
-        std::cout << mParent->m_Name << " unmatched."<<std::endl;
+        std::cout << mParent->m_Name << " unmatched." << std::endl;
     }
 }
 
@@ -202,9 +208,9 @@ void TestPublisher::runThread()
 	std::cout << m_Name << " running..." << std::endl;
     while (!publish() && iPrevCount < m_iSamples)
     {
-		eClock::my_sleep(m_iWaitTime);
+        eClock::my_sleep(m_iWaitTime);
         ++iPrevCount;
-	}
+    }
 }
 
 void TestPublisher::run()

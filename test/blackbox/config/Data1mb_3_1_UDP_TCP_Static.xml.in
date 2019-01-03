@@ -11,11 +11,20 @@
                     <port>@PORT_RANDOM_NUMBER_4@</port>
                 </listening_ports>
                 <wait_negotiation>false</wait_negotiation>
+                <maxInitialPeersRange>20</maxInitialPeersRange>
+            </transport_descriptor>
+            <transport_descriptor>
+                <transport_id>UDP</transport_id>
+                <type>UDPv4</type>
+                <maxInitialPeersRange>20</maxInitialPeersRange>
             </transport_descriptor>
         </transport_descriptors>
 
         <participant profile_name="ParticipantD_A1">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -33,6 +42,9 @@
 
         <participant profile_name="ParticipantD_A2">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN1_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -50,6 +62,9 @@
 
         <participant profile_name="ParticipantD_A3">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN2_RANDOM_NUMBER@</domainId>
                     <leaseDuration>

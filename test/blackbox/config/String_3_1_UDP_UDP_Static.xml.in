@@ -2,8 +2,19 @@
 <is>
 
     <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>UDP</transport_id>
+                <type>UDPv4</type>
+                <maxInitialPeersRange>20</maxInitialPeersRange>
+            </transport_descriptor>
+        </transport_descriptors>
+
         <participant profile_name="ParticipantA1">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -15,6 +26,9 @@
 
         <participant profile_name="ParticipantA2">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN1_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -26,6 +40,9 @@
 
         <participant profile_name="ParticipantA3">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN2_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -37,6 +54,9 @@
 
         <participant profile_name="ParticipantB">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
                     <leaseDuration>

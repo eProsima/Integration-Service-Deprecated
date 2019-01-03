@@ -16,6 +16,11 @@
                 <wait_negotiation>false</wait_negotiation>
                 <maxInitialPeersRange>20</maxInitialPeersRange>
             </transport_descriptor>
+            <transport_descriptor>
+                <transport_id>UDP</transport_id>
+                <type>UDPv4</type>
+                <maxInitialPeersRange>20</maxInitialPeersRange>
+            </transport_descriptor>
         </transport_descriptors>
 
         <participant profile_name="ParticipantA1">
@@ -110,6 +115,9 @@
 
         <participant profile_name="ParticipantB1">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN5_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -121,6 +129,9 @@
 
         <participant profile_name="ParticipantB2">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN6_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -132,6 +143,9 @@
 
         <participant profile_name="ParticipantB3">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN7_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -143,6 +157,9 @@
 
         <participant profile_name="ParticipantB4">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN8_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
@@ -154,6 +171,9 @@
 
         <participant profile_name="ParticipantB5">
             <rtps>
+                <userTransports>
+                    <transport_id>UDP</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN9_RANDOM_NUMBER@</domainId>
                     <leaseDuration>

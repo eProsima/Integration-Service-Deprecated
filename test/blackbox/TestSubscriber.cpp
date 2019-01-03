@@ -56,7 +56,10 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
 
     if (transport == 1)
     {
-        PParam.rtps.useBuiltinTransports = true;
+        PParam.rtps.useBuiltinTransports = false;
+        std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        descriptor->maxInitialPeersRange = 20;
+        PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 2)
     {
@@ -82,6 +85,7 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
         //uint32_t kind = LOCATOR_KIND_UDPv6;
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<UDPv6TransportDescriptor> descriptor = std::make_shared<UDPv6TransportDescriptor>();
+        descriptor->maxInitialPeersRange = 20;
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 4)

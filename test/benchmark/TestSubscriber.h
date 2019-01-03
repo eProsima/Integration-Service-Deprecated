@@ -28,6 +28,7 @@
 #include <mutex>
 #include <thread>
 #include <chrono>
+#include <condition_variable>
 
 class TestSubscriber
 {

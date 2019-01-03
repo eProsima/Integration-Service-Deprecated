@@ -11,11 +11,20 @@
                     <port>@PORT_RANDOM_NUMBER_2@</port>
                 </listening_ports>
                 <wait_negotiation>false</wait_negotiation>
+                <maxInitialPeersRange>20</maxInitialPeersRange>
+            </transport_descriptor>
+            <transport_descriptor>
+                <transport_id>UDPString</transport_id>
+                <type>UDPv4</type>
+                <maxInitialPeersRange>20</maxInitialPeersRange>
             </transport_descriptor>
         </transport_descriptors>
 
         <participant profile_name="ParticipantB_A1">
             <rtps>
+                <userTransports>
+                    <transport_id>UDPString</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
                     <leaseDuration>
