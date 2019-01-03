@@ -70,14 +70,14 @@ TEST(BlackBox, String_1_1_TCP_UDP_Static)
     TestIS is("config/String_1_1_TCP_UDP_Static.xml");
     const uint16_t nmsgs = 5;
 
+    sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub1_String");
+    ASSERT_TRUE(sub1.isInitialized());
+
     // Launch IS, they will discover each other
     is.run();
 
     pub.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "StringTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_String", @PORT_RANDOM_NUMBER_1@);
     ASSERT_TRUE(pub.isInitialized());
-
-    sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "StringTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub1_String");
-    ASSERT_TRUE(sub1.isInitialized());
 
     // Wait for discovery.
     sub1.waitDiscovery(true, 30);
@@ -149,10 +149,6 @@ TEST(BlackBox, Data1mb_1_5_TCP_UDP_Static)
     TestIS is("config/Data1mb_1_5_TCP_UDP_Static.xml");
     const uint16_t nmsgs = 5;
 
-    pub.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_Data1mb", @PORT_RANDOM_NUMBER_3@);
-
-    ASSERT_TRUE(pub.isInitialized());
-
     sub1.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN5_RANDOM_NUMBER@, &type, "Sub1_Data1mb");
     sub2.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN6_RANDOM_NUMBER@, &type, "Sub2_Data1mb");
     sub3.init(UDP, RELIABLE_RELIABILITY_QOS, "Data1mbTopic", @DOMAIN7_RANDOM_NUMBER@, &type, "Sub3_Data1mb");
@@ -167,6 +163,10 @@ TEST(BlackBox, Data1mb_1_5_TCP_UDP_Static)
 
     // Launch IS, they will discover each other
     is.run();
+
+    pub.init(TCP, RELIABLE_RELIABILITY_QOS, 5, 10, "Data1mbTopic", @DOMAIN0_RANDOM_NUMBER@, &type, "Pub_Data1mb", @PORT_RANDOM_NUMBER_3@);
+
+    ASSERT_TRUE(pub.isInitialized());
 
     // Wait for discovery.
     sub1.waitDiscovery(true, 30);

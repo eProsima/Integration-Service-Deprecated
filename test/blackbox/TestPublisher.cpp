@@ -106,7 +106,9 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
         std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();
         descriptor->sendBufferSize = 8912896; // 8.5Mb
         descriptor->receiveBufferSize = 8912896; // 8.5Mb
-        //descriptor->set_WAN_address("127.0.0.1");
+        descriptor->wait_for_tcp_negotiation = false;
+        descriptor->keep_alive_frequency_ms = 1000;
+        descriptor->keep_alive_timeout_ms = 5000;
         descriptor->add_listener_port(port);
         PParam.rtps.userTransports.push_back(descriptor);
     }

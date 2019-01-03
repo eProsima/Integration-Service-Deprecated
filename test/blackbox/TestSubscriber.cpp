@@ -71,7 +71,7 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
         descriptor->wait_for_tcp_negotiation = false;
-        descriptor->maxInitialPeersRange = 10;
+        descriptor->maxInitialPeersRange = 20;
         descriptor->logical_port_range = 100;
 		descriptor->sendBufferSize = 8912896; // 8.5Mb
 		descriptor->receiveBufferSize = 8912896; // 8.5Mb
@@ -92,11 +92,14 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
         Locator_t initial_peer_locator;
         initial_peer_locator.kind = kind;
         IPLocator::setIPv6(initial_peer_locator, address);
-        initial_peer_locator.port = port;
+        IPLocator::setPhysicalPort(initial_peer_locator, port);
         PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();
+        descriptor->wait_for_tcp_negotiation = false;
+        descriptor->maxInitialPeersRange = 20;
+        descriptor->logical_port_range = 100;
 		descriptor->sendBufferSize = 8912896; // 8.5Mb
 		descriptor->receiveBufferSize = 8912896; // 8.5Mb
         PParam.rtps.userTransports.push_back(descriptor);
