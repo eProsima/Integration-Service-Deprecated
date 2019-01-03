@@ -81,6 +81,18 @@ endif()
 option(EPROSIMA_BUILD "Activate internal building" OFF)
 
 ###############################################################################
+# Generation of windows installers.
+###############################################################################
+option(EPROSIMA_INSTALLER "Activate the creation of a build to create windows installers" OFF)
+if(EPROSIMA_INSTALLER)
+    set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
+    set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers")
+    # Needed to generate correctly the installer
+    set(BUILD_JAVA ON)
+    set(THIRDPARTY ON)
+endif()
+
+###############################################################################
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
@@ -173,12 +185,12 @@ set(${PROJECT_NAME}_source_files
     )
 
 # External sources
-if(TINYXML2_SOURCE_DIR)
-    list(APPEND ${PROJECT_NAME}_source_files
-        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
-        )
-    set_sources(${TINYXML2_SOURCE_DIR}/tinyxml2.cpp)
-endif()
+#if(TINYXML2_SOURCE_DIR)
+#    list(APPEND ${PROJECT_NAME}_source_files
+#        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+#        )
+#    set_sources(${TINYXML2_SOURCE_DIR}/tinyxml2.cpp)
+#endif()
 
 # Add sources to Makefile.am
 set_sources(${${PROJECT_NAME}_source_files})
@@ -187,7 +199,7 @@ set_sources(${${PROJECT_NAME}_source_files})
 if(NOT EPROSIMA_INSTALLER)
     # Testing
     option(BUILD_TESTS "Build tests" OFF)
-	
+
     if(EPROSIMA_BUILD)
 		SET(BUILD_TESTS ON)
     endif()
@@ -215,11 +227,13 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 if (WIN32)
     add_library(${SHAREDLIB_NAME} STATIC
         ${${PROJECT_NAME}_source_files}
+        $<$<BOOL:${TINYXML2_SOURCE_DIR}>:${TINYXML2_SOURCE_DIR}/tinyxml2.cpp>
         )
 else()
     add_library(${SHAREDLIB_NAME} SHARED
 #        $<$<NOT:$<BOOL:${WIN32}>>:SHARED>
         ${${PROJECT_NAME}_source_files}
+        $<$<BOOL:${TINYXML2_SOURCE_DIR}>:${TINYXML2_SOURCE_DIR}/tinyxml2.cpp>
         )
 endif()
 
@@ -230,13 +244,13 @@ target_include_directories(${SHAREDLIB_NAME} PUBLIC
     )
 
 target_link_libraries(${SHAREDLIB_NAME} PUBLIC
-        fastrtps
-        fastcdr
-        $<$<NOT:$<BOOL:${TINYXML2_INCLUDE_DIR}>>:tinyxml2>
-        ${CMAKE_DL_LIBS}
-        $<$<BOOL:${WIN32}>:IPHLPAPI$<SEMICOLON>shlwapi>
-        $<$<NOT:$<BOOL:${WIN32}>>:-L/usr/lib/x86_64-linux-gnu>
-        )
+    fastrtps
+    fastcdr
+    $<$<NOT:$<BOOL:${TINYXML2_INCLUDE_DIR}>>:tinyxml2>
+    ${CMAKE_DL_LIBS}
+    $<$<BOOL:${WIN32}>:IPHLPAPI$<SEMICOLON>shlwapi>
+    $<$<NOT:$<BOOL:${WIN32}>>:-L/usr/lib/x86_64-linux-gnu>
+    )
 
 target_link_libraries(${PROJECT_NAME} ${SHAREDLIB_NAME})
 
@@ -260,7 +274,7 @@ endif()
 ###############################################################################
 
 ###############################################################################
-# Packaging                                                                   
+# Packaging
 ###############################################################################
 
 if(EPROSIMA_INSTALLER)
@@ -324,6 +338,16 @@ install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
     DESTINATION share
     )
 
+# Install autotools
+if(UNIX AND EPROSIMA_INSTALLER)
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/
+        DESTINATION .
+        USE_SOURCE_PERMISSIONS
+        OPTIONAL
+        COMPONENT sources
+        )
+endif()
+
 set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
 set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
 set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
@@ -340,7 +364,7 @@ if(WIN32 AND EPROSIMA_INSTALLER)
 
     set(CPACK_PROJECT_CONFIG_FILE ${PROJECT_BINARY_DIR}/cmake/packaging/windows/WindowsPackaging.cmake)
     # Setup generic options.
-    
+
     set(CPACK_PACKAGE_NAME ${PRODUCT_NAME_SHORT})
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Integration Service")
     set(CPACK_PACKAGE_DESCRIPTION "eProsima ${PRODUCT_NAME_SHORT}")
@@ -374,16 +398,16 @@ if(WIN32 AND EPROSIMA_INSTALLER)
     set(CPACK_NSIS_URL_INFO_ABOUT "www.eprosima.com")
     set(CPACK_NSIS_CONTACT "support@eprosima.com")
     set(CPACK_NSIS_MUI_ICON "${PROJECT_SOURCE_DIR}/utils/images/icon/eprosima_icon.ico")
-    set(CPACK_NSIS_MENU_LINKS 
+    set(CPACK_NSIS_MENU_LINKS
         "bin/integration_service.exe" "${PRODUCT_NAME_SHORT}"
         "Uninstall.exe" "Uninstall ${PRODUCT_NAME_SHORT}"
         )
 
     if(CMAKE_CL_64)
         set(CPACK_NSIS_INSTALL_ROOT "$ENV{PROGRAMFILES}/eProsima")
-    else() 
+    else()
         set(PF86_STR "PROGRAMFILES(x86)")
-    set(CPACK_NSIS_INSTALL_ROOT "$ENV{${PF86_STR}}/eProsima")
+        set(CPACK_NSIS_INSTALL_ROOT "$ENV{${PF86_STR}}/eProsima")
     endif()
     string(REPLACE "\\" "/" CPACK_NSIS_INSTALL_ROOT ${CPACK_NSIS_INSTALL_ROOT} )
 
@@ -394,15 +418,16 @@ if(WIN32 AND EPROSIMA_INSTALLER)
     # Setup redistributables installation nsh.
     if(${MSVC_ARCH} STREQUAL "x64Win64VS2015")
         set(REDIST_REGISTER "SOFTWARE\\Classes\\Installer\\Dependencies\\,,amd64,14.0,bundle")
-    set(REDIST_VERSION "14.0.23506.0")
-    set(REDIST_LINK "http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x64.exe")
-    set(REDIST_EXEC "vc_redist_x64.exe")
+        set(REDIST_VERSION "14.0.23506.0")
+        set(REDIST_LINK "http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x64.exe")
+        set(REDIST_EXEC "vc_redist_x64.exe")
     elseif(${MSVC_ARCH} STREQUAL "i86Win32VS2015")
         set(REDIST_REGISTER "SOFTWARE\\Classes\\Installer\\Dependencies\\,,x86,14.0,bundle")
-    set(REDIST_VERSION "14.0.23506.0")
-    set(REDIST_LINK "http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x86.exe")
-    set(REDIST_EXEC "vc_redist_i86.exe")
+        set(REDIST_VERSION "14.0.23506.0")
+        set(REDIST_LINK "http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x86.exe")
+        set(REDIST_EXEC "vc_redist_i86.exe")
     endif()
+
     configure_file(${PROJECT_SOURCE_DIR}/cmake/packaging/windows/InstallRedistributables.nsh.in
         ${PROJECT_BINARY_DIR}/cmake/packaging/windows/InstallRedistributables.nsh @ONLY
         )
@@ -411,7 +436,9 @@ if(WIN32 AND EPROSIMA_INSTALLER)
     set(CPACK_INSTALL_SCRIPT "${PROJECT_BINARY_DIR}/cmake/packaging/windows/NSISPackaging.cmake")
 
     # Update CMAKE_MODULE_PATH to find NSIS.template.in
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/packaging/windows") 
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/packaging/windows")
 
     include(CPack)
 endif()
+
+include(${PROJECT_SOURCE_DIR}/cmake/packaging/eProsimaPackaging.cmake)
