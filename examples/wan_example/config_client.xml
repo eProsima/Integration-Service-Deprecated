@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<is>
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>TCPv4_Client</transport_id>
+                <wait_negotiation>false</wait_negotiation>
+                <type>TCPv4</type>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="LocalParticipant">
+            <rtps>
+                <builtin>
+                    <domainId>0</domainId>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="TCPParticipant">
+            <rtps>
+                <userTransports>
+                    <transport_id>TCPv4_Client</transport_id>
+                </userTransports>
+                <builtin>
+                    <domainId>0</domainId>
+                    <leaseDuration>
+                        <durationbyname>INFINITE</durationbyname>
+                    </leaseDuration>
+                    <initialPeersList>
+                        <locator>
+                            <kind>TCPv4</kind>
+                            <address>127.0.0.1</address>
+                            <ports_>
+                                <physical_port>5100</physical_port>
+                            </ports_>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+
+        <subscriber profile_name="HelloWorldSubscriber">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+        </subscriber>
+
+        <publisher profile_name="HelloWorldPublisher">
+            <topic>
+                <name>HelloWorldTopic</name>
+                <dataType>HelloWorld</dataType>
+            </topic>
+        </pubsliher>
+    </profiles>
+
+    <connector name="RemoteToLocal">
+        <reader participant_profile="TCPParticipant" subscriber_profile="HelloWorldSubscriber"/>
+        <writer participant_profile="LocalParticipant" publisher_profile="HelloWorldPublisher"/>
+    </connector>
+</is>
