@@ -79,6 +79,8 @@ public:
      */
     virtual void onTerminate()
     {
+        ISBaseClass::onTerminate();
+
         for (ISReader* sub : mv_reader)
         {
             sub->onTerminate();
@@ -86,6 +88,9 @@ public:
 
         for (auto pub_pair : mm_writer)
         {
+            const std::string& keyPub = pub_pair.first;
+            std::mutex* mutex = mm_mutex[keyPub];
+            std::unique_lock<std::mutex> scopedLock(*mutex);
             for (ISWriter* pub : pub_pair.second)
             {
                 pub->onTerminate();
@@ -123,6 +128,12 @@ public:
     {
         std::string key = generateKeyWriter(sub, funcName);
         std::vector<ISWriter*> &pubs = mm_writer[key];
+        std::mutex* mutex = mm_mutex[key];
+        if (mutex == nullptr)
+        {
+            mutex = new std::mutex();
+            mm_mutex[key] = mutex;
+        }
         pubs.emplace_back(pub);
         mm_inv_writer[pub] = key;
         ms_subpubs.emplace(pub);
@@ -148,47 +159,47 @@ public:
 
     virtual void on_received_data(const ISReader *sub, SerializedPayload_t *data)
     {
-        std::vector<std::string> funcNames = mm_functions[sub->getName()];
-        for (std::string fName : funcNames)
+        if (!isTerminating())
         {
-            std::string keyPub = generateKeyWriter(sub->getName(), fName);
-            userf_t function = mm_functionsNames[fName];
-
-            if (function)
+            std::vector<std::string> funcNames = mm_functions[sub->getName()];
+            for (std::string fName : funcNames)
             {
-                std::mutex* mutex = mm_mutex[keyPub];
-                if (mutex == nullptr)
-                {
-                    mutex = new std::mutex();
-                    mm_mutex[keyPub] = mutex;
-                }
-                std::unique_lock<std::mutex> scopedLock(*mutex);
-                SerializedPayload_t* output = mm_staticPayload[keyPub];
-                if (output == nullptr)
-                {
-                    output = new SerializedPayload_t();
-                    mm_staticPayload[keyPub] = output;
-                }
+                std::string keyPub = generateKeyWriter(sub->getName(), fName);
+                userf_t function = mm_functionsNames[fName];
 
-                function(data, output);
-                std::vector<ISWriter*> pubs = mm_writer[keyPub];
-                for (ISWriter* pub : pubs)
+                if (function)
                 {
-                    if (!pub->isTerminating())
+                    std::mutex* mutex = mm_mutex[keyPub];
+                    std::unique_lock<std::mutex> scopedLock(*mutex);
+                    SerializedPayload_t* output = mm_staticPayload[keyPub];
+                    if (output == nullptr)
                     {
-                        pub->write(output);
+                        output = new SerializedPayload_t();
+                        mm_staticPayload[keyPub] = output;
+                    }
+
+                    function(data, output);
+                    std::vector<ISWriter*> pubs = mm_writer[keyPub];
+                    for (ISWriter* pub : pubs)
+                    {
+                        if (!pub->isTerminating())
+                        {
+                            pub->write(output);
+                        }
                     }
                 }
-            }
-            else
-            {
-                //output.copy(data, false);
-                std::vector<ISWriter*> pubs = mm_writer[keyPub];
-                for (ISWriter* pub : pubs)
+                else
                 {
-                    if (!pub->isTerminating())
+                    //output.copy(data, false);
+                    std::vector<ISWriter*> pubs = mm_writer[keyPub];
+                    for (ISWriter* pub : pubs)
                     {
-                        pub->write(data);
+                        if (!pub->isTerminating())
+                        {
+                            std::mutex* mutex = mm_mutex[keyPub];
+                            std::unique_lock<std::mutex> scopedLock(*mutex);
+                            pub->write(data);
+                        }
                     }
                 }
             }
@@ -197,76 +208,68 @@ public:
 
     virtual void on_received_data(const ISReader *sub, DynamicData *data)
     {
-        std::vector<std::string> funcNames = mm_dynFunctions[sub->getName()];
-        if (funcNames.empty())
+        if (!isTerminating())
         {
-            std::string keyPub = generateKeyWriter(sub->getName(), "");
-            std::vector<ISWriter*> pubs = mm_writer[keyPub];
-            for (ISWriter* pub : pubs)
+            std::vector<std::string> funcNames = mm_dynFunctions[sub->getName()];
+            if (funcNames.empty())
             {
-                if (!pub->isTerminating())
-                {
-                    pub->write(data);
-                    /*
-                    DynamicData* output = mm_dynamicData[keyPub];
-                    if (output == nullptr)
-                    {
-                        output = DynamicDataFactory::GetInstance()->CreateCopy(data);
-                        mm_dynamicData[keyPub] = output;
-                    }
-                    pub->write(output);
-                    //DynamicDataFactory::GetInstance()->DeleteData(output);
-                    */
-                }
-            }
-        }
-        else
-        {
-            for (std::string fName : funcNames)
-            {
-                std::string keyPub = generateKeyWriter(sub->getName(), fName);
+                std::string keyPub = generateKeyWriter(sub->getName(), "");
                 std::vector<ISWriter*> pubs = mm_writer[keyPub];
                 for (ISWriter* pub : pubs)
                 {
-                    if (pub->isTerminating()) continue;
-
-                    userdynf_t function = mm_dynFunctionsNames[fName];
-
-                    //DynamicData output; // TODO nueva instancia desde el tipo del publisher (añadir mapeo función)
-                    if (function)
+                    if (!pub->isTerminating())
                     {
-                        TopicDataType *output_type = pub->output_type;
-                        DynamicPubSubType *pst = dynamic_cast<DynamicPubSubType*>(output_type);
-                        if (pst == nullptr)
+                        std::mutex* mutex = mm_mutex[keyPub];
+                        std::unique_lock<std::mutex> scopedLock(*mutex);
+                        pub->write(data);
+                    }
+                }
+            }
+            else
+            {
+                for (std::string fName : funcNames)
+                {
+                    std::string keyPub = generateKeyWriter(sub->getName(), fName);
+                    std::vector<ISWriter*> pubs = mm_writer[keyPub];
+                    for (ISWriter* pub : pubs)
+                    {
+                        if (pub->isTerminating()) continue;
+
+                        userdynf_t function = mm_dynFunctionsNames[fName];
+
+                        //DynamicData output; // TODO nueva instancia desde el tipo del publisher (añadir mapeo función)
+                        if (function)
                         {
-                            //LOG_ERROR("Trying to call dynamic function with static data type: " << fName.c_str() << ", " << output_type->getName());
-                            continue;
+                            TopicDataType *output_type = pub->output_type;
+                            DynamicPubSubType *pst = dynamic_cast<DynamicPubSubType*>(output_type);
+                            if (pst == nullptr)
+                            {
+                                //LOG_ERROR("Trying to call dynamic function with static data type: " << fName.c_str() << ", " << output_type->getName());
+                                continue;
+                            }
+                            else
+                            {
+                                std::mutex* mutex = mm_mutex[keyPub];
+                                std::unique_lock<std::mutex> scopedLock(*mutex);
+                                DynamicData* output = mm_dynamicData[keyPub];
+                                if (output == nullptr)
+                                {
+                                    output = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
+                                    mm_dynamicData[keyPub] = output;
+                                }
+                                function(data, output);
+                                pub->write(output);
+                                //DynamicDataFactory::GetInstance()->DeleteData(output);
+                            }
                         }
                         else
                         {
+                            //output = DynamicDataFactory::GetInstance()->CreateCopy(data);
+                            //output->copy(data, false);
                             std::mutex* mutex = mm_mutex[keyPub];
-                            if (mutex == nullptr)
-                            {
-                                mutex = new std::mutex();
-                                mm_mutex[keyPub] = mutex;
-                            }
                             std::unique_lock<std::mutex> scopedLock(*mutex);
-                            DynamicData* output = mm_dynamicData[keyPub];
-                            if (output == nullptr)
-                            {
-                                output = DynamicDataFactory::GetInstance()->CreateData(pst->GetDynamicType());
-                                mm_dynamicData[keyPub] = output;
-                            }
-                            function(data, output);
-                            pub->write(output);
-                            //DynamicDataFactory::GetInstance()->DeleteData(output);
+                            pub->write(data);
                         }
-                    }
-                    else
-                    {
-                        //output = DynamicDataFactory::GetInstance()->CreateCopy(data);
-                        //output->copy(data, false);
-                        pub->write(data);
                     }
                 }
             }
@@ -287,22 +290,28 @@ inline void ISReader::addBridge(ISBridge* bridge){
 
 inline void ISReader::on_received_data(SerializedPayload_t* payload)
 {
-    for (ISBridge* bridge : mv_bridges)
+    if (!isTerminating())
     {
-        if (!bridge->isTerminating())
+        for (ISBridge* bridge : mv_bridges)
         {
-            bridge->on_received_data(this, payload);
+            if (!bridge->isTerminating())
+            {
+                bridge->on_received_data(this, payload);
+            }
         }
     }
 }
 
 inline void ISReader::on_received_data(DynamicData* data)
 {
-    for (ISBridge* bridge : mv_bridges)
+    if (!isTerminating())
     {
-        if (!bridge->isTerminating())
+        for (ISBridge* bridge : mv_bridges)
         {
-            bridge->on_received_data(this, data);
+            if (!bridge->isTerminating())
+            {
+                bridge->on_received_data(this, data);
+            }
         }
     }
 }

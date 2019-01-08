@@ -5,15 +5,26 @@
             <transport_descriptor>
                 <transport_id>TCPServerString</transport_id>
                 <type>TCPv4</type>
+				<keep_alive_frequency_ms>100</keep_alive_frequency_ms>
+				<keep_alive_timeout_ms>10000</keep_alive_timeout_ms>
                 <listening_ports>
                     <port>@PORT_RANDOM_NUMBER_2@</port>
                 </listening_ports>
                 <wait_negotiation>false</wait_negotiation>
+                <maxInitialPeersRange>20</maxInitialPeersRange>
+            </transport_descriptor>
+            <transport_descriptor>
+                <transport_id>UDPString</transport_id>
+                <type>UDPv4</type>
+                <maxInitialPeersRange>20</maxInitialPeersRange>
             </transport_descriptor>
         </transport_descriptors>
 
         <participant profile_name="ParticipantB_A1">
             <rtps>
+                <userTransports>
+                    <transport_id>UDPString</transport_id>
+                </userTransports>
                 <builtin>
                     <domainId>@DOMAIN0_RANDOM_NUMBER@</domainId>
                     <leaseDuration>

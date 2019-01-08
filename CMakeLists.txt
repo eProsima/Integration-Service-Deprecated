@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 2.8.3)
 set(IS_TOP_LEVEL TRUE)
 if(PROJECT_SOURCE_DIR)
     set(IS_TOP_LEVEL FALSE)
+    string(REPLACE "\\" "/" PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR} )
 endif()
 
 #If not set, copy over product version from configure.ac
@@ -80,6 +81,18 @@ endif()
 option(EPROSIMA_BUILD "Activate internal building" OFF)
 
 ###############################################################################
+# Generation of windows installers.
+###############################################################################
+option(EPROSIMA_INSTALLER "Activate the creation of a build to create windows installers" OFF)
+if(EPROSIMA_INSTALLER)
+    set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
+    set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers")
+    # Needed to generate correctly the installer
+    set(BUILD_JAVA ON)
+    set(THIRDPARTY ON)
+endif()
+
+###############################################################################
 # Test system configuration
 ###############################################################################
 include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
@@ -94,11 +107,10 @@ if(MSVC OR MSVC_IDE)
     check_msvc_arch()
 endif()
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
 include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
 eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_package(fastrtps REQUIRED)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 if(NOT TINYXML2_INCLUDE_DIR)
     set(THIRDPARTY_TinyXML2 ON)
@@ -117,14 +129,9 @@ ENDIF("${isSystemDir}" STREQUAL "-1")
 set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Installation directory for C++ headers")
 set(INCLUDE_SOURCE_DIR src/ CACHE PATH "Installation directory for C++ sources")
+set(EXAMPLES_INSTALL_DIR examples/ CACHE PATH "Installation directory for examples")
 set(LIB_INSTALL_DIR lib/ CACHE PATH "Installation directory for libraries")
 set(DATA_INSTALL_DIR share/ CACHE PATH "Installation directory for data")
-
-if(WIN32 AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
-    set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
-else()
-    set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
-endif()
 
 add_definitions(-DEPROSIMA_SHAPES_DLL_EXPORT)
 add_definitions(-DBUILD_SHARED_LIBS -Dintegration_services_EXPORTS)
@@ -155,7 +162,6 @@ configure_file(${PROJECT_SOURCE_DIR}/src/config.h.in
     ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h)
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
 set(${PROJECT_NAME}_header_files
         include/xmlUtils.h
@@ -179,28 +185,21 @@ set(${PROJECT_NAME}_source_files
     )
 
 # External sources
-if(TINYXML2_SOURCE_DIR)
-    list(APPEND ${PROJECT_NAME}_source_files
-        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
-        )
-    set_sources(${TINYXML2_SOURCE_DIR}/tinyxml2.cpp)
-endif()
+#if(TINYXML2_SOURCE_DIR)
+#    list(APPEND ${PROJECT_NAME}_source_files
+#        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
+#        )
+#    set_sources(${TINYXML2_SOURCE_DIR}/tinyxml2.cpp)
+#endif()
 
 # Add sources to Makefile.am
 set_sources(${${PROJECT_NAME}_source_files})
 
-if(EPROSIMA_INSTALLER)
-    set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
-    set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers")
-endif()
-
 # Create libraries
-if((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
-    generate_msvc_libraries(${MSVC_ARCH})
-elseif(NOT EPROSIMA_INSTALLER)
+if(NOT EPROSIMA_INSTALLER)
     # Testing
     option(BUILD_TESTS "Build tests" OFF)
-	
+
     if(EPROSIMA_BUILD)
 		SET(BUILD_TESTS ON)
     endif()
@@ -211,118 +210,136 @@ elseif(NOT EPROSIMA_INSTALLER)
         include(CTest)
         add_subdirectory(test)
     endif()
+endif()
 
-    # Examples
-    option(COMPILE_EXAMPLES "Build example" OFF)
-    if(COMPILE_EXAMPLES)
-        if(NOT CMAKE_BUILD_TYPE)
-            set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
-        endif()
-        add_subdirectory(examples)
-    endif()
+# Examples
+option(COMPILE_EXAMPLES "Build example" OFF)
+if(COMPILE_EXAMPLES)
+#    if(NOT CMAKE_BUILD_TYPE)
+#        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+#    endif()
+    add_subdirectory(examples)
+endif()
 
-    # Executable and library
-    add_executable(${PROJECT_NAME} src/main.cpp)
+# Executable and library
+add_executable(${PROJECT_NAME} src/main.cpp)
 
 if (WIN32)
     add_library(${SHAREDLIB_NAME} STATIC
         ${${PROJECT_NAME}_source_files}
+        $<$<BOOL:${TINYXML2_SOURCE_DIR}>:${TINYXML2_SOURCE_DIR}/tinyxml2.cpp>
         )
 else()
     add_library(${SHAREDLIB_NAME} SHARED
 #        $<$<NOT:$<BOOL:${WIN32}>>:SHARED>
         ${${PROJECT_NAME}_source_files}
+        $<$<BOOL:${TINYXML2_SOURCE_DIR}>:${TINYXML2_SOURCE_DIR}/tinyxml2.cpp>
         )
 endif()
 
-    target_include_directories(${SHAREDLIB_NAME} PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-        PRIVATE $<BUILD_INTERFACE:${TINYXML2_INCLUDE_DIR}>
+target_include_directories(${SHAREDLIB_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    PRIVATE $<BUILD_INTERFACE:${TINYXML2_INCLUDE_DIR}>
+    )
+
+target_link_libraries(${SHAREDLIB_NAME} PUBLIC
+    fastrtps
+    fastcdr
+    $<$<NOT:$<BOOL:${TINYXML2_INCLUDE_DIR}>>:tinyxml2>
+    ${CMAKE_DL_LIBS}
+    $<$<BOOL:${WIN32}>:IPHLPAPI$<SEMICOLON>shlwapi>
+    $<$<NOT:$<BOOL:${WIN32}>>:-L/usr/lib/x86_64-linux-gnu>
+    )
+
+target_link_libraries(${PROJECT_NAME} ${SHAREDLIB_NAME})
+
+if(TINYXML2_LIBRARY)
+    target_link_libraries(${PROJECT_NAME} ${PRIVACY}
+        ${TINYXML2_LIBRARY}
         )
-
-    target_link_libraries(${SHAREDLIB_NAME}
-            fastrtps
-            fastcdr
-            $<$<NOT:$<BOOL:${TINYXML2_INCLUDE_DIR}>>:tinyxml2>
-            ${CMAKE_DL_LIBS}
-            $<$<BOOL:${WIN32}>:IPHLPAPI$<SEMICOLON>shlwapi>
-            $<$<NOT:$<BOOL:${WIN32}>>:-L/usr/lib/x86_64-linux-gnu>
-            )
-
-    target_link_libraries(${PROJECT_NAME} ${SHAREDLIB_NAME})
-
-    if(TINYXML2_LIBRARY)
-        target_link_libraries(${PROJECT_NAME} ${PRIVACY}
-            ${TINYXML2_LIBRARY}
-            )
-    endif()
-
-    # Properties
-    set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-    set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-    set_target_properties(${SHAREDLIB_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
-
-    if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-        set_target_properties(${SHAREDLIB_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
-    endif()
 endif()
 
+# Properties
+set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+set_target_properties(${SHAREDLIB_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+set_target_properties(${SHAREDLIB_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+    set_target_properties(${SHAREDLIB_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
+endif()
+
+###############################################################################
+# Compile options
+###############################################################################
+
+###############################################################################
+# Packaging
+###############################################################################
+
+if(EPROSIMA_INSTALLER)
+    set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
+    set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers")
+endif()
+
+if(WIN32 AND EPROSIMA_INSTALLER)
+    set(LICENSE_INSTALL_DIR . CACHE PATH "Installation directory for licenses")
+else()
+    set(LICENSE_INSTALL_DIR ${DATA_INSTALL_DIR}/${PROJECT_NAME} CACHE PATH "Installation directory for licenses")
+endif()
+
+install(TARGETS islib
+    EXPORT islib_Targets
+    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT libraries
+    )
+
+install(FILES ${PROJECT_SOURCE_DIR}/build/Release/integration_service.exe
+    COMPONENT bin
+    DESTINATION ${BIN_INSTALL_DIR}
+    )
+
+install(TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}_Targets
+    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT bin
+    )
+
+# Install includes
+install(DIRECTORY include/
+    COMPONENT headers
+    DESTINATION ${INCLUDE_INSTALL_DIR}
+    FILES_MATCHING PATTERN "*.h"
+    )
+
+# Install examples
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/
+    COMPONENT examples
+    DESTINATION ${EXAMPLES_INSTALL_DIR}
+    )
+
+### # Export library
+### install(EXPORT ${PROJECT_NAME}Targets
+###     DESTINATION ${DATA_INSTALL_DIR}/${PROJECT_NAME}/cmake
+###     )
+
+# Sources
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/src
+    COMPONENT sources
+    DESTINATION ${INCLUDE_SOURCE_DIR})
+
+# Install licenses
+install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
+    COMPONENT licenses
+    DESTINATION share
+    )
+
+# Install autotools
 if(UNIX AND EPROSIMA_INSTALLER)
-    install(
-        FILES
-            include/xmlUtils.h
-            include/ISBaseClass.h
-            include/ISBridge.h
-            include/ISWriter.h
-            include/ISReader.h
-            include/ISManager.h
-            include/GenericPubSubTypes.h
-            include/ISManager.h
-            include/ISBridge.h
-            include/RTPSBridge.h
-            include/RTPSPublisher.h
-            include/RTPSSubscriber.h
-            include/GenericPubSubTypes.h
-        COMPONENT headers
-        DESTINATION ${INCLUDE_INSTALL_DIR})
-
-    install(
-        FILES
-            include/dynamicload/dynamicload.h
-        COMPONENT headers
-        DESTINATION ${INCLUDE_INSTALL_DIR}/dynamicload)
-
-    install(
-        FILES
-        include/log/ISLog.h
-        COMPONENT headers
-        DESTINATION ${INCLUDE_INSTALL_DIR}/log)
-
-    install(
-        FILES
-            src/main.cpp
-            src/ISManager.cpp
-            src/RTPSBridge.cpp
-            src/RTPSPublisher.cpp
-            src/RTPSSubscriber.cpp
-            src/GenericPubSubTypes.cpp
-        COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/src)
-
-    install(
-        FILES
-            src/dynamicload/dynamicload.cpp
-        COMPONENT sources
-        DESTINATION ${INCLUDE_SOURCE_DIR}/src/dynamicload)
-
-    # Install licenses
-    install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
-        DESTINATION ${LICENSE_INSTALL_DIR}
-        COMPONENT licenses
-        )
-    set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
-
     install(DIRECTORY ${PROJECT_BINARY_DIR}/autotools/
         DESTINATION .
         USE_SOURCE_PERMISSIONS
@@ -331,98 +348,97 @@ if(UNIX AND EPROSIMA_INSTALLER)
         )
 endif()
 
+set(CPACK_COMPONENT_LICENSES_HIDDEN 1)
 set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
 set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
+set(CPACK_COMPONENTS_ALL headers sources licenses examples bin)
+set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries)
 
-if(NOT EPROSIMA_INSTALLER)
-    install(
-        FILES
-            include/xmlUtils.h
-            include/ISBaseClass.h
-            include/ISBridge.h
-            include/ISWriter.h
-            include/ISReader.h
-            include/ISManager.h
-            include/GenericPubSubTypes.h
-            include/ISManager.h
-            include/ISBridge.h
-            include/RTPSBridge.h
-            include/RTPSPublisher.h
-            include/RTPSSubscriber.h
-            include/GenericPubSubTypes.h
-        COMPONENT headers
-        DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME})
+# Generate Windows Installer.
+if(WIN32 AND EPROSIMA_INSTALLER)
+    # Set product name.
+    set(PRODUCT_NAME_SHORT "Integration Service")
+    set(PRODUCT_NAME_LONG "Integration Service")
 
-    install(
-        FILES
-            include/dynamicload/dynamicload.h
-        COMPONENT headers
-        DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}/dynamicload)
+    set(CPACK_GENERATOR NSIS)
 
-    install(
-        FILES
-            include/log/ISLog.h
-        COMPONENT headers
-        DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}/log)
+    set(CPACK_PROJECT_CONFIG_FILE ${PROJECT_BINARY_DIR}/cmake/packaging/windows/WindowsPackaging.cmake)
+    # Setup generic options.
 
-    if(MSVC OR MSVC_IDE)
-        install(
-            TARGETS ${SHAREDLIB_NAME}
-            EXPORT ${PROJECT_NAME}Targets
-            COMPONENT libraries_${MSVC_ARCH}
-            DESTINATION ${LIB_INSTALL_DIR})
-    else()
-        install(
-            TARGETS ${SHAREDLIB_NAME}
-            EXPORT ${PROJECT_NAME}Targets
-            COMPONENT libraries}
-            DESTINATION ${LIB_INSTALL_DIR})
-    endif()
+    set(CPACK_PACKAGE_NAME ${PRODUCT_NAME_SHORT})
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Integration Service")
+    set(CPACK_PACKAGE_DESCRIPTION "eProsima ${PRODUCT_NAME_SHORT}")
+    set(CPACK_PACKAGE_VENDOR "eProsima")
+    set(CPACK_PACKAGE_CONTACT "eProsima Support <support@eprosima.com>")
+    set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_MAJOR_VERSION})
+    set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_MINOR_VERSION})
+    #set(CPACK_PACKAGE_VERSION_PATH ${PROJECT_MICRO_VERSION})
+    set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+    set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+    set(CPACK_COMPONENTS_LICENSES_HIDDEN 1)
 
-    export(
-        TARGETS ${SHAREDLIB_NAME}
-        FILE ${BIN_INSTALL_DIR}cmake/config/${PROJECT_NAME}Targets.cmake)
-
-    install(
-        EXPORT ${PROJECT_NAME}Targets
-        DESTINATION lib/${PROJECT_NAME}/cmake
-        COMPONENT cmake)
-
-    install(
-        TARGETS ${PROJECT_NAME}
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin
-        COMPONENT libraries_${MSVC_ARCH})
-else()
-    set(CPACK_COMPONENTS_ALL headers sources licenses examples)
-
-    if(MSVC OR MSVC_IDE)
-        set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries_${MSVC_ARCH})
-    else()
-        set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} libraries)
-    endif()
-
-    include(${PROJECT_SOURCE_DIR}/cmake/packaging/eProsimaPackaging.cmake)
-endif()
-
-# Install libraries
-if(MSVC OR MSVC_IDE AND EPROSIMA_INSTALLER AND IS_TOP_LEVEL)
-    install_msvc_libraries(${MSVC_ARCH})
-elseif(NOT EPROSIMA_INSTALLER)
-    set(DIR_EXTENSION "")
-    if(EPROSIMA_INSTALLER_MINION)
-        set(DIR_EXTENSION "/${MSVC_ARCH}")
-    endif()
-
-    install(EXPORT ${PROJECT_NAME}Targets
-        DESTINATION ${LIB_INSTALL_DIR}${DIR_EXTENSION}/${PROJECT_NAME}/cmake
-        COMPONENT cmake
-        )
-else()
+    # Components display.
+    set(CPACK_COMPONENT_CMAKE_DISPLAY_NAME "CMake files")
+    set(CPACK_COMPONENT_CMAKE_DESCRIPTION "CMake configuration files")
+    set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PRODUCT_NAME_SHORT} C++ Headers")
+    set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
+    set(CPACK_COMPONENT_BIN_DESCRIPTION "eProsima ${PRODUCT_NAME_SHORT} Executables")
+    set(CPACK_COMPONENT_BIN_DISPLAY_NAME "Executables")
+    set(CPACK_COMPONENT_SOURCES_DESCRIPTION "eProsima ${PRODUCT_NAME_SHORT} Source Files")
+    set(CPACK_COMPONENT_SOURCES_DISPLAY_NAME "Source Files")
+    set(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "eProsima ${PRODUCT_NAME_SHORT} Libraries")
+    set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries")
     string(TOUPPER "${MSVC_ARCH}" MSVC_ARCH_UPPER)
-    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DISPLAY_NAME "${MSVC_ARCH}")
-    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries for platform ${MSVC_ARCH}")
-    set(CPACK_COMPONENT_LIBRARIES_${MSVC_ARCH_UPPER}_GROUP "Libraries")
+    set(CPACK_COMPONENT_LICENSES_DISPLAY_NAME "License")
+    set(CPACK_COMPONENT_LICENSES_DESCRIPTION "eProsima ${PRODUCT_NAME_SHORT} License")
 
-    set(CPACK_COMPONENT_GROUP_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries")
+    # Setup NSIS installer.
+    set(CPACK_NSIS_DISPLAY_NAME "${PRODUCT_NAME_LONG} ${PROJECT_VERSION}")
+    set(CPACK_NSIS_PACKAGE_NAME "eProsima ${PRODUCT_NAME_LONG} ${PROJECT_VERSION}")
+    set(CPACK_NSIS_URL_INFO_ABOUT "www.eprosima.com")
+    set(CPACK_NSIS_CONTACT "support@eprosima.com")
+    set(CPACK_NSIS_MUI_ICON "${PROJECT_SOURCE_DIR}/utils/images/icon/eprosima_icon.ico")
+    set(CPACK_NSIS_MENU_LINKS
+        "bin/integration_service.exe" "${PRODUCT_NAME_SHORT}"
+        "Uninstall.exe" "Uninstall ${PRODUCT_NAME_SHORT}"
+        )
+
+    if(CMAKE_CL_64)
+        set(CPACK_NSIS_INSTALL_ROOT "$ENV{PROGRAMFILES}/eProsima")
+    else()
+        set(PF86_STR "PROGRAMFILES(x86)")
+        set(CPACK_NSIS_INSTALL_ROOT "$ENV{${PF86_STR}}/eProsima")
+    endif()
+    string(REPLACE "\\" "/" CPACK_NSIS_INSTALL_ROOT ${CPACK_NSIS_INSTALL_ROOT} )
+
+    # Setup configure files for NSIS installer.
+    configure_file(${PROJECT_SOURCE_DIR}/cmake/packaging/windows/NSISPackaging.cmake.in
+        ${PROJECT_BINARY_DIR}/cmake/packaging/windows/NSISPackaging.cmake @ONLY
+        )
+    # Setup redistributables installation nsh.
+    if(${MSVC_ARCH} STREQUAL "x64Win64VS2015")
+        set(REDIST_REGISTER "SOFTWARE\\Classes\\Installer\\Dependencies\\,,amd64,14.0,bundle")
+        set(REDIST_VERSION "14.0.23506.0")
+        set(REDIST_LINK "http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x64.exe")
+        set(REDIST_EXEC "vc_redist_x64.exe")
+    elseif(${MSVC_ARCH} STREQUAL "i86Win32VS2015")
+        set(REDIST_REGISTER "SOFTWARE\\Classes\\Installer\\Dependencies\\,,x86,14.0,bundle")
+        set(REDIST_VERSION "14.0.23506.0")
+        set(REDIST_LINK "http://download.microsoft.com/download/C/E/5/CE514EAE-78A8-4381-86E8-29108D78DBD4/VC_redist.x86.exe")
+        set(REDIST_EXEC "vc_redist_i86.exe")
+    endif()
+
+    configure_file(${PROJECT_SOURCE_DIR}/cmake/packaging/windows/InstallRedistributables.nsh.in
+        ${PROJECT_BINARY_DIR}/cmake/packaging/windows/InstallRedistributables.nsh @ONLY
+        )
+
+    # Setup CPack install script
+    set(CPACK_INSTALL_SCRIPT "${PROJECT_BINARY_DIR}/cmake/packaging/windows/NSISPackaging.cmake")
+
+    # Update CMAKE_MODULE_PATH to find NSIS.template.in
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/packaging/windows")
+
+    include(CPack)
 endif()
+
+include(${PROJECT_SOURCE_DIR}/cmake/packaging/eProsimaPackaging.cmake)

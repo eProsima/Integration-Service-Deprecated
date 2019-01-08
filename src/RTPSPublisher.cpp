@@ -47,26 +47,34 @@ void RTPSPublisher::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
 
 bool RTPSPublisher::write(SerializedPayload_t *data)
 {
-    if (dynamic_cast<GenericPubSubType*>(output_type) != nullptr)
+    if (!isTerminating())
     {
-        return mp_publisher->write(data);
-    }
-    else
-    {
-        std::unique_lock<std::mutex> scopeLock(m_bufferMutex);
-        if (m_buffer == nullptr)
+        if (dynamic_cast<GenericPubSubType*>(output_type) != nullptr)
         {
-            m_buffer = output_type->createData();
+            return mp_publisher->write(data);
         }
-        output_type->deserialize(data, m_buffer);
-        bool result = mp_publisher->write(m_buffer);
-        return result;
+        else
+        {
+            std::unique_lock<std::mutex> scopeLock(m_bufferMutex);
+            if (m_buffer == nullptr)
+            {
+                m_buffer = output_type->createData();
+            }
+            output_type->deserialize(data, m_buffer);
+            bool result = mp_publisher->write(m_buffer);
+            return result;
+        }
     }
+    return false;
 }
 
 bool RTPSPublisher::write(DynamicData *data)
 {
-    return mp_publisher->write(data);
+    if (!isTerminating())
+    {
+        return mp_publisher->write(data);
+    }
+    return false;
 }
 
 void RTPSPublisher::setParticipant(Participant* part)

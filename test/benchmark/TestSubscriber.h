@@ -25,6 +25,10 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/TopicDataType.h>
+#include <mutex>
+#include <thread>
+#include <chrono>
+#include <condition_variable>
 
 class TestSubscriber
 {

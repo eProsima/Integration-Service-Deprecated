@@ -4,6 +4,7 @@
 #include <fastrtps/types/DynamicData.h>
 #include "GenericPubSubTypes.h"
 #include <string>
+#include <atomic>
 
 using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastrtps::rtps;
@@ -17,13 +18,13 @@ class ISBaseClass
 protected:
     std::string name;
     virtual void setName(const std::string &name) { this->name = name; }
-    bool m_bTerminating;
+    std::atomic<bool> m_bTerminating;
 public:
     ISBaseClass(const std::string &name) : name(name), m_bTerminating(false) {}
     virtual const std::string& getName() const { return name; }
     virtual void onTerminate() { m_bTerminating = true; }
     virtual ~ISBaseClass() = default;
-    bool isTerminating() const { return m_bTerminating; }
+    inline bool isTerminating() const { return m_bTerminating; }
 };
 
 #endif //_IS_BASE_CLASS_H_

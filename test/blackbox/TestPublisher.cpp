@@ -30,6 +30,7 @@
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
+#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -62,7 +63,10 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
 
     if (transport == 1)
     {
-        PParam.rtps.useBuiltinTransports = true;
+        PParam.rtps.useBuiltinTransports = false;
+        std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        descriptor->maxInitialPeersRange = 20;
+        PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 2)
     {
@@ -73,7 +77,10 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
         descriptor->sendBufferSize = 8912896; // 8.5Mb
         descriptor->receiveBufferSize = 8912896; // 8.5Mb
         descriptor->wait_for_tcp_negotiation = false;
+        descriptor->keep_alive_frequency_ms = 1000;
+        descriptor->keep_alive_timeout_ms = 5000;
         descriptor->add_listener_port(port);
+        descriptor->maxInitialPeersRange = 20;
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 3)
@@ -81,6 +88,7 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
         //uint32_t kind = LOCATOR_KIND_UDPv6;
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<UDPv6TransportDescriptor> descriptor = std::make_shared<UDPv6TransportDescriptor>();
+        descriptor->maxInitialPeersRange = 20;
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 4)
@@ -103,8 +111,11 @@ bool TestPublisher::init(int transport, ReliabilityQosPolicyKind qosKind, int sa
         std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();
         descriptor->sendBufferSize = 8912896; // 8.5Mb
         descriptor->receiveBufferSize = 8912896; // 8.5Mb
-        //descriptor->set_WAN_address("127.0.0.1");
+        descriptor->wait_for_tcp_negotiation = false;
+        descriptor->keep_alive_frequency_ms = 1000;
+        descriptor->keep_alive_timeout_ms = 5000;
         descriptor->add_listener_port(port);
+        descriptor->maxInitialPeersRange = 20;
         PParam.rtps.userTransports.push_back(descriptor);
     }
 
@@ -187,7 +198,7 @@ void TestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Matchin
     }
     else
     {
-        std::cout << mParent->m_Name << " unmatched."<<std::endl;
+        std::cout << mParent->m_Name << " unmatched." << std::endl;
     }
 }
 
@@ -197,9 +208,9 @@ void TestPublisher::runThread()
 	std::cout << m_Name << " running..." << std::endl;
     while (!publish() && iPrevCount < m_iSamples)
     {
-		eClock::my_sleep(m_iWaitTime);
+        eClock::my_sleep(m_iWaitTime);
         ++iPrevCount;
-	}
+    }
 }
 
 void TestPublisher::run()

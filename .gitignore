@@ -544,3 +544,7 @@ paket-files/
 # should be stored in the .pubxml.user file.
 
 # End of https://www.gitignore.io/api/vim,c++,java,tags,cmake,linux,python,gradle,windows,visualstudio
+test/blackbox/BlackboxTCPTests.cpp
+test/blackbox/BlackboxKeyedTests.cpp
+test/blackbox/BlackboxUDPTests.cpp
+test/benchmark/Benchmark.cpp

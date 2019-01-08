@@ -56,7 +56,10 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
 
     if (transport == 1)
     {
-        PParam.rtps.useBuiltinTransports = true;
+        PParam.rtps.useBuiltinTransports = false;
+        std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
+        descriptor->maxInitialPeersRange = 20;
+        PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 2)
     {
@@ -65,12 +68,14 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
         Locator_t initial_peer_locator;
         initial_peer_locator.kind = kind;
         IPLocator::setIPv4(initial_peer_locator, address);
-        initial_peer_locator.port = port;
+        IPLocator::setPhysicalPort(initial_peer_locator, port);
         PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
         descriptor->wait_for_tcp_negotiation = false;
+        descriptor->maxInitialPeersRange = 20;
+        descriptor->logical_port_range = 100;
 		descriptor->sendBufferSize = 8912896; // 8.5Mb
 		descriptor->receiveBufferSize = 8912896; // 8.5Mb
         PParam.rtps.userTransports.push_back(descriptor);
@@ -80,6 +85,7 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
         //uint32_t kind = LOCATOR_KIND_UDPv6;
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<UDPv6TransportDescriptor> descriptor = std::make_shared<UDPv6TransportDescriptor>();
+        descriptor->maxInitialPeersRange = 20;
         PParam.rtps.userTransports.push_back(descriptor);
     }
     else if (transport == 4)
@@ -90,11 +96,14 @@ bool TestSubscriber::init(int transport, ReliabilityQosPolicyKind qosKind, const
         Locator_t initial_peer_locator;
         initial_peer_locator.kind = kind;
         IPLocator::setIPv6(initial_peer_locator, address);
-        initial_peer_locator.port = port;
+        IPLocator::setPhysicalPort(initial_peer_locator, port);
         PParam.rtps.builtin.initialPeersList.push_back(initial_peer_locator); // Publisher's meta channel
 
         PParam.rtps.useBuiltinTransports = false;
         std::shared_ptr<TCPv6TransportDescriptor> descriptor = std::make_shared<TCPv6TransportDescriptor>();
+        descriptor->wait_for_tcp_negotiation = false;
+        descriptor->maxInitialPeersRange = 20;
+        descriptor->logical_port_range = 100;
 		descriptor->sendBufferSize = 8912896; // 8.5Mb
 		descriptor->receiveBufferSize = 8912896; // 8.5Mb
         PParam.rtps.userTransports.push_back(descriptor);
