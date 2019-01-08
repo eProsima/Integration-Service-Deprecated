@@ -17,8 +17,8 @@
             -->
             <type>
                 <struct name="sample">
-                    <octet name="index"/>
-                    <octet name="key_value" key="true"/>
+                    <member name="index" type="byte"/>
+                    <member name="key_value" type="byte" key="true"/>
                 </struct>
             </type>
         </types>

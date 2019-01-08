@@ -34,7 +34,7 @@
                 <builtin>
                     <domainId>0</domainId>
                     <leaseDuration>
-                        <durationbyname>INFINITE</durationbyname>
+                        <sec>DURATION_INFINITY</sec>
                     </leaseDuration>
                 </builtin>
                 <useBuiltinTransports>false</useBuiltinTransports>
