@@ -7,7 +7,7 @@ applications running over different subnetworks through a WAN connection.
 
 **Preparation**
 
-To execute this example, we need to have configured properly two separated subnetwork, only linked through a WAN
+To execute this example, we need to have configured properly two separated subnetworks, only linked through a WAN
 connection, ideally, internet.
 
 In each subnetwork, we must have a computer with Fast-RTPS HelloWorldExample and Integration Service already installed.
@@ -15,6 +15,9 @@ In each subnetwork, we must have a computer with Fast-RTPS HelloWorldExample and
 The subnetwork that will receive the incoming connection (that owns the "server" host), should be configured to allow
 incoming TCP connections to port 5100 (you can modify this port in the XML configuration files if you prefer
 to use other TCP port).
+
+Also, this test needs to open an input port on the router of the "server" host to allow incoming
+connections and to map this input port to send the incoming data to the computer that is going to run the test.
 
 **Execution**
 
@@ -47,7 +50,7 @@ to the same subnetwork and UDP traffic should not be possible between them.
 To allow communicate the examples, we need to execute *IS* with the proper configuration.
 
 First, you must edit the file *config_client.xml* and modify the line ``<address>127.0.0.1</address>`` with
-**Node B**'s IP address. Save the changes.
+**Node B**'s public IP address. Save the changes.
 Additionally, you can modify the TCP port in both XML files if you need to use another port number instead of 5100.
 
 Now, launch Integration Service in both machines to allow communicating.
