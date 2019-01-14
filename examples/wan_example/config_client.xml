@@ -4,7 +4,6 @@
         <transport_descriptors>
             <transport_descriptor>
                 <transport_id>TCPv4_Client</transport_id>
-                <wait_negotiation>false</wait_negotiation>
                 <type>TCPv4</type>
             </transport_descriptor>
         </transport_descriptors>
@@ -27,12 +26,15 @@
                     <leaseDuration>
                         <sec>DURATION_INFINITY</sec>
                     </leaseDuration>
+                    <leaseAnnouncement>
+                        <sec>3</sec>
+                    </leaseAnnouncement>
                     <initialPeersList>
                         <locator>
-                            <TCPv4>
+                            <tcpv4>
                                 <address>127.0.0.1</address>
                                 <physical_port>5100</physical_port>
-                            </TCPv4>
+                            </tcpv4>
                         </locator>
                     </initialPeersList>
                 </builtin>
@@ -45,6 +47,7 @@
                 <name>HelloWorldTopic</name>
                 <dataType>HelloWorld</dataType>
             </topic>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         </subscriber>
 
         <publisher profile_name="HelloWorldPublisher">
@@ -52,7 +55,8 @@
                 <name>HelloWorldTopic</name>
                 <dataType>HelloWorld</dataType>
             </topic>
-        </pubsliher>
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+        </publisher>
     </profiles>
 
     <connector name="RemoteToLocal">
