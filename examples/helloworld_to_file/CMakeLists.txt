@@ -12,8 +12,11 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-find_package(fastcdr)
-find_package(fastrtps)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}../../cmake/modules)
+include(${PROJECT_SOURCE_DIR}/../../cmake/common/eprosima_libraries.cmake)
+eprosima_find_package(fastcdr REQUIRED)
+eprosima_find_package(fastrtps REQUIRED)
+
 add_definitions(-DEPROSIMA_USER_DLL_EXPORT  -DBUILD_SHARED_LIBS)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -37,6 +40,7 @@ target_link_libraries(isfile fastrtps fastcdr ${liblist} ${CMAKE_DL_LIBS})
 
 
 install(TARGETS isfile
+    ARCHIVE DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     LIBRARY DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     )
 
