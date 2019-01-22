@@ -32,7 +32,7 @@
                     <initialPeersList>
                         <locator>
                             <tcpv4>
-                                <address>127.0.0.1</address>
+                                <address>88.88.74.14</address>
                                 <physical_port>5100</physical_port>
                             </tcpv4>
                         </locator>

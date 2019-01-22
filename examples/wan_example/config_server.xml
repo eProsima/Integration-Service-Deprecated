@@ -8,6 +8,7 @@
                 <listening_ports>
                     <port>5100</port>
                 </listening_ports>
+                <wan_addr>88.88.74.14</wan_addr>
             </transport_descriptor>
         </transport_descriptors>
 
