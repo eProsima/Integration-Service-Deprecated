@@ -32,8 +32,21 @@ There are two values that you must set with your own configuration before runnin
 the Public IP Address of the machine that is going to work as a TCP Server (in the example 88.88.74.14),
 and update the XML Files with it.
 The **config_server.xml** file has the *wan_addr* inside the transport descriptor.
+
+.. literalinclude:: config_server.xml
+    :language: xml
+    :start-after: <!-- TRANSPORT CONFIGURATION START -->
+    :end-before: <!-- TRANSPORT CONFIGURATION END -->
+    :dedent: 4
+
 The **config_client.xml** file has the *address* inside the field *initialPeersList* to set
 where it is going to connect.
+
+.. literalinclude:: config_client.xml
+    :language: xml
+    :start-after: <!-- TRANSPORT CONFIGURATION START -->
+    :end-before: <!-- TRANSPORT CONFIGURATION END -->
+    :dedent: 4
 
 The second field is the TCP port where the server is going to listen and where the client is going to connect.
 By default, this value is 5100, but you can modify this value in the XML configuration

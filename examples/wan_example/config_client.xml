@@ -29,6 +29,7 @@
                     <leaseAnnouncement>
                         <sec>3</sec>
                     </leaseAnnouncement>
+                    <!-- TRANSPORT CONFIGURATION START -->
                     <initialPeersList>
                         <locator>
                             <tcpv4>
@@ -37,6 +38,7 @@
                             </tcpv4>
                         </locator>
                     </initialPeersList>
+                    <!-- TRANSPORT CONFIGURATION END -->
                 </builtin>
                 <useBuiltinTransports>false</useBuiltinTransports>
             </rtps>
