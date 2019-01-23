@@ -12,10 +12,14 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}../../cmake/modules)
-include(${PROJECT_SOURCE_DIR}/../../cmake/common/eprosima_libraries.cmake)
-eprosima_find_package(fastcdr REQUIRED)
-eprosima_find_package(fastrtps REQUIRED)
+# Find requirements
+if(NOT fastcdr_FOUND)
+    find_package(fastcdr REQUIRED)
+endif()
+
+if(NOT fastrtps_FOUND)
+    find_package(fastrtps REQUIRED)
+endif()
 
 add_definitions(-DEPROSIMA_SHAPES_DLL_EXPORT -DBUILD_SHARED_LIBS)
 

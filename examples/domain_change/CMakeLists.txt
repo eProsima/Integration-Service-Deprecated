@@ -20,10 +20,14 @@ endif()
 
 project("domain_change")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}../../cmake/modules)
-include(${PROJECT_SOURCE_DIR}/../../cmake/common/eprosima_libraries.cmake)
-eprosima_find_package(fastcdr REQUIRED)
-eprosima_find_package(fastrtps REQUIRED)
+# Find requirements
+if(NOT fastcdr_FOUND)
+    find_package(fastcdr REQUIRED)
+endif()
+
+if(NOT fastrtps_FOUND)
+    find_package(fastrtps REQUIRED)
+endif()
 
 # Set C++11
 include(CheckCXXCompilerFlag)

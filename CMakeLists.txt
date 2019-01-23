@@ -302,11 +302,6 @@ install(TARGETS islib
     COMPONENT libraries
     )
 
-install(FILES ${PROJECT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/integration_service.exe
-    COMPONENT bin
-    DESTINATION ${BIN_INSTALL_DIR}
-    )
-
 install(TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}_Targets
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}
