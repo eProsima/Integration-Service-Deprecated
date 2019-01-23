@@ -44,6 +44,7 @@ target_link_libraries(isfile fastrtps fastcdr ${liblist} ${CMAKE_DL_LIBS})
 
 
 install(TARGETS isfile
+    RUNTIME DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     ARCHIVE DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     LIBRARY DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     )

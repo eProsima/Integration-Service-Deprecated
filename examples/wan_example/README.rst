@@ -3,9 +3,10 @@ WAN example
 
 In this example, *IS* will communicate two
 `HelloWorldExample <https://github.com/eProsima/Fast-RTPS/tree/master/examples/C%2B%2B/HelloWorldExample>`__
-applications running over different subnetworks through a WAN connection. To do that we need at least two
-machines that work on different networks and connected to the Internet, and we need to have
-Fast-RTPS HelloWorldExample and Integration Service already installed.
+applications running over different subnetworks through a WAN connection.
+To do that we need at least two machines that work on different networks and
+connected to the Internet, and we need to have Fast-RTPS HelloWorldExample and
+Integration Service already installed.
 
 Environment
 ^^^^^^^^^^^
@@ -17,8 +18,9 @@ and establish a port forwarding to route the incoming data of this port the serv
 
 The following diagram shows the minimum architecture of the example that is two machines,
 both with a HelloWorld Example running over UDP and one Integration Service operating
-as a bridge to connect with the other end. If you want to expand the example you can
-run the HelloWorld Example on different machines inside the same LAN than the TCP Server and the TCP Client.
+as a bridge to connect with the other end.
+If you want to expand the example you can run the HelloWorld Example on different machines
+inside the same LAN than the TCP Server and the TCP Client.
 
 
 .. image:: TCP_NAT_example.png
@@ -28,9 +30,9 @@ run the HelloWorld Example on different machines inside the same LAN than the TC
 Configuration
 ^^^^^^^^^^^^^
 
-There are two values that you must set with your own configuration before running the test, the first one is
-the Public IP Address of the machine that is going to work as a TCP Server (in the example 88.88.74.14),
-and update the XML Files with it.
+There are two values that you must set with your own configuration before running the test,
+the first one is the Public IP Address of the machine that is going to work as
+a TCP Server (in the example 88.88.74.14), and update the XML Files with it.
 The **config_server.xml** file has the *wan_addr* inside the transport descriptor.
 
 .. code-block:: xml

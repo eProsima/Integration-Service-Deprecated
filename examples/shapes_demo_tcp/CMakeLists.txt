@@ -37,6 +37,7 @@ endif()
 target_link_libraries(shapelib fastrtps fastcdr ${CMAKE_DL_LIBS})
 
 install(TARGETS shapelib
+    RUNTIME DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     ARCHIVE DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     LIBRARY DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     )
