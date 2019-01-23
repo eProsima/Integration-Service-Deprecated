@@ -9,6 +9,15 @@ if(PROJECT_SOURCE_DIR)
     string(REPLACE "\\" "/" PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR} )
 endif()
 
+# Set CMAKE_BUILD_TYPE to Release by default.
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to 'Release' as none was specified.")
+    set(CMAKE_BUILD_TYPE Release CACHE STRING
+        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+        FORCE)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
 #If not set, copy over product version from configure.ac
 file(STRINGS
     configure.ac
@@ -215,9 +224,6 @@ endif()
 # Examples
 option(COMPILE_EXAMPLES "Build example" OFF)
 if(COMPILE_EXAMPLES)
-#    if(NOT CMAKE_BUILD_TYPE)
-#        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
-#    endif()
     add_subdirectory(examples)
 endif()
 
@@ -296,7 +302,7 @@ install(TARGETS islib
     COMPONENT libraries
     )
 
-install(FILES ${PROJECT_SOURCE_DIR}/build/Release/integration_service.exe
+install(FILES ${PROJECT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/integration_service.exe
     COMPONENT bin
     DESTINATION ${BIN_INSTALL_DIR}
     )
