@@ -35,28 +35,28 @@ The **config_server.xml** file has the *wan_addr* inside the transport descripto
 
 .. code-block:: xml
 
-<transport_descriptor>
-    <transport_id>TCPv4_Server</transport_id>
-    <type>TCPv4</type>
-    <listening_ports>
-        <port>5100</port>
-    </listening_ports>
-    <wan_addr>88.88.74.14</wan_addr>
-</transport_descriptor>
+    <transport_descriptor>
+        <transport_id>TCPv4_Server</transport_id>
+        <type>TCPv4</type>
+        <listening_ports>
+            <port>5100</port>
+        </listening_ports>
+        <wan_addr>88.88.74.14</wan_addr>
+    </transport_descriptor>
 
 The **config_client.xml** file has the *address* inside the field *initialPeersList* to set
 where it is going to connect.
 
 .. code-block:: xml
 
-<initialPeersList>
-    <locator>
-        <tcpv4>
-            <address>88.88.74.14</address>
-            <physical_port>5100</physical_port>
-        </tcpv4>
-    </locator>
-</initialPeersList>
+    <initialPeersList>
+        <locator>
+            <tcpv4>
+                <address>88.88.74.14</address>
+                <physical_port>5100</physical_port>
+            </tcpv4>
+        </locator>
+    </initialPeersList>
 
 The second field is the TCP port where the server is going to listen and where the client is going to connect.
 By default, this value is 5100, but you can modify this value in the XML configuration
