@@ -10,7 +10,6 @@
         <transport_descriptors>
             <transport_descriptor>
                 <transport_id>TCPv4_Client</transport_id>
-                <wait_negotiation>false</wait_negotiation>
                 <type>TCPv4</type>
             </transport_descriptor>
         </transport_descriptors>

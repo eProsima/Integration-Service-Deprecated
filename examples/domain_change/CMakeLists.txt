@@ -20,8 +20,14 @@ endif()
 
 project("domain_change")
 
-find_package(fastcdr REQUIRED)
-find_package(fastrtps REQUIRED)
+# Find requirements
+if(NOT fastcdr_FOUND)
+    find_package(fastcdr REQUIRED)
+endif()
+
+if(NOT fastrtps_FOUND)
+    find_package(fastrtps REQUIRED)
+endif()
 
 # Set C++11
 include(CheckCXXCompilerFlag)

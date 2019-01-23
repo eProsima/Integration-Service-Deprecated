@@ -12,10 +12,16 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
     endif()
 endif()
 
-find_package(fastcdr REQUIRED)
-find_package(fastrtps REQUIRED)
+# Find requirements
+if(NOT fastcdr_FOUND)
+    find_package(fastcdr REQUIRED)
+endif()
 
-add_definitions(-DEPROSIMA_SHAPES_DLL_EXPORT  -DBUILD_SHARED_LIBS)
+if(NOT fastrtps_FOUND)
+    find_package(fastrtps REQUIRED)
+endif()
+
+add_definitions(-DEPROSIMA_SHAPES_DLL_EXPORT -DBUILD_SHARED_LIBS)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_SHARED_LIBS TRUE)
@@ -40,11 +46,15 @@ if(WIN32)
 endif()
 target_link_libraries(keyhelloworld_dyn_dyn_lib fastrtps fastcdr ${CMAKE_DL_LIBS})
 
-install(TARGETS keyhelloworld_dyn_dyn_lib
+ install(TARGETS keyhelloworld_dyn_dyn_lib
+    RUNTIME DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
+    ARCHIVE DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     LIBRARY DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     )
 
 install(TARGETS keyhelloworld_static_static_lib
+    RUNTIME DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
+    ARCHIVE DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     LIBRARY DESTINATION examples/${PROJECT_NAME}/build$<$<BOOL:${WIN32}>:/${CMAKE_BUILD_TYPE}>
     )
 
