@@ -12,7 +12,7 @@ Environment
 
 To execute this example, we need to have configured properly two separated subnetworks,
 only linked through a WAN connection, ideally the Internet.
-We need also to open an input TCP port on the router of the machine that is going to work as a Server,
+We need also to open an input TCP port on the router of the machine that is going to work as a Server
 and establish a port forwarding to route the incoming data of this port the server.
 
 The following diagram shows the minimum architecture of the example that is two machines,
@@ -33,20 +33,30 @@ the Public IP Address of the machine that is going to work as a TCP Server (in t
 and update the XML Files with it.
 The **config_server.xml** file has the *wan_addr* inside the transport descriptor.
 
-.. literalinclude:: config_server.xml
-    :language: xml
-    :start-after: <!-- TRANSPORT CONFIGURATION START -->
-    :end-before: <!-- TRANSPORT CONFIGURATION END -->
-    :dedent: 4
+.. code-block:: xml
+
+<transport_descriptor>
+    <transport_id>TCPv4_Server</transport_id>
+    <type>TCPv4</type>
+    <listening_ports>
+        <port>5100</port>
+    </listening_ports>
+    <wan_addr>88.88.74.14</wan_addr>
+</transport_descriptor>
 
 The **config_client.xml** file has the *address* inside the field *initialPeersList* to set
 where it is going to connect.
 
-.. literalinclude:: config_client.xml
-    :language: xml
-    :start-after: <!-- TRANSPORT CONFIGURATION START -->
-    :end-before: <!-- TRANSPORT CONFIGURATION END -->
-    :dedent: 4
+.. code-block:: xml
+
+<initialPeersList>
+    <locator>
+        <tcpv4>
+            <address>88.88.74.14</address>
+            <physical_port>5100</physical_port>
+        </tcpv4>
+    </locator>
+</initialPeersList>
 
 The second field is the TCP port where the server is going to listen and where the client is going to connect.
 By default, this value is 5100, but you can modify this value in the XML configuration

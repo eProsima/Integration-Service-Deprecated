@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <is>
     <profiles>
-        <!-- TRANSPORT CONFIGURATION START -->
         <transport_descriptors>
             <transport_descriptor>
                 <transport_id>TCPv4_Server</transport_id>
@@ -12,7 +11,6 @@
                 <wan_addr>88.88.74.14</wan_addr>
             </transport_descriptor>
         </transport_descriptors>
-        <!-- TRANSPORT CONFIGURATION END -->
         <participant profile_name="LocalParticipant">
             <rtps>
                 <builtin>
