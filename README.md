@@ -7,18 +7,40 @@
 
 ![http://www.eprosima.com](https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ)
 
-*eProsima Integration Service* is a library based on *Fast RTPS* for creating parameterized
-communication bridges between different systems, services and protocols.
-It is also able to perform transformations over the messages such as customized routing and
-mapping between input and output attributes or data modification.
+*eProsima Integration Service* is a library based on *Fast RTPS* which allows
+integrating heterogeneous and detached systems.
+It allows RTPS applications to communicate across domains, networks (Local and Wide Area Networks),
+passing through firewalls and NATs and it enables the communication between legacy, 
+incompatible and/or newly developed systems without modifying any line of code of those.
+
+*Integration Service* is able to create routing tables allowing to create filtering and
+complex communication diagrams, like a writer communicating with several readers,
+and one of those readers receiving information from several writers at the same time.
 
 The main features of *Integration Service* are:
 
--   Connects two different domains.
--   Mapping between different data types.
--   User-defined operations over the received messages.
--   Communication with others environments, like *ROS2*.
+- Integrates and expands real-time systems across WANs without effort and without
+  stopping or modifying existing applications.
 
+- Allows to build modular systems, including over already deployed systems.
+
+- Provides precise control over the data flow allowing to split networks and
+  protecting them with firewalls and NATs.
+
+- Transforms data by changing topic names or data types, applies different quality of services.
+
+- Allows to define customized operations and filtering over the data values allowing
+  to integrate different versions of topic definitions.
+
+- Exposes selected topics and accepts data from remote locations, allows testing the connectivity,
+  topic compatibility, and use-cases, easing development, integration, and testing.
+
+- Allows remote connection to already deployed systems, for data analysis and verification.
+
+- Provides an easy-to-use API allowing to add support to non-RTPS systems and legacy protocols.
+
+- Based on Fast-RTPS, but not attached to it, eProsima Integration Service can communicate
+  any RTPS based application out-of-the-box.
 
 <p align="center"> <img src="docs/RTPS_other_connector.png" alt="Default behaviour"/> </p>
 
