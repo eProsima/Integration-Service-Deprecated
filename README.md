@@ -9,7 +9,7 @@
 
 *eProsima Integration Service* is a library based on *Fast RTPS* which allows
 integrating distant and incompatible systems.
-It allows RTPS applications to communicate across domains, and Local and Wide Area Networks,
+It allows RTPS applications to communicate across domains, networks (Local and Wide Area Networks),
 passing through firewall and NAT.
 *eProsima Integration Service* permits to apply customized data transformations and
 to filter between the endpoints.
