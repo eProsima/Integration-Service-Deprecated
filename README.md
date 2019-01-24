@@ -8,15 +8,11 @@
 ![http://www.eprosima.com](https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ)
 
 *eProsima Integration Service* is a library based on *Fast RTPS* which allows
-integrating distant and incompatible systems.
+integrating heterogeneous and detached systems.
 It allows RTPS applications to communicate across domains, networks (Local and Wide Area Networks),
-passing through firewall and NAT.
-*eProsima Integration Service* permits to apply customized data transformations and
-to filter between the endpoints.
-This enables the communication between legacy, incompatible and/or newly developed systems
-without modifying any line of code of those.
+passing through firewalls and NATs and it enables the communication between legacy, 
+incompatible and/or newly developed systems without modifying any line of code of those.
 
-*Integration Service* provides an easy-to-use API that allows adding support to any protocol.
 *Integration Service* is able to create routing tables allowing to create filtering and
 complex communication diagrams, like a writer communicating with several readers,
 and one of those readers receiving information from several writers at the same time.
