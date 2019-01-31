@@ -210,7 +210,7 @@ void ISManager::loadISTypes(tinyxml2::XMLElement *is_types_element)
             if (element != nullptr)
             {
                 // Has his own library
-                const char* lib = (element->GetText() == nullptr) ? nullptr : element->GetText();
+                const char* lib = element->GetText();
                 if (lib != nullptr)
                 {
                     void* handle = getLibraryHandle(lib);
@@ -225,7 +225,7 @@ void ISManager::loadISTypes(tinyxml2::XMLElement *is_types_element)
         tinyxml2::XMLElement *typesLib = is_types_element->FirstChildElement(s_sTypesLibrary.c_str());
         while (typesLib)
         {
-            const char* lib = (typesLib->GetText() == nullptr) ? nullptr : typesLib->GetText();
+            const char* lib = typesLib->GetText();
             if (lib != nullptr)
             {
                 void* handle = getLibraryHandle(lib);
