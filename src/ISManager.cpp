@@ -664,12 +664,6 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
             bridge = new RTPSBridge(connector_name);
             addBridge(bridge);
         }
-        else if (itsb != bridges.end() && itpb != bridges.end())
-        {
-            // No RTPS endpoint?
-            LOG_ERROR("Connector " << connector_name << " without RTPS endpoint!");
-            throw 0; // Not allowed.
-        }
         else if(itsb != bridges.end())
         {
             // Reader has the custom bridge
