@@ -81,12 +81,12 @@ public:
     void addReader(const std::string &part_name, ISReader* s);
     void loadISTypes(tinyxml2::XMLElement *is_types_element);
     void loadProfiles(tinyxml2::XMLElement *profiles);
-    void loadDynamicTypes(tinyxml2::XMLElement *types);
+    void loadProtocol(tinyxml2::XMLElement *protocol);
     Participant* getParticipant(const std::string &name);
     void createReader(Participant* participant, const std::string &participant_profile, const std::string &name);
     void createWriter(Participant* participant, const std::string &participant_profile, const std::string &name);
-    void loadBridge(tinyxml2::XMLElement *bridge_element);
     void loadConnector(tinyxml2::XMLElement *connector_element);
+    void loadTransformation(tinyxml2::XMLElement *connector_element);
     void onTerminate();
     void* getLibraryHandle(const std::string &libpath);
     void* getTypeHandle(const std::string &libpath);

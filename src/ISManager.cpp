@@ -24,17 +24,17 @@
 // String literals
 static const std::string s_sIS("is");
 static const std::string s_sProfiles("profiles");
-static const std::string s_sBridge("bridge");
 static const std::string s_sConnector("connector");
+static const std::string s_sDDS("dds");
+static const std::string s_sProtocol("protocol");
+static const std::string s_sSystem("system");
+static const std::string s_sMutation("mutation");
 static const std::string s_sName("name");
-static const std::string s_sAttributes("attributes");
 static const std::string s_sDomain("domain");
 static const std::string s_sSubscriber("subscriber");
 static const std::string s_sPublisher("publisher");
 static const std::string s_sTopic("topic");
 static const std::string s_sType("type");
-static const std::string s_sTypes("types");
-static const std::string s_sPartition("partition");
 static const std::string s_sLibrary("library");
 static const std::string s_sProperties("properties");
 static const std::string s_sProperty("property");
@@ -53,17 +53,6 @@ static const std::string s_sPublisherProfile("publisher_profile");
 static const std::string s_sFile("file");
 static const std::string s_sFunction("function");
 static const std::string s_sValue("value");
-// TCP parameters
-static const std::string s_sProtocol("protocol");
-static const std::string s_sRemoteAddress("remoteAddesss");
-static const std::string s_sRemotePort("remotePort");
-static const std::string s_sListeningPort("listeningPort");
-static const std::string s_sLogicalInitialPeerPort("logicalInitialPeerPort");
-static const std::string s_sLogicalMetadataPort("logicalMetadataPort");
-static const std::string s_sLogicalUserPort("logicalUserPort");
-// Topic types libraries
-static const std::string s_sISTypes("is_types");
-static const std::string s_sTypesLibrary("types_library");
 
 
 ISManager::ISManager(const std::string &xml_file_path)
@@ -84,37 +73,31 @@ ISManager::ISManager(const std::string &xml_file_path)
             child != nullptr; child = child->NextSiblingElement(s_sIS.c_str()))
         {
 
-            tinyxml2::XMLElement *topic_types = child->FirstChildElement(s_sISTypes.c_str());
-            if (topic_types)
-            {
-                loadISTypes(topic_types);
-            }
+            tinyxml2::XMLElement *profiles =
+                    (child->FirstChildElement(s_sDDS.c_str()))->FirstChildElement(s_sProfiles.c_str());
 
-            tinyxml2::XMLElement *profiles = child->FirstChildElement(s_sProfiles.c_str());
             if (profiles)
             {
                 loadProfiles(profiles);
             }
             else
             {
-                LOG_ERROR("No profiles found!");
+                LOG_ERROR("No dds profiles found!");
                 return;
             }
 
-            /*
-            tinyxml2::XMLElement *participant = child->FirstChildElement(s_sParticipant.c_str());
-            while(participant)
+            tinyxml2::XMLElement *protocol = child->FirstChildElement(s_sProtocol.c_str());
+            while (protocol)
             {
-                loadParticipant(participant);
-                participant = participant->NextSiblingElement(s_sParticipant.c_str());
+                loadProtocol(protocol);
+                protocol = protocol->NextSiblingElement(s_sProtocol.c_str());
             }
-            */
 
-            tinyxml2::XMLElement *bridge = child->FirstChildElement(s_sBridge.c_str());
-            while (bridge)
+            tinyxml2::XMLElement *transformation = child->FirstChildElement(s_sTransformation.c_str());
+            while (transformation)
             {
-                loadBridge(bridge);
-                bridge = bridge->NextSiblingElement(s_sBridge.c_str());
+                loadTransformation(transformation);
+                transformation = transformation->NextSiblingElement(s_sTransformation.c_str());
             }
 
             tinyxml2::XMLElement *connector = child->FirstChildElement(s_sConnector.c_str());
@@ -122,6 +105,20 @@ ISManager::ISManager(const std::string &xml_file_path)
             {
                 loadConnector(connector);
                 connector = connector->NextSiblingElement(s_sConnector.c_str());
+            }
+
+            tinyxml2::XMLElement *topic = child->FirstChildElement(s_sTopic.c_str());
+            while (topic)
+            {
+                loadTopic(topic);
+                topic = topic->NextSiblingElement(s_sTopic.c_str());
+            }
+
+            tinyxml2::XMLElement *mutation = child->FirstChildElement(s_sMutation.c_str());
+            while (mutation)
+            {
+                loadMutation(mutation);
+                mutation = mutation->NextSiblingElement(s_sMutation.c_str());
             }
         }
 
@@ -177,69 +174,55 @@ void ISManager::loadProfiles(tinyxml2::XMLElement *profiles)
     }
 }
 
-void ISManager::loadDynamicTypes(tinyxml2::XMLElement *types)
-{
-    xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLDynamicTypes(*types);
+//void ISManager::loadISTypes(tinyxml2::XMLElement *is_types_element)
+//{
+//    try
+//    {
+//        tinyxml2::XMLElement *types = is_types_element->FirstChildElement(s_sTypes.c_str());
+//        if (types)
+//        {
+//            loadDynamicTypes(is_types_element);
+//        }
 
-    if (ret == xmlparser::XMLP_ret::XML_OK)
-    {
-        LOG_INFO("Dynamic Types parsed successfully.");
-    }
-    else
-    {
-        LOG_ERROR("Error parsing dynamic types!");
-    }
-}
+//        tinyxml2::XMLElement *type = is_types_element->FirstChildElement(s_sType.c_str());
+//        while (type)
+//        {
+//            const char* type_name = type->Attribute(s_sName.c_str());
 
-void ISManager::loadISTypes(tinyxml2::XMLElement *is_types_element)
-{
-    try
-    {
-        tinyxml2::XMLElement *types = is_types_element->FirstChildElement(s_sTypes.c_str());
-        if (types)
-        {
-            loadDynamicTypes(is_types_element);
-        }
+//            tinyxml2::XMLElement *element = _assignOptionalElement(type, s_sLibrary);
+//            if (element != nullptr)
+//            {
+//                // Has his own library
+//                const char* lib = element->GetText();
+//                if (lib != nullptr)
+//                {
+//                    void* handle = getLibraryHandle(lib);
+//                    typef_t function = (typef_t)eProsimaGetProcAddress(handle, "GetTopicType");
+//                    typesLibs[type_name] = function;
+//                }
+//            }
 
-        tinyxml2::XMLElement *type = is_types_element->FirstChildElement(s_sType.c_str());
-        while (type)
-        {
-            const char* type_name = type->Attribute(s_sName.c_str());
+//            type = type->NextSiblingElement(s_sType.c_str());
+//        }
 
-            tinyxml2::XMLElement *element = _assignOptionalElement(type, s_sLibrary);
-            if (element != nullptr)
-            {
-                // Has his own library
-                const char* lib = element->GetText();
-                if (lib != nullptr)
-                {
-                    void* handle = getLibraryHandle(lib);
-                    typef_t function = (typef_t)eProsimaGetProcAddress(handle, "GetTopicType");
-                    typesLibs[type_name] = function;
-                }
-            }
-
-            type = type->NextSiblingElement(s_sType.c_str());
-        }
-
-        tinyxml2::XMLElement *typesLib = is_types_element->FirstChildElement(s_sTypesLibrary.c_str());
-        while (typesLib)
-        {
-            const char* lib = typesLib->GetText();
-            if (lib != nullptr)
-            {
-                void* handle = getLibraryHandle(lib);
-                typef_t function = (typef_t)eProsimaGetProcAddress(handle, "GetTopicType");
-                defaultTypesLibs.emplace_back(function);
-                typesLib = typesLib->NextSiblingElement(s_sTypesLibrary.c_str());
-            }
-        }
-    }
-    catch (int e_code)
-    {
-        LOG_ERROR("Error ocurred while loading topic types " << e_code);
-    }
-}
+//        tinyxml2::XMLElement *typesLib = is_types_element->FirstChildElement(s_sTypesLibrary.c_str());
+//        while (typesLib)
+//        {
+//            const char* lib = typesLib->GetText();
+//            if (lib != nullptr)
+//            {
+//                void* handle = getLibraryHandle(lib);
+//                typef_t function = (typef_t)eProsimaGetProcAddress(handle, "GetTopicType");
+//                defaultTypesLibs.emplace_back(function);
+//                typesLib = typesLib->NextSiblingElement(s_sTypesLibrary.c_str());
+//            }
+//        }
+//    }
+//    catch (int e_code)
+//    {
+//        LOG_ERROR("Error ocurred while loading topic types " << e_code);
+//    }
+//}
 
 TopicDataType* ISManager::getTopicDataType(const std::string &name)
 {
@@ -495,6 +478,38 @@ void ISManager::loadBridge(tinyxml2::XMLElement *bridge_element)
     }
 }
 
+void ISManager::loadProtocol(tinyxml2::XMLElement *protocol_element)
+{
+    try
+    {
+        const char* protocol_name = protocol_element->Attribute(s_sName.c_str());
+        const char* protocol_lib = protocol_element->Attribute(s_sLibrary.c_str());
+
+        void *handle = getLibraryHandle(protocol_lib);
+
+        createBridgef_t create_bridge = (createBridgef_t)eProsimaGetProcAddress(handle, s_sFuncCreateBridge.c_str());
+        createSubf_t create_reader = (createSubf_t)eProsimaGetProcAddress(handle, s_sFuncCreateReader.c_str());
+        createPubf_t create_writer = (createPubf_t)eProsimaGetProcAddress(handle, s_sFuncCreateWriter.c_str());
+
+        ISBridge *bridge = nullptr;
+        if (create_bridge != nullptr)
+        {
+            bridge = create_bridge(protocol_name, nullptr);
+        }
+
+        if (bridge == nullptr) // Use the default bridge
+        {
+            bridge = new RTPSBridge(protocol_name);
+        }
+
+        addBridge(bridge);
+    }
+    catch (int e_code)
+    {
+        LOG_ERROR("Error ocurred while loading protocol. " << e_code);
+    }
+}
+
 Participant* ISManager::getParticipant(const std::string &name)
 {
     Participant* participant = nullptr;
@@ -521,7 +536,187 @@ void ISManager::loadConnector(tinyxml2::XMLElement *connector_element)
         const char* connector_name = connector_element->Attribute(s_sName.c_str());
         tinyxml2::XMLElement *sub_el = _assignNextElement(connector_element, s_sReader);
         tinyxml2::XMLElement *pub_el = _assignNextElement(connector_element, s_sWriter);
-        tinyxml2::XMLElement *trans_el = _assignOptionalElement(connector_element, s_sTransformation);
+        tinyxml2::XMLElement *trans_el = _assignOptionalElement(connector_element, s_sTransformation);  //MODIFICAR
+
+        const char* sub_part   = sub_el->Attribute(s_sParticipantProfile.c_str());
+        const char* sub_bridge = sub_el->Attribute(s_sBridgeName.c_str());
+        const char* sub_name = sub_el->Attribute(s_sReaderName.c_str());
+        const char* sub_profile_name = sub_el->Attribute(s_sSubscriberProfile.c_str());
+        const char* pub_part   = pub_el->Attribute(s_sParticipantProfile.c_str());
+        const char* pub_bridge = pub_el->Attribute(s_sBridgeName.c_str());
+        const char* pub_name = pub_el->Attribute(s_sWriterName.c_str());
+        const char* pub_profile_name = pub_el->Attribute(s_sPublisherProfile.c_str());
+
+        if (sub_part == nullptr && sub_bridge == nullptr)
+        {
+            LOG_ERROR("Neither reader's participant or bridge are defined in connector " << connector_name << ".");
+            throw 0;
+        }
+
+        if (sub_part != nullptr && sub_bridge != nullptr)
+        {
+            LOG_ERROR("Both reader's participant and bridge are defined in connector " << connector_name << ".");
+            throw 0;
+        }
+
+        if (pub_part == nullptr && pub_bridge == nullptr)
+        {
+            LOG_ERROR("Neither writer's participant or bridge are defined in connector " << connector_name << ".");
+            throw 0;
+        }
+
+        if (pub_part != nullptr && pub_bridge != nullptr)
+        {
+            LOG_ERROR("Both writer's participant and bridge are defined in connector " << connector_name << ".");
+            throw 0;
+        }
+
+        if (pub_part != nullptr && pub_profile_name == nullptr)
+        {
+            LOG_ERROR("A RTPS Publisher participant needs a " << s_sPublisherProfile << " in connector "
+                << connector_name << ".");
+            throw 0;
+        }
+
+        if (sub_part != nullptr && sub_profile_name == nullptr)
+        {
+            LOG_ERROR("A RTPS Subscriber participant needs a " << s_sSubscriberProfile << " in connector "
+                << connector_name << ".");
+            throw 0;
+        }
+
+        if (pub_bridge != nullptr && pub_name == nullptr)
+        {
+            LOG_ERROR("A Writer bridge needs a " << s_sWriterName << " in connector " << connector_name << ".");
+            throw 0;
+        }
+
+        if (sub_bridge != nullptr && sub_name == nullptr)
+        {
+            LOG_ERROR("A Reader bridge needs a " << s_sReaderName << " in connector " << connector_name << ".");
+            throw 0;
+        }
+
+        std::string subName;
+        std::string pubName;
+        if (sub_part != nullptr)
+        {
+            Participant* participant_subscriber = getParticipant(sub_part);
+            if (participant_subscriber != nullptr)
+            {
+                createReader(participant_subscriber, sub_part, sub_profile_name);
+                subName = getEndPointName(sub_part, sub_profile_name);
+            }
+        }
+        else
+        {
+            // Bridge's load created it
+            subName = getEndPointName(sub_bridge, sub_name);
+        }
+
+        if (pub_part != nullptr)
+        {
+            Participant* participant_publisher = getParticipant(pub_part);
+            if (participant_publisher != nullptr)
+            {
+                createWriter(participant_publisher, pub_part, pub_profile_name);
+                pubName = getEndPointName(pub_part, pub_profile_name);
+            }
+        }
+        else
+        {
+            // Bridge's load created it
+            pubName = getEndPointName(pub_bridge, pub_name);
+        }
+
+        auto its = readers.find(subName);
+        if (its == readers.end())
+        {
+            LOG_ERROR("Reader " << sub_name << " of participant " << sub_part << " cannot be found.");
+            throw 0;
+        }
+
+        auto itp = writers.find(pubName);
+        if (itp == writers.end())
+        {
+            LOG_ERROR("Writer " << pub_name << " of participant " << pub_part << " cannot be found.");
+            throw 0;
+        }
+
+        ISReader* sub = its->second;
+        ISWriter* pub = itp->second;
+
+        std::string function_name;
+        userf_t function = nullptr;
+        userdynf_t dynFunction = nullptr;
+
+        if (trans_el)
+        {
+            const char* f_file = trans_el->Attribute(s_sFile.c_str());
+            const char* f_name = trans_el->Attribute(s_sFunction.c_str());
+            function_name = std::string(f_file) + "@" + f_name;
+            void* handle = getLibraryHandle(f_file);
+
+            if (pub->output_type == nullptr || dynamic_cast<DynamicPubSubType*>(pub->output_type) == nullptr)
+            {
+                function = (userf_t)eProsimaGetProcAddress(handle, f_name);
+            }
+            else
+            {
+                dynFunction = (userdynf_t)eProsimaGetProcAddress(handle, f_name);
+            }
+        }
+
+        // Any participant is a bridge?
+        ISBridge* bridge;
+
+        auto itsb = sub_bridge != nullptr ? bridges.find(sub_bridge) : bridges.end();
+        auto itpb = pub_bridge != nullptr ? bridges.find(pub_bridge) : bridges.end();
+
+        if (itsb == bridges.end() && itpb == bridges.end())
+        {
+            // Create the RTPS bridge
+            bridge = new RTPSBridge(connector_name);
+            addBridge(bridge);
+        }
+        else if(itsb != bridges.end())
+        {
+            // Reader has the custom bridge
+            bridge = itsb->second;
+        }
+        else // itpb != bridges.end()
+        {
+            // Writer has the custom bridge
+            bridge = itpb->second;
+        }
+
+        bridge->addReader(sub);
+        bridge->addWriter(sub->getName(), function_name, pub);
+        if (dynFunction == nullptr)
+        {
+            bridge->addFunction(sub->getName(), function_name, function);
+        }
+        else
+        {
+            bridge->addFunction(sub->getName(), function_name, dynFunction);
+        }
+
+        LOG_INFO("Set connector between " << sub->getName() << " and " << pub->getName());
+    }
+    catch (int e_code)
+    {
+        LOG_ERROR("Error ocurred while loading connector " << e_code);
+    }
+}
+
+void ISManager::loadTransformation(tinyxml2::XMLElement *transformation_element)
+{
+    try
+    {
+        const char* connector_name = transformation_element->Attribute(s_sName.c_str());
+        tinyxml2::XMLElement *sub_el = _assignNextElement(transformation_element, s_sReader);
+        tinyxml2::XMLElement *pub_el = _assignNextElement(transformation_element, s_sWriter);
+        tinyxml2::XMLElement *trans_el = _assignOptionalElement(transformation_element, s_sTransformation);  //MODIFICAR
 
         const char* sub_part   = sub_el->Attribute(s_sParticipantProfile.c_str());
         const char* sub_bridge = sub_el->Attribute(s_sBridgeName.c_str());
